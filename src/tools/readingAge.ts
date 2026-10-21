@@ -5,7 +5,7 @@
  * them against: no current date in the prompt and no age in the result. In the 2026-09-24
  * conversation check it called two pods that last reported 10 and 12 days earlier "likely
  * online", and presented a 10-day-old temperature as current
- * (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1 and 2). The prompt now carries the
+ * (`docs/records/CONVERSATION_QA_2026-09-24.md` findings 1 and 2). The prompt now carries the
  * current time too (`formatCurrentTime`), but an age computed here is exact, while date arithmetic
  * by the model is not.
  *

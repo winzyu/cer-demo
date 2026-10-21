@@ -1,4 +1,8 @@
+import { loadFixtures } from "../../src/eval/fixtures";
+import { loadLabels } from "../../src/eval/retrieval/labels";
 import { GoldContextAdapter } from "../../src/retrieval/adapters/GoldContextAdapter";
+import { GoldPlusRetrievedAdapter } from "../../src/retrieval/adapters/GoldPlusRetrievedAdapter";
+import type { Chunk, RetrievalAdapter } from "../../src/types/retrieval.types";
 
 /**
  * Exercised against the real label files and the real ingestion artifact — same pattern as
@@ -39,11 +43,42 @@ describe("GoldContextAdapter", () => {
     expect(chunks[0].text).toContain("factors can result in");
   });
 
-  it("returns an empty array for a noRelevantChunks turn, distinct from an unknown query", async () => {
-    const query = "Before we call a pH drop at the mill creek a real event, I want to know how "
-      + "much acid that creek can soak up before the pH actually moves. Can our pods tell me that?";
+  it("supplies per-turn explanatory context even when the requested value must be refused", async () => {
+    const fixtures = loadFixtures().filter((fixture) => fixture.class === "refusal");
+    const labels = loadLabels();
+    const adapter = new GoldContextAdapter();
+    expect(fixtures).toHaveLength(4);
+    for (const fixture of fixtures) {
+      for (const turn of fixture.turns) {
+        const chunks = await adapter.getContext(turn.content);
+        expect(turn.requires_refusal).toBe(true);
+        expect(chunks.length).toBeGreaterThan(0);
+        for (const evidence of turn.retrieval_evidence ?? []) {
+          expect(chunks.some((chunk) => chunk.text.includes(evidence.quote))).toBe(true);
+        }
+        const label = labels.queries.find((query) => query.label.query === turn.content)?.label;
+        expect(label?.noRelevantChunks).toBeUndefined();
+      }
+    }
+    const buffering = fixtures.find((fixture) => fixture.id === "refusal-buffering-capacity-not-measured")!;
+    const first = await adapter.getContext(buffering.turns[0].content);
+    const second = await adapter.getContext(buffering.turns[1].content);
+    expect(first.map((chunk) => chunk.id)).not.toEqual(second.map((chunk) => chunk.id));
+  });
 
-    expect(await new GoldContextAdapter().getContext(query)).toEqual([]);
+  it("includes new source-supported numerical branches and calibration alternatives", async () => {
+    const fixtures = loadFixtures();
+    const adapter = new GoldContextAdapter();
+    const cases = [
+      ["deepmanual-sonde-settle-time", 1, "10% of the measured value for turbidity >100 TU"],
+      ["probecal-ph-slope-acceptance", 0, "Slope Acceptance Criteria: 95% to 102%"],
+      ["crossdoc-sonde-sensor-order", 0, "sodium sulfite"],
+    ] as const;
+    for (const [id, turn, text] of cases) {
+      const fixture = fixtures.find((item) => item.id === id)!;
+      const chunks = await adapter.getContext(fixture.turns[turn].content);
+      expect(chunks.some((chunk) => chunk.text.includes(text))).toBe(true);
+    }
   });
 
   it("throws on an unknown query, naming the query", async () => {
@@ -67,5 +102,36 @@ describe("GoldContextAdapter", () => {
     const second = await adapter.getContext(other);
 
     expect(second.map((c) => c.id)).toEqual(first.map((c) => c.id));
+  });
+});
+
+describe("gold context with a search rewrite", () => {
+  const asked = "We put a pod below an old mine adit. Water is running about pH 3.2 and the "
+    + "conductivity trace looks wrong to me — higher than the grab samples the lab ran. Is the "
+    + "low pH capable of throwing the conductivity off, and if so by how much?";
+
+  it("looks the label up by the user's own words when the search query was rewritten", async () => {
+    const adapter = new GoldContextAdapter();
+    const direct = await adapter.getContext(asked);
+    const viaRewrite = await adapter.getContext("low pH effect on conductivity", { originalQuery: asked });
+    expect(viaRewrite).toEqual(direct);
+  });
+
+  it("puts gold first, then the retrieved chunks it lacks, searching with the rewrite", async () => {
+    const gold = await new GoldContextAdapter().getContext(asked);
+    const extra: Chunk = { id: "other.pdf__1", text: "unrelated", source: "other.pdf" };
+    const seen: string[] = [];
+    const retrieved: RetrievalAdapter = {
+      mode: "fake",
+      getContext: (query) => {
+        seen.push(query);
+        return Promise.resolve([gold[3], extra, gold[0]]);
+      },
+    };
+    const chunks = await new GoldPlusRetrievedAdapter(new GoldContextAdapter(), retrieved, "gold-plus-fake")
+      .getContext("low pH effect on conductivity", { originalQuery: asked });
+
+    expect(seen).toEqual(["low pH effect on conductivity"]);
+    expect(chunks.map((c) => c.id)).toEqual([...gold.map((c) => c.id), extra.id]);
   });
 });

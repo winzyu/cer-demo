@@ -1,0 +1,123 @@
+{
+  "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "do-t622-20c-750-897-01",
+          "rubric": [
+            1,
+            3
+          ],
+          "why": "Gives the USGS value used to calculate the 0.03 mg/L difference; matches explicit evidence."
+        },
+        {
+          "claimId": "do-tables-benson-krause-01",
+          "rubric": [
+            4
+          ],
+          "why": "Identifies Benson and Krause as the equations' source; matches explicit evidence."
+        },
+        {
+          "claimId": "epa-do-solubility-20c-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Gives the EPA value used to calculate the difference; matches explicit evidence."
+        },
+        {
+          "claimId": "a60-xcut-tbl601-all-01",
+          "rubric": [
+            5
+          ],
+          "why": "Supplies the separately identified stabilization tolerance permitted by the rubric; matches explicit evidence."
+        }
+      ],
+      "uncovered": [
+        6
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "do-tables-benson-krause-01",
+          "rubric": [
+            6
+          ],
+          "why": "Establishes that the USGS chapter supplies salinity correction factors."
+        },
+        {
+          "claimId": "epa-do-solubility-range-45c-01",
+          "rubric": [
+            1,
+            5
+          ],
+          "why": "Gives EPA's 45 C ceiling and absence of values above it."
+        },
+        {
+          "claimId": "epa-do-solubility-lowpressure-block-01",
+          "rubric": [
+            3,
+            4,
+            5
+          ],
+          "why": "Gives EPA's 690 mmHg lower bound for comparison with USGS."
+        },
+        {
+          "claimId": "do-t622-40c-600-496-01",
+          "rubric": [
+            2,
+            3,
+            5
+          ],
+          "why": "Identifies USGS's highest temperature and coverage at 600 mmHg."
+        },
+        {
+          "claimId": "do-t622-block2-header-01",
+          "rubric": [
+            3,
+            5
+          ],
+          "why": "Establishes USGS coverage down to 600 mmHg."
+        },
+        {
+          "claimId": "do-table624-title-01",
+          "rubric": [
+            6
+          ],
+          "why": "Identifies the USGS salinity-correction table."
+        },
+        {
+          "claimId": "do-t624-identity-01",
+          "rubric": [
+            6
+          ],
+          "why": "Describes the USGS salinity factors and their conductance basis."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "epa-do-solubility-units-mgl-01",
+      "why": "Matches explicit evidence but defines chart units and pressure conversion, not a requested value or table bound."
+    },
+    {
+      "claimId": "epa-do-solubility-0c-725-01",
+      "why": "Gives unrequested saturation values at 0 C rather than establishing the chart's bounds."
+    },
+    {
+      "claimId": "do-t622-block1-header-01",
+      "why": "Describes the first pressure block but does not supply a requested value or limiting bound."
+    },
+    {
+      "claimId": "do-saline-above-2000-01",
+      "why": "Defines saline-water correction conditions; neither rubric asks for the salinity threshold."
+    }
+  ]
+}

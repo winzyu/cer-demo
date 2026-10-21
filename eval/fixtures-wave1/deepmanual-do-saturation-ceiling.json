@@ -6,11 +6,11 @@
     "usgs-nfm-a6.2-dissolved-oxygen.pdf"
   ],
   "requires": [],
-  "notes": "Numeric lookup deep inside NFM A6.2's freshwater oxygen-solubility table (table 6.2-2). Claims: do-t622-20c-750-897-01 (8.97 mg/L at 750 mmHg, 9.09 at 760, 20.0 C), do-t622-35c-760-695-01 (6.95 mg/L at 760 mmHg, 35.0 C). Both claims sit on caption- and column-header-bearing chunks (indices 59 and 62), not on the headerless continuation grids listed in the a6.2 summary notes, so the row/column pairing is honestly retrievable. Nothing in the direct-feed slice tabulates solubility against temperature and pressure — the operator source-of-truth only gives healthy-range bands (6-11 mg/L freshwater), which is the wrong kind of answer. Expected to favor rag: the value exists in exactly one place in the corpus, ~65 percent of the way through a 91-chunk document, and no amount of the slice or general knowledge produces 9.09 and 6.95 from the same table.",
+  "notes": "Tests deepmanual do saturation ceiling. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: do-t622-20c-750-897-01, do-t622-35c-760-695-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
-      "content": "Water at one of our sites was 20 °C this morning and the barometer on the pod read 760 mm. If that water were fully saturated with air, what should the DO sensor be showing?",
+      "content": "Using USGS A6.2 table 6.2-2, what is the freshwater equilibrium dissolved-oxygen saturation value at 20 °C and 760 mmHg?",
       "rubric": {
         "must_contain": [
           "Gives 9.09 mg/L for 20.0 °C at 760 mmHg",
@@ -19,7 +19,7 @@
         ],
         "must_not": [
           "Invents a value for 20 °C at 760 mmHg that is not the table's",
-          "Cites the Atlas Scientific Industrial DO probe datasheet, which contains no solubility table"
+          "Uses the probe datasheet as evidence for the solubility value"
         ],
         "cite": [
           "usgs-nfm-a6.2-dissolved-oxygen.pdf"
@@ -32,11 +32,11 @@
       "rubric": {
         "must_contain": [
           "Gives 6.95 mg/L for 35.0 °C at 760 mmHg",
-          "States the ceiling falls by roughly 2 mg/L compared with the 20 °C value",
+          "States equilibrium saturation decreases by 2.14 mg/L, about 2 mg/L; does not describe it as an absolute maximum excluding supersaturation",
           "Takes both figures from the same USGS table rather than mixing sources"
         ],
         "must_not": [
-          "Interpolates or estimates instead of reading the 35.0 °C row",
+          "Replaces the requested table value with an unsupported estimate",
           "States or implies that warmer water can hold more oxygen",
           "Invents a barometric correction the question did not ask for"
         ],

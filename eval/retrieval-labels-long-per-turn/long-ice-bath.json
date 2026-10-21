@@ -1,0 +1,248 @@
+{
+  "fixtureId": "long-ice-bath",
+  "set": "committed",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "I'm setting up a zero-degree check for our field thermometer before the next trip. Can I use ordinary freezer ice, and how small a container can I get away with?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__a69ab8527908",
+          "contentHash": "a69ab8527908",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "to use ice made with DIW in a bath of DIW.",
+          "locator": "Sections 3.2.1, 3.2.2, and 3.2.2.1 — 'limited to points of 0°C (ice and deionized water [DIW] bath), room temperature (20–25°C)'",
+          "claimIds": [
+            "t-0c-diw-ice-01",
+            "t-0c-container-fill-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "The middle and the edge don't read quite the same. How should I check around the bath, and can I use the reference probe to stir it?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__9e93dc503af6",
+          "contentHash": "9e93dc503af6",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "locations within the bath with the certified or traceable\nsensor. Do not use the sensor to stir the bath.",
+          "locator": "Section 3.2.2.1 Calibration Verification at 0°C, steps 3-9 — 'Do not use the sensor to stir the bath'",
+          "claimIds": [
+            "t-0c-stir-uniform-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "query": "The reading is still creeping instead of holding. What practical changes to the bath should I try?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__9e93dc503af6",
+          "contentHash": "9e93dc503af6",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "stir more, add more ice, insulate the bath, or relocate the",
+          "locator": "Section 3.2.2.1 Calibration Verification at 0°C, steps 3-9 — 'Do not use the sensor to stir the bath'",
+          "claimIds": [
+            "t-0c-trend-remedy-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "query": "I'm borrowing a certified reference thermometer for this. What range, accuracy and display detail does that reference need?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__6c3145b44cb4",
+          "contentHash": "6c3145b44cb4",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "required to have a range of at least -5°C to 45°C, and a\ncertified accuracy of less than or equal to ±0.05°C with\na readout resolution of at least 0.001°C.",
+          "locator": "Section 2.1 Definitions — 'Certified Temperature Sensor', 'Traceable', 'Verified'",
+          "claimIds": [
+            "t-certified-spec-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "query": "Different field issue: the creek is running hard and I was going to hold the pH electrode straight in the fast current. Why might that be a bad idea?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__54b040d83f83",
+          "contentHash": "54b040d83f83",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "It is not advisable to immerse the pH electrode into fast-\nflowing surface water for the following reasons—",
+          "locator": "Section 5.1 Step 2, determining measurement location and method — \"It is not advisable to immerse the pH electrode into fast-flowing surface water\"",
+          "claimIds": [
+            "ph-no-fast-flow-immersion-01",
+            "ph-fast-flow-bulb-damage-01",
+            "ph-fast-flow-equilibrium-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "query": "Could we use a sample from the churn instead, and if morning and afternoon pH differ, could the plants be part of it?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__54b040d83f83",
+          "contentHash": "54b040d83f83",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "from a sample that is withdrawn from a churn\nor cone splitter or other approved sample-\ncompositing device.",
+          "locator": "Section 5.1 Step 2, determining measurement location and method — \"It is not advisable to immerse the pH electrode into fast-flowing surface water\"",
+          "claimIds": [
+            "ph-surface-methods-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.4-ph.pdf__d69cb303fc10",
+          "contentHash": "d69cb303fc10",
+          "filename": "usgs-nfm-a6.4-ph.pdf",
+          "grade": 2,
+          "evidence": "pH of surface waters is affected diurnally by photosynthe-\nsis and respiration of algae and rooted macrophytes (Hem,\n1989).",
+          "locator": "Section 1.1 Overview of pH, \"Information on pH—\" bullet list",
+          "claimIds": [
+            "ph-diurnal-surface-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "query": "OK, back to the ice-bath check in the workshop. If it starts drifting again while we get ready, what are the simple fixes?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__9e93dc503af6",
+          "contentHash": "9e93dc503af6",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "stir more, add more ice, insulate the bath, or relocate the",
+          "locator": "Section 3.2.2.1 Calibration Verification at 0°C, steps 3-9 — 'Do not use the sensor to stir the bath'",
+          "claimIds": [
+            "t-0c-trend-remedy-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "query": "That middle-versus-edge check from earlier - which sensor do I use, where do I check, and what mustn't I use it for?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__9e93dc503af6",
+          "contentHash": "9e93dc503af6",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "locations within the bath with the certified or traceable\nsensor. Do not use the sensor to stir the bath.",
+          "locator": "Section 3.2.2.1 Calibration Verification at 0°C, steps 3-9 — 'Do not use the sensor to stir the bath'",
+          "claimIds": [
+            "t-0c-stir-uniform-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "query": "That creeping reading I mentioned near the start has returned. Apart from stirring more, what can I change about the ice and insulation?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__9e93dc503af6",
+          "contentHash": "9e93dc503af6",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "stir more, add more ice, insulate the bath, or relocate the",
+          "locator": "Section 3.2.2.1 Calibration Verification at 0°C, steps 3-9 — 'Do not use the sensor to stir the bath'",
+          "claimIds": [
+            "t-0c-trend-remedy-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "query": "The thermometer lives on our sonde. What reference accuracy and resolution should we write into the check sheet, and where do the calibration records belong?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__6c3145b44cb4",
+          "contentHash": "6c3145b44cb4",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "required to have a range of at least -5°C to 45°C, and a\ncertified accuracy of less than or equal to ±0.05°C with\na readout resolution of at least 0.001°C.",
+          "locator": "Section 2.1 Definitions — 'Certified Temperature Sensor', 'Traceable', 'Verified'",
+          "claimIds": [
+            "t-certified-spec-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__75d13350deef",
+          "contentHash": "75d13350deef",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Calibration records must be maintained and entered\ninto the appropriate instrument or sensor logbook and",
+          "locator": "Section 3.0 Calibration, record-keeping bullets — \"Calibration records must be maintained\"",
+          "claimIds": [
+            "mp-cal-records-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "query": "When I write down the comparison, what precision should I keep, and what range and accuracy should the borrowed reference have?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__6c3145b44cb4",
+          "contentHash": "6c3145b44cb4",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "required to have a range of at least -5°C to 45°C, and a\ncertified accuracy of less than or equal to ±0.05°C with\na readout resolution of at least 0.001°C.",
+          "locator": "Section 2.1 Definitions — 'Certified Temperature Sensor', 'Traceable', 'Verified'",
+          "claimIds": [
+            "t-certified-spec-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__b4799b81c761",
+          "contentHash": "b4799b81c761",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "record the sensor measurements to the near-\nest 0.01°C or the maximum resolution of the displays.",
+          "locator": "Section 2.2 Establishing and Maintaining a Traceable Sensor — 'no less than five points between 0°C and 40°C annually'",
+          "claimIds": [
+            "t-record-001-resolution-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "query": "The zero-point setup I asked about first - what should the frozen and liquid parts be made from, and what's the small flask size again?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.1-temperature.pdf__a69ab8527908",
+          "contentHash": "a69ab8527908",
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "grade": 2,
+          "evidence": "to use ice made with DIW in a bath of DIW.",
+          "locator": "Sections 3.2.1, 3.2.2, and 3.2.2.1 — 'limited to points of 0°C (ice and deionized water [DIW] bath), room temperature (20–25°C)'",
+          "claimIds": [
+            "t-0c-diw-ice-01",
+            "t-0c-container-fill-01"
+          ]
+        }
+      ]
+    }
+  ]
+}

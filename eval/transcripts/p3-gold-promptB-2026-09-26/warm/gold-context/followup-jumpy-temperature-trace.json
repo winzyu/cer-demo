@@ -1,0 +1,82 @@
+{
+  "fixtureId": "followup-jumpy-temperature-trace",
+  "fixtureClass": "follow-up",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-26T21:24:33.762Z",
+    "gitSha": "4fee6d6c178ea5d88cf598e947aa1ef046f933c8",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "reasoningEffort": "default",
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8011/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "The water temperature on one of our pods has gone jumpy - it steps around by a degree or two between readings while everything else on the same instrument looks steady. Where do we start looking?",
+      "answer": "Start by checking the temperature sensor itself and its power source. A common cause of “jumpy” temperature readings is a dirty sensor surface, which can be cleaned to remove any dirt or oily film【1†\"Dirty sensor—remove dirt and oil film.\"】. Also verify that the batteries are fresh, since weak batteries can produce unstable readings【1†\"Weak batteries—replace with new batteries.\"】. If the sensor and batteries look fine, inspect the sensor’s connections and cables for dirt, looseness, or damage, as poor connections can also cause erratic output【1†\"Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\"】.",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.1-temperature.pdf__c4c215ab7bd4",
+          "text": "d in\na field setting. The best practice is to have new, verified water\ntemperature sensors available to replace malfunctioning field\nsensors. Be sure to follow manufacturer’s recommendations\nfor cleaning and troubleshooting in general.\n• Check the voltage of the batteries.\n• Start with good batteries in instruments and carry\nspares.\n6.0. \tReporting\nUSGS temperature measurements should be stored inthe National Water Information System (NWIS) database\nTable 6.1–1. \tTroubleshooting guide for temperature measurements.\nSymptom \tPossible cause and corrective action\nThe sensor does not read accurately \t• Dirty sensor—remove dirt and oil film.\n• Weak batteries—replace with new batteries.\n• Calibration expired—verify or recertify.\nErratic sensor readings \t• Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\n• Break in the cables—replace cables, which may require recertification.\n• Weak batteries—replace with new batteries.\nReadings are slow to stabilize \t• Dirty sensor—clean the sensor to remove dirt and oily film.",
+          "source": "https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "Start by checking the temperature sensor itself and its power source. A common cause of “jumpy” temperature readings is a dirty sensor surface, which can be cleaned to remove any dirt or oily film【1†\"Dirty sensor—remove dirt and oil film.\"】. Also verify that the batteries are fresh, since weak batteries can produce unstable readings【1†\"Weak batteries—replace with new batteries.\"】. If the sensor and batteries look fine, inspect the sensor’s connections and cables for dirt, looseness, or damage, as poor connections can also cause erratic output【1†\"Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\"】.",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 1539,
+        "completionTokens": 281,
+        "totalTokens": 1820,
+        "cachedPromptTokens": 1263
+      },
+      "timing": {
+        "ttftMs": 1187,
+        "wallMs": 2066
+      }
+    },
+    {
+      "index": 1,
+      "question": "If it turns out to be the cable, can we just swap it ourselves and carry on?",
+      "answer": "Yes—you can replace a faulty cable, but the replacement may need to be recertified before the sensor will meet its accuracy specifications【1†\"replace cables, which may require recertification.\"】.",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.1-temperature.pdf__c4c215ab7bd4",
+          "text": "d in\na field setting. The best practice is to have new, verified water\ntemperature sensors available to replace malfunctioning field\nsensors. Be sure to follow manufacturer’s recommendations\nfor cleaning and troubleshooting in general.\n• Check the voltage of the batteries.\n• Start with good batteries in instruments and carry\nspares.\n6.0. \tReporting\nUSGS temperature measurements should be stored inthe National Water Information System (NWIS) database\nTable 6.1–1. \tTroubleshooting guide for temperature measurements.\nSymptom \tPossible cause and corrective action\nThe sensor does not read accurately \t• Dirty sensor—remove dirt and oil film.\n• Weak batteries—replace with new batteries.\n• Calibration expired—verify or recertify.\nErratic sensor readings \t• Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\n• Break in the cables—replace cables, which may require recertification.\n• Weak batteries—replace with new batteries.\nReadings are slow to stabilize \t• Dirty sensor—clean the sensor to remove dirt and oily film.",
+          "source": "https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "Yes—you can replace a faulty cable, but the replacement may need to be recertified before the sensor will meet its accuracy specifications【1†\"replace cables, which may require recertification.\"】.",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 1707,
+        "completionTokens": 130,
+        "totalTokens": 1837,
+        "cachedPromptTokens": 1538
+      },
+      "timing": {
+        "ttftMs": 494,
+        "wallMs": 664
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 3246,
+    "cachedPromptTokens": 2801,
+    "completionTokens": 411,
+    "wallMs": 2730
+  }
+}

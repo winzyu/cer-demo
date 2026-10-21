@@ -7,6 +7,9 @@
  * U+002D, so normalising without an explicit dash class does not save it either. That would have
  * reported a passing arm as failing an absolute pre-registered gate.
  */
+import fs from "fs";
+import os from "os";
+import path from "path";
 import {
   checkCitations,
   checkFigures,
@@ -20,7 +23,7 @@ import {
   normalizeForMatch,
 } from "../../src/eval/gates/normalize";
 import { REFUSAL_SENTENCE } from "../../src/prompt/systemPrompt";
-import { refusalMap } from "../../src/eval/gates/runner";
+import { refusalMap, runGateCheck } from "../../src/eval/gates/runner";
 import { loadFixtures } from "../../src/eval/fixtures";
 import type { LoadedFixture } from "../../src/eval/fixtures";
 
@@ -103,6 +106,14 @@ describe("closestWindow", () => {
 });
 
 describe("checkRefusal", () => {
+  it("permits the pinned refusal followed by a supported numerical explanation", () => {
+    const answer = `${REFUSAL_SENTENCE} No maximum deployment lifetime is supplied. `
+      + "The turbidity chapter describes cleaning every 2 to 4 weeks; that is not a lifetime.";
+    expect(checkRefusal(answer).vetoes).toBe(false);
+    // Whether the explanation is actually grounded, and whether a forbidden lifetime was
+    // invented, remain separate figures/quote checks and judge rubric decisions.
+  });
+
   it("reports an untouched refusal as an exact match", () => {
     const result = checkRefusal(`${REFUSAL_SENTENCE} The threshold is not in the documents.`);
     expect(result.match).toBe("exact");
@@ -567,5 +578,32 @@ describe("checkQuotes", () => {
     expect(result.supported).toBe(0);
     expect(result.elided).toBe(0);
     expect(result.issues[0].reason).toContain("not found verbatim");
+  });
+});
+
+describe("runGateCheck grounding", () => {
+  // "more than 12 hours" appears in the catalogue block and nowhere else in the system prompt.
+  const run = (cataloguePrompt: boolean): number => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "gate-grounding-"));
+    const dir = path.join(root, "warm", "local-vector");
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, "crossdoc-acid-drainage-conductivity-suspect.json"), JSON.stringify({
+      fixtureId: "crossdoc-acid-drainage-conductivity-suspect",
+      fixtureClass: "cross-document",
+      run: { cataloguePrompt },
+      turns: [{
+        index: 0, question: "Is this event serious?", answer: "It lasted more than 12 hours.", context: [],
+      }],
+    }), "utf8");
+    try {
+      return runGateCheck({ root, arms: ["local-vector"] })[0]!.figures.unexplained;
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  };
+
+  it("counts a catalogue figure as grounded only when the capture ran with the catalogue", () => {
+    expect(run(true)).toBe(0);
+    expect(run(false)).toBe(1);
   });
 });

@@ -1,0 +1,64 @@
+{
+  "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+  "fixtureClass": "definitional",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "orp-eh-definition-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Defines Eh's hydrogen-electrode reference and equilibrium interface with redox-active species."
+        },
+        {
+          "claimId": "orp-eh-equation-01",
+          "rubric": [
+            1,
+            3,
+            4
+          ],
+          "why": "Distinguishes measured emf from Eh and requires adding the temperature-corrected reference potential."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "a60-eh-not-direct-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Explicitly explains Eh's nonroutine status and absence from the stabilization table."
+        },
+        {
+          "claimId": "a60-xcut-routine-gw-params-01",
+          "rubric": [
+            3
+          ],
+          "why": "Lists the five routine groundwater field parameters."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "orp-eref-definition-01",
+      "why": "Defines Eref in the ZoBell test but adds no requested conversion rule or sample-reference distinction."
+    },
+    {
+      "claimId": "a60-eh-definition-01",
+      "why": "Calls Eh oxidation-reduction potential without the requested equilibrium or reference-electrode distinctions."
+    },
+    {
+      "claimId": "a60-xcut-field-param-list-01",
+      "why": "Lists all properties needing on-site measurement, including nonroutine Eh, rather than the routine subset."
+    }
+  ]
+}

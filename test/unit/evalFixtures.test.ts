@@ -17,13 +17,20 @@ import { DIRECT_FEED_SLICE, DOC_META } from "../../src/ingestion/corpus";
  * loader actually rejects the malformed cases it claims to.
  */
 
+const createdDirs: string[] = [];
+
 const writeFixtureDir = (files: Record<string, unknown>): string => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "eval-fixtures-"));
+  createdDirs.push(dir);
   Object.entries(files).forEach(([name, body]) => {
     fs.writeFileSync(path.join(dir, name), JSON.stringify(body), "utf8");
   });
   return dir;
 };
+
+afterEach(() => {
+  createdDirs.splice(0).forEach((dir) => fs.rmSync(dir, { recursive: true, force: true }));
+});
 
 const validFixture = {
   id: "sample",
@@ -222,6 +229,15 @@ describe("fixture validation", () => {
   it("rejects a single-turn conversation", () => {
     expect(() => loadFixtures(withFixture({ turns: [validFixture.turns[0]] })))
       .toThrow(/at least 2 user turns/);
+  });
+
+  it("rejects empty, blank or undeclared per-turn evidence", () => {
+    [[], [{ filename: "IORP_probe.pdf", quote: " " }],
+      [{ filename: "absent.pdf", quote: "some source text" }]].forEach((retrievalEvidence) => {
+      const turns = [{ ...validFixture.turns[0], retrieval_evidence: retrievalEvidence },
+        validFixture.turns[1]];
+      expect(() => loadFixtures(withFixture({ turns }))).toThrow(/retrieval_evidence/);
+    });
   });
 
   it("rejects a non-boolean requires_refusal", () => {

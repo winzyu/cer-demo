@@ -45,7 +45,7 @@ describe("get_pod_thresholds — tool definition", () => {
       + "minimum and maximum for temperature (°F), pH, dissolved oxygen (mg/L), ORP (mV) and "
       + "conductivity (µS/cm), plus the pod's water type. These are configured alert limits, "
       + "not an ecological standard. Values that fail validation are returned as rejected with a "
-      + "reason — never quote a rejected value. There is no turbidity threshold; use "
+      + "reason - never quote a rejected value. This tool exposes no numeric turbidity threshold; use "
       + "get_turbidity_info for turbidity.",
     );
   });
@@ -78,7 +78,7 @@ describe("get_pod_thresholds — a fully valid pod", () => {
       orp: { status: "configured", min: 50, max: 400, unit: "mV" },
       conductivity: { status: "configured", min: 40_000, max: 75_000, unit: "µS/cm" },
     });
-    expect(result.turbidity).toMatchObject({ status: "no_threshold" });
+    expect(result.turbidity).toMatchObject({ status: "unavailable" });
     expect(String((result.turbidity as { note: string }).note)).toContain("get_turbidity_info");
     expect(String(result.source)).toMatch(/device registry/i);
     expect(String(result.note)).toMatch(/not an ecological/i);
@@ -96,7 +96,7 @@ describe("get_pod_thresholds — a fully valid pod", () => {
 });
 
 describe("get_pod_thresholds — a pod with rejected thresholds", () => {
-  it("rejects every metric on the all-zero row as unset, with no raw values in the entries", async () => {
+  it("rejects the all-zero row as unset where v2 has no range, with no raw values", async () => {
     const { client } = makeClient();
     const tool = new GetPodThresholds({ sensor: new QuerySensorData({ client }) });
 
@@ -104,15 +104,26 @@ describe("get_pod_thresholds — a pod with rejected thresholds", () => {
     const result = await tool.run({ device: "dev:351077454591408" }, { token: TOKEN });
 
     expect(result.error).toBeUndefined();
-    const thresholds = result.thresholds as Record<string, { status: string; reason?: string }>;
-    Object.values(thresholds).forEach((entry) => {
-      expect(entry.status).toBe("rejected");
-      expect(typeof entry.reason).toBe("string");
+    const thresholds = result.thresholds as Record<string, Record<string, unknown>>;
+    ["temperature", "orp", "conductivity"].forEach((metric) => {
+      expect(thresholds[metric].status).toBe("rejected");
+      expect(typeof thresholds[metric].reason).toBe("string");
+      // No rejected entry may carry min/max/unit -- that would be quoting the rejected value.
+      expect(JSON.stringify(thresholds[metric])).not.toMatch(/"min":|"max":|"unit":/);
     });
+  });
 
-    // No rejected entry may carry min/max/unit -- that would be quoting the rejected value.
-    const json = JSON.stringify(thresholds);
-    expect(json).not.toMatch(/"min":|"max":|"unit":/);
+  it("falls back to v2's coastal range for pH and dissolved oxygen, labelled generic", async () => {
+    const { client } = makeClient();
+    const tool = new GetPodThresholds({ sensor: new QuerySensorData({ client }) });
+    const result = await tool.run({ device: "dev:351077454591408" }, { token: TOKEN });
+
+    const thresholds = result.thresholds as Record<string, Record<string, unknown>>;
+    expect(thresholds.ph).toMatchObject({ status: "fallback", min: 7.8, max: 8.3 });
+    expect(thresholds.dissolved_oxygen)
+      .toMatchObject({ status: "fallback", min: 6, max: 8.5, unit: "mg/L" });
+    expect(thresholds.ph.note).toMatch(/generic fallback/);
+    expect(thresholds.ph.reason).toMatch(/identical minimum and maximum/);
   });
 });
 
@@ -162,5 +173,88 @@ describe("get_pod_thresholds — device resolution", () => {
     await tool.run({ device: "Algalita" }, { token: TOKEN });
 
     expect(calls.filter((c) => c.url.includes("/devices")).length).toBe(1);
+  });
+});
+
+it.each([
+  { minPH: 0, maxPH: 100 },
+  { minPH: -1, maxPH: 8 },
+])("marks an over-wide physical range not assessed, without quoting it: %j", async (thresholds) => {
+  const { client } = makeClient([{ id: "pod", data: { name: "Pod", label: "dev:pod", thresholds } }]);
+  const tool = new GetPodThresholds({ sensor: new QuerySensorData({ client }) });
+  const result = await tool.run({});
+  const ph = (result.thresholds as Record<string, Record<string, unknown>>).ph;
+  expect(ph.status).toBe("not assessed");
+  expect(ph.reason).toMatch(/not assessed/i);
+  expect(ph).not.toHaveProperty("min");
+  expect(ph).not.toHaveProperty("max");
+});
+
+describe("get_pod_thresholds — reader notes for limits that were not used", () => {
+  const notesFor = async (thresholds: Record<string, string | number>): Promise<string[]> => {
+    const { client } = makeClient([{ id: "pod", data: { name: "Pod", label: "dev:pod", thresholds } }]);
+    const tool = new GetPodThresholds({ sensor: new QuerySensorData({ client }) });
+    const result = await tool.run({}, { token: TOKEN });
+    return result.user_notes as string[];
+  };
+  const VALID = {
+    minTemperature: 50, maxTemperature: 80, minPH: 6, maxPH: 10, minDissolvedOxygen: 4,
+    maxDissolvedOxygen: 15, minORP: 50, maxORP: 400, minConductivity: 100, maxConductivity: 2000,
+  };
+  const without = (key: string): Record<string, number> => Object.fromEntries(
+    Object.entries(VALID).filter(([k]) => k !== key),
+  );
+
+  it("adds no rejection note when every limit is usable", async () => {
+    expect(await notesFor(VALID)).toEqual([
+      "These limits are the alert thresholds set for this pod, not an ecological water-quality standard.",
+    ]);
+  });
+
+  it.each([
+    ["an absent minimum", without("minDissolvedOxygen"),
+      "Dissolved Oxygen was not checked against a limit: its minimum is not set."],
+    ["an absent maximum", without("maxORP"),
+      "ORP was not checked against a limit: its maximum is not set."],
+    ["both absent", Object.fromEntries(Object.entries(without("minPH")).filter(([k]) => k !== "maxPH")),
+      "pH was not checked against a limit: its limits are not set."],
+    ["an unset pair (min === max)", { ...VALID, minConductivity: 0, maxConductivity: 0 },
+      "Conductivity was not checked against a limit: its limits are not set."],
+    ["an inverted pair", { ...VALID, minTemperature: 80, maxTemperature: 50 },
+      "Temperature was not checked against its limits: the minimum is above the maximum."],
+    ["a non-numeric pair", { ...VALID, minPH: "n/a" },
+      "pH was not checked against its limits: they are not usable."],
+    ["an implausible pair", { ...VALID, maxPH: 100 },
+      "pH was not checked against its limits: they are not usable."],
+  ])("%s gets exactly one note, in the reader's words", async (_case, thresholds, note) => {
+    const notes = await notesFor(thresholds);
+    expect(notes).toHaveLength(2);
+    expect(notes[1]).toBe(note);
+  });
+
+  it("never echoes a rejected registry value in a note", async () => {
+    const notes = await notesFor({ ...VALID, minTemperature: 97, maxTemperature: 51, maxPH: 100 });
+    expect(notes.join(" ")).not.toMatch(/97|51|100/);
+  });
+
+  it("gives a pod with no limits at all one note, not one per metric", async () => {
+    const notes = await notesFor({});
+    expect(notes.slice(1)).toEqual([
+      "No limits are set for this pod, so no reading was checked against a limit.",
+    ]);
+  });
+
+  it("names every metric on the all-zero row", async () => {
+    const { client } = makeClient();
+    const tool = new GetPodThresholds({ sensor: new QuerySensorData({ client }) });
+    const result = await tool.run({ device: "dev:351077454591408" }, { token: TOKEN });
+    const general = (label: string): string => `${label} is checked against a general range `
+      + "from the source-of-truth document, because this pod has no usable limit of its own.";
+    const unset = (label: string): string => `${label} was not checked against a limit: its `
+      + "limits are not set.";
+    expect((result.user_notes as string[]).slice(1)).toEqual([
+      unset("Temperature"), general("pH"), general("Dissolved Oxygen"), unset("ORP"),
+      unset("Conductivity"),
+    ]);
   });
 });

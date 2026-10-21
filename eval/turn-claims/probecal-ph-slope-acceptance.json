@@ -1,0 +1,128 @@
+{
+  "fixtureId": "probecal-ph-slope-acceptance",
+  "fixtureClass": "probe-calibration",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "ph-slope-test-definition-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Defines the slope condition test and A6.4's percent and 25 C millivolt windows; matches explicit evidence."
+        },
+        {
+          "claimId": "ph-working-system-checklist-01",
+          "rubric": [
+            1,
+            2,
+            4
+          ],
+          "why": "Connects healthy operation with acceptable slope and quick buffer response; matches explicit evidence."
+        },
+        {
+          "claimId": "ph-response-time-1-2-min-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the one-to-two-minute response expected in buffer."
+        },
+        {
+          "claimId": "ph-recondition-triggers-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives the 95-101 percent boundary for slope deterioration; matches explicit evidence."
+        },
+        {
+          "claimId": "ph-post-recondition-reject-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Gives the acceptable percentage and 25 C millivolt ranges; matches explicit evidence."
+        },
+        {
+          "claimId": "ph-replace-after-recal-fail-01",
+          "rubric": [
+            2
+          ],
+          "why": "Identifies 95-101 percent as the acceptable range; matches explicit evidence."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "ph-slope-test-definition-01",
+          "rubric": [
+            1
+          ],
+          "why": "Makes 92 percent fail the 95-101 percent acceptance range."
+        },
+        {
+          "claimId": "ph-working-system-checklist-01",
+          "rubric": [
+            1
+          ],
+          "why": "Identifies 92 percent as outside the healthy slope range."
+        },
+        {
+          "claimId": "ph-slope-out-of-range-action-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Requires cleaning, applicable filling and junction checks, then recalibration."
+        },
+        {
+          "claimId": "ph-recondition-triggers-01",
+          "rubric": [
+            1,
+            4
+          ],
+          "why": "Identifies failed slope and liquid-filled-electrode reconditioning when appropriate."
+        },
+        {
+          "claimId": "ph-post-recondition-reject-01",
+          "rubric": [
+            1,
+            5
+          ],
+          "why": "Makes 92 percent unacceptable and forbids use if failure persists after reconditioning."
+        },
+        {
+          "claimId": "ph-replace-after-recal-fail-01",
+          "rubric": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "why": "Calls for cleaning, reconditioning or replacement after failed recalibration."
+        },
+        {
+          "claimId": "ph-table644-slope-out-01",
+          "rubric": [
+            2,
+            4,
+            5
+          ],
+          "why": "Supports cleaning, reconditioning or replacement for persistent slope faults."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "ph-ideal-cal-slope-01",
+      "why": "Matches explicit evidence but gives an ideal slope, not the required acceptance window or restoration steps."
+    }
+  ]
+}

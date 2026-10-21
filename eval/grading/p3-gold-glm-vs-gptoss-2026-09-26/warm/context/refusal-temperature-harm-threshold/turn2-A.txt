@@ -1,0 +1,144 @@
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__443c31100934)
+
+RECORDS MANAGEMENT «ccc csesees 15
+8.0 REFERENCES. cssssssscscsssesssssseesvssesesecevesssssesspeestssssesuvtsesstseessie 15
+Table 1 INSTRUMENT CALIBRATION LOG .......cesscseseeseeee cceavevettevevevecscanee 16
+
+OXYGEN SOLUBILITY
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+Field Instruments
+
+Revision Number: 2
+Date: June 3, 1998
+
+' Revised January 19, 2010
+Page 4 of 18
+
+1.0 SCOPE AND APPLICATIONThe purpose of this standard operating procedure (SOP) is to provide a framework for calibrating
+field instruments used to measure water quality parameters for groundwater and surface water.
+Water quality parameters include temperature, pH, dissolved oxygen, specific conductance,
+oxidation/reduction potential [ORP], and turbidity. This SOP supplements, but does not replace,
+EPA analytical methods listed in 40 CFR 136 and 40 CFR 141 for temperature, dissolved
+oxygen, conductivity/specific conductance, pH and turbidity.
+
+This SOP is written for instruments that measure temperature, pH, dissolved oxygen, specific
+conductance, turbidity, and/or oxidation/reduction potential [ORP] and the probe readings for
+pH, dissolved oxygen, and specific conductance are automatically corrected for temperature.
+
+For groundwater monitoring, the instrument must be equipped with a flow-through-cell and the
+display/logger or computer display screen needs to be large enough to simultaneously contain the
+readouts of each probe in the instrument. Turbidity is measured using a separate instrument. It
+must not be measured in a flow-through-cell because the flow-through-cell acts as a sediment
+trap. This procedure is applicable for use with the EPA Region 1 Low Stress (low flow) Purging
+and Sampling Procedure for the Collection of Ground Water Samples from Monitoring Wells.
+
+2.0 HEALTH AND SAFETY WARNINGS
+
+Read all labels on the standards and note any warnings on the labels. Wear appropriate personal
+protection equipment (e.g., gloves, eye shields, etc.) when handling the standards. Ifnecessary,
+consult the Material Safety Data Sheets (MSDS) for additional safety information on the
+chemicals in the standards. .
+
+3.0 GENERAL
+
+All monitoring instruments must be calibrated before they are used to measure environmental
+samples. For instrument probes that rely on the temperature sensor (pH, dissolved oxygen,
+specific conductance, and oxidation/reduction potential [ORP]), each temperature sensor needs to
+be checked for accuracy against a thermometer that is traceable to the National Institute of
+Standards and Technology (NIST). Before any instrument is calibrated or used to perform
+environmental measurements, the instrument must stabilize (warm-up) according to
+
+manufacturer's instructions and must have no air bubbles lodged between the probe and probe
+guard.
+EQASOP-FieldCalibrat
+Region | Calibration of
+
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 5 of 18
+
+_ Most projects will require at least two standards to bracket the expected measurement range.
+
+This means that one standard is less than the expected value and one is higher. When an
+environmental sample measurement falls outside the calibration range, the instrument must be re-
+calibrated to bracket the new range before continuing measurements. Otherwise, the
+measurements that are outside the calibration range will need to be qualified.
+
+This SOP requires that the manufacturer’s instruction manual (including the instrument
+specifications) accompany the instrument into the field.
+
+4.0 FREQUENCY OF CALIBRATION
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__b94bbf9a9ecf)
+
+-- 9 of 23 --2 	Chapter A6.1. Temperature
+general introduction to the NFM (USGS Techniques and
+Methods, book 9, chapter A0—U.S. Geological Survey,
+2018) at https://doi.org/10.3133/tm9A0. The authoritative
+current versions of NFM chapters are available in the USGS
+Publications Warehouse at https://pubs.usgs.gov. Comments,
+questions, and suggestions related to the NFM can be
+addressed to nfm@usgs.gov.
+1.1. 	Overview of Temperature
+TEMPERATURE: a measure of warmth or coldness of a
+substance with reference to a standard value.
+Measurements of air and water temperature at a field
+site are essential for water-quality data collection. Determina-
+tion of dissolved-oxygen concentrations, conductivity, pH,
+rate and equilibria of chemical reactions, biological activity,
+and fluid properties relies on accurate temperature measure-
+ments. The USGS currently (2024) measures and publishes
+water temperature data at more than 3,500 surface-water and
+groundwater stations, including wells, springs, streams, lakes,
+rivers, estuaries, and marine environments (U.S. Geological
+Survey, undated). Water temperature data are provided to
+cooperators, data managers, scientists, and the public. Water
+temperature is often measured in conjunction with other water-
+quality parameters to support habitat assessment of threatened
+and endangered species and to evaluate changing climate con-
+ditions. Accurate air- and water-temperature data are essential
+to document thermal alterations to the environment caused by
+natural phenomena and by human activities. Water tempera-
+ture can be subject to environmental regulation and monitoring
+by State and local agencies.
+• The U.S. Geological Survey (USGS) uses the
+Celsius (C) scale for measuring temperature.
+• The procedures in this chapter aim to bring trace-
+ability standards of the National Institute of Standards
+and Technology (NIST), to all USGS measurements
+of temperature.
+2.0. 	Equipment and Supplies
+A temperature sensor is any device used to measure
+temperature. In its simplest form, a temperature sensor can
+contain a detector that creates a signal used to infer tempera-
+ture according to a calibration. Standard procedures used in
+the past by the USGS to measure temperature involved the use
+of liquid-in-glass thermometers. Since the 1990s, digital ther-
+mometers and other equipment utilizing integrated thermistors
+and thermocouples, such as multiparameter instruments, have
+continued to undergo improvements in accuracy, reliability,
+and cost. Digital thermometers have many advantages over
+liquid-in-glass thermometers, including smaller uncertain-
+ties, faster response, ease of automation, and elimination of
+uncertainty related to lighting and viewing angle (Ripple and
+Strouse, 2005). Electronic temperature sensors vary voltage,
+resistance, current, or frequency outputs with temperature.
+Common sensors include thermistors, an electrical resistor
+with a resistance that varies sharply and predictably with tem-
+perature, and thermocouples, sensors containing two dissimilar
+metals bonded to form a connection with a dielectric potential
+that varies with temperature. To make a digital thermometer,
+
+ANSWER EVIDENCE:
+{
+  "audit": {
+    "original_answer": "You'd be going to the state for that. Nothing in what we have gives a numeric temperature limit, and I don't have this pod's configured thresholds available here, so I can't support a \"too warm\" call with a number.\n\nWhat the documents do point to is where that limit lives: \"Water temperature can be subject to environmental regulation and monitoring by State and local agencies\" 【2†\"Water temperature can be subject to environmental regulation and monitoring by State and local agencies\"】.\n\nWhat I can do for the report: give you the pod's actual temperature readings for the week and describe the trend — for example, how much it rose during the hot stretch — without judging it against a threshold.",
+    "corrections": [],
+    "invalid_citations": []
+  }
+}

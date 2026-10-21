@@ -16,8 +16,11 @@
  *                                        # a top-up round: only the arms and fixtures that still
  *                                        # need human grades, written where it cannot overwrite
  *                                        # the graded sheet
+ *   npm run grade:packet -- --run=p3-calib-2026-09-24 --only=<ids>
+ *                                        # a named capture: reads eval/transcripts/<run>/ and
+ *                                        # writes eval/grading/<run>/, where `judge --run` reads it
  *
- * Outputs under `eval/grading/<pass>/`:
+ * Outputs under `eval/grading/<pass>/`, or `eval/grading/<run>/<pass>/` with `--run`:
  *
  *   packet/<fixture>.md      what the judge reads
  *   context/<fixture>/…txt   full context per answer, referenced from the sheet
@@ -38,9 +41,10 @@
  * overrides, `--out` writes elsewhere): this script has destroyed a completed grading pass once.
  */
 
-import { promises as fs } from "fs";
+import { promises as fs, type Dirent } from "fs";
 import path from "path";
 import { loadFixtures } from "../src/eval/fixtures";
+import { parseRunId } from "../src/eval/cli";
 
 /**
  * The arms to grade: every directory under `eval/transcripts/<pass>/`, sorted.
@@ -61,7 +65,15 @@ const armsOnDisk = async (
   const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => {
     throw new Error(`No transcripts at ${dir}. Capture a pass first (npm run bakeoff).`);
   });
-  const found = entries.filter((e) => e.isDirectory()).map((e) => e.name).sort();
+  // Followed through symlinks: a composite run links arm directories from the captures that made
+  // them, so the transcripts stay verbatim where they were written.
+  const isArmDir = async (entry: Dirent): Promise<boolean> => (
+    entry.isDirectory()
+    || (entry.isSymbolicLink()
+      && (await fs.stat(path.join(dir, entry.name)).catch(() => null))?.isDirectory() === true)
+  );
+  const flags = await Promise.all(entries.map(isArmDir));
+  const found = entries.filter((_, i) => flags[i]).map((e) => e.name).sort();
 
   // `--arm` exists for top-up rounds: an arm re-captured after grading, or one never graded at
   // all, needs human rows without re-grading the arms that already have them. Naming a missing
@@ -101,6 +113,8 @@ const hasFilledScores = (csv: string): boolean => csv
 
 interface Args {
   pass: string;
+  /** A named capture: reads `eval/transcripts/<run>/`, writes `eval/grading/<run>/`. */
+  run?: string;
   sample?: number;
   /** Restrict to these arms — a top-up round for arms that still need human grades. */
   arms?: string[];
@@ -116,19 +130,25 @@ const parseArgs = (argv: string[]): Args => {
     outRoot: path.join(process.cwd(), "eval", "grading"),
     force: false,
   };
+  let out: string | undefined;
   argv.forEach((arg) => {
     const [flag, value] = [arg.split("=")[0], arg.split("=").slice(1).join("=")];
     if (flag === "--pass") args.pass = value;
     else if (flag === "--sample") args.sample = Number(value);
     else if (flag === "--arm") args.arms = value.split(",").map((a) => a.trim()).filter(Boolean);
     else if (flag === "--only") args.only = value.split(",").map((f) => f.trim()).filter(Boolean);
-    else if (flag === "--out") args.outRoot = path.resolve(value);
+    else if (flag === "--run") args.run = parseRunId(value);
+    else if (flag === "--out") out = path.resolve(value);
     else if (flag === "--force") args.force = true;
     else throw new Error(`Unknown argument: ${arg}`);
   });
   if (!["cold", "warm"].includes(args.pass)) {
     throw new Error(`--pass must be cold or warm (got "${args.pass}")`);
   }
+  // `--out` still wins, so a top-up round of a named run goes to `eval/grading/<run>/rounds/<name>`
+  // where `calibrate()` composes it with the run's base packet.
+  if (out !== undefined) args.outRoot = out;
+  else if (args.run !== undefined) args.outRoot = path.join(args.outRoot, args.run);
   return args;
 };
 
@@ -179,7 +199,7 @@ const shuffleFor = (fixtureId: string, arms: readonly string[]): readonly string
 };
 
 export const __testing = {
-  shuffleFor, hashSeed, labelsFor, hasFilledScores, armsOnDisk,
+  shuffleFor, hashSeed, labelsFor, hasFilledScores, armsOnDisk, parseArgs,
 };
 
 interface Turn {
@@ -223,7 +243,9 @@ export const gradingContext = (turn: Turn): string => {
 
 const main = async (): Promise<void> => {
   const args = parseArgs(process.argv.slice(2));
-  const transcriptRoot = path.join(process.cwd(), "eval", "transcripts");
+  const transcriptRoot = path.join(
+    process.cwd(), "eval", "transcripts", ...(args.run !== undefined ? [args.run] : []),
+  );
   const outRoot = path.join(args.outRoot, args.pass);
   const packetDir = path.join(outRoot, "packet");
   const contextDir = path.join(outRoot, "context");
@@ -343,6 +365,7 @@ const main = async (): Promise<void> => {
     `${JSON.stringify({
       note: "Label -> arm mapping. DO NOT open before grading is complete and scores.csv is filled in.",
       pass: args.pass,
+      ...(args.run !== undefined ? { run: args.run } : {}),
       generatedAt: new Date().toISOString(),
       key,
     }, null, 2)}\n`,
@@ -350,7 +373,8 @@ const main = async (): Promise<void> => {
   );
 
   process.stdout.write(
-    `\nArms graded:    ${arms.length} — ${arms.join(", ")}\n`
+    `${args.run !== undefined ? `\nRun:            ${args.run}` : ""}`
+    + `\nArms graded:    ${arms.length} — ${arms.join(", ")}\n`
     + `Packet written: ${written} fixture sheet(s) -> ${path.relative(process.cwd(), packetDir)}\n`
     + `Score sheet:    ${path.relative(process.cwd(), path.join(outRoot, "scores.csv"))} (${scoreRows.length - 1} rows)\n`
     + `Key:            ${path.relative(process.cwd(), path.join(outRoot, "KEY.json"))} — do not open until scoring is done\n\n`

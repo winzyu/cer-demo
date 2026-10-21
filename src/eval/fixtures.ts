@@ -35,6 +35,17 @@ import type {
 export const FIXTURE_DIR = path.resolve(__dirname, "../../eval/fixtures-wave1");
 
 /**
+ * The directory captures and judge runs read. `EVAL_FIXTURE_DIR`, relative to the repo root,
+ * points them at a side set scored apart from wave 1, such as `eval/fixtures-e7` (the launch
+ * corpus update's new-content fixtures); unset, it is `FIXTURE_DIR`.
+ */
+export const activeFixtureDir = (): string => (
+  process.env.EVAL_FIXTURE_DIR
+    ? path.resolve(__dirname, "../..", process.env.EVAL_FIXTURE_DIR)
+    : FIXTURE_DIR
+);
+
+/**
  * Capabilities the service has today. Fixtures requiring anything absent from this list are
  * committed but not runnable — see `EVAL_REQUIREMENTS`.
  *
@@ -94,6 +105,22 @@ const validateTurn = (
 
   if (requiresRefusal !== undefined && typeof requiresRefusal !== "boolean") {
     errors.push(`${where}.requires_refusal must be a boolean when present.`);
+  }
+
+  const { retrieval_evidence: evidence } = turn as Record<string, unknown>;
+  if (evidence !== undefined) {
+    if (!Array.isArray(evidence) || evidence.length === 0) {
+      errors.push(`${where}.retrieval_evidence must be a non-empty array when present.`);
+    } else {
+      evidence.forEach((entry: unknown) => {
+        const item = entry as { filename?: string; quote?: string } | null;
+        if (!item || typeof item.filename !== "string"
+          || !answerableFrom.includes(item.filename)
+          || typeof item.quote !== "string" || item.quote.trim() === "") {
+          errors.push(`${where}.retrieval_evidence requires a source in answerable_from and a quote.`);
+        }
+      });
+    }
   }
 
   // An empty must_contain would grade to "pass" for any answer at all, including silence.
@@ -202,7 +229,7 @@ const validateFixture = (
  * cannot drift from `DIRECT_FEED_SLICE` or from what the service can actually do.
  */
 export const loadFixtures = (
-  dir: string = FIXTURE_DIR,
+  dir: string = activeFixtureDir(),
   capabilities: readonly EvalRequirement[] = AVAILABLE_CAPABILITIES,
 ): LoadedFixture[] => {
   const filenames = fs.readdirSync(dir).filter((name) => name.endsWith(".json")).sort();

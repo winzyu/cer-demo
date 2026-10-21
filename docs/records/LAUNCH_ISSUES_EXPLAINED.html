@@ -1,0 +1,783 @@
+<title>Launch Issues Explained</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #f4f6f5; --surface: #ffffff; --ink: #1b2422; --muted: #56635f; --rule: #d3dbd8;
+  --accent: #0f6e6a; --accent-soft: #e0efed;
+  --fail: #b42318; --fail-soft: #fbe9e7; --pass: #1f7a3a; --pass-soft: #e5f3e8;
+  --hold: #9a5a06; --hold-soft: #fbf0dc; --code-bg: #eef2f0;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #111615; --surface: #182020; --ink: #e3eae7; --muted: #9aa8a3; --rule: #2d3a37;
+    --accent: #56b8b0; --accent-soft: #173331; --fail: #f08b7f; --fail-soft: #3a1c19;
+    --pass: #7fcf94; --pass-soft: #17301f; --hold: #e6b35f; --hold-soft: #35280f; --code-bg: #1f2927;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #111615; --surface: #182020; --ink: #e3eae7; --muted: #9aa8a3; --rule: #2d3a37;
+  --accent: #56b8b0; --accent-soft: #173331; --fail: #f08b7f; --fail-soft: #3a1c19;
+  --pass: #7fcf94; --pass-soft: #17301f; --hold: #e6b35f; --hold-soft: #35280f; --code-bg: #1f2927;
+}
+* { box-sizing: border-box; }
+body { background: var(--ground); color: var(--ink); font: 15px/1.6 var(--body); margin: 0; padding-inline: 16px; padding-block: 24px 64px; }
+.wrap { max-width: 1140px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); align-self: start; max-height: calc(100vh - 32px); overflow-y: auto; font-size: 13px; }
+nav.toc h2 { font: 700 11px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 18px 0 6px; }
+nav.toc a { display: block; color: var(--ink); text-decoration: none; padding: 2px 0; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--accent); }
+nav.toc .id { font-family: var(--mono); color: var(--muted); display: inline-block; min-width: 3.4em; }
+main { min-width: 0; display: grid; gap: 28px; }
+h1 { font: 700 34px/1.15 var(--display); margin: 0; text-wrap: balance; }
+h2.part { font: 700 24px/1.2 var(--display); margin: 20px 0 0; padding-top: 18px; border-top: 3px solid var(--ink); text-wrap: balance; scroll-margin-top: 16px; }
+h3.cat { font: 600 13px/1.3 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 8px 0 -8px; }
+h3.sub { font: 700 17px/1.3 var(--display); margin: 0; }
+p { margin: 0; max-width: 70ch; }
+.lede { color: var(--muted); max-width: 70ch; }
+code, .mono { font-family: var(--mono); font-size: .88em; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.tablebox { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+th { font: 600 12px/1.3 var(--display); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+td.yes { color: var(--pass); font-weight: 600; }
+td.no { color: var(--muted); }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 16px 18px; display: grid; gap: 12px; }
+ul, ol { margin: 0; padding-left: 1.3em; }
+li { margin-bottom: 3px; }
+article.item { background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 18px 20px; display: grid; gap: 14px; scroll-margin-top: 16px; }
+.item header { display: grid; gap: 6px; }
+.item h4 { font: 700 19px/1.3 var(--display); margin: 0; text-wrap: balance; }
+.item h4 .id { font-family: var(--mono); font-weight: 500; color: var(--accent); margin-right: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12px/1 var(--body); padding: 4px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--muted); white-space: nowrap; }
+.chip.demo { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.chip.high { background: var(--fail-soft); color: var(--fail); border-color: transparent; }
+.chip.med { background: var(--hold-soft); color: var(--hold); border-color: transparent; }
+.oneline { font-size: 16px; font-weight: 500; max-width: 70ch; }
+.label { font: 600 12px/1.3 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.ways { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px 22px; }
+.ways > div { display: grid; gap: 6px; align-content: start; }
+.ways ol { font-size: 14px; }
+.ways p { font-size: 14px; }
+.compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.state { border-radius: 6px; padding: 10px 12px; border: 1px solid var(--rule); font-size: 14px; }
+.state.bad { background: var(--fail-soft); border-color: transparent; }
+.state.good { background: var(--pass-soft); border-color: transparent; }
+.state.wait { background: var(--hold-soft); border-color: transparent; }
+.state .label { color: inherit; opacity: .8; }
+.note { font-size: 14px; color: var(--muted); max-width: 70ch; }
+a { color: var(--accent); }
+details { border-top: 1px solid var(--rule); padding-top: 10px; font-size: 14px; }
+details summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details[open] summary { margin-bottom: 8px; }
+details .qa { display: grid; gap: 10px; }
+details .qa p { max-width: 70ch; }
+details .qa b { display: block; }
+.flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; }
+.flow .box { flex: 1 1 150px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; font-size: 13px; display: grid; gap: 2px; align-content: start; }
+.flow .box.key { border: 2px solid var(--accent); }
+.flow .box b { font: 700 14px/1.3 var(--display); }
+.flow .box .mono { color: var(--muted); }
+.flow .arrow { align-self: center; color: var(--muted); font: 700 18px/1 var(--display); }
+dl.gloss { display: grid; grid-template-columns: 10em minmax(0, 1fr); gap: 8px 16px; margin: 0; font-size: 14px; }
+dl.gloss dt { font-weight: 600; }
+dl.gloss dd { margin: 0; max-width: 70ch; }
+.codes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+.codes div { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; font-size: 13px; }
+.codes b { font: 700 16px/1.2 var(--mono); display: block; }
+@media (max-width: 820px) {
+  .wrap { grid-template-columns: 1fr; gap: 20px; }
+  nav.toc { position: static; max-height: none; }
+  dl.gloss { grid-template-columns: 1fr; gap: 2px; }
+  dl.gloss dd { margin-bottom: 8px; }
+  .flow .arrow { transform: rotate(90deg); flex-basis: 100%; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <h2>Foundations</h2>
+  <a href="#how"><span class="id">0</span>How to read this</a>
+  <a href="#system"><span class="id">1</span>How the system fits together</a>
+  <a href="#roles"><span class="id">2</span>Account levels</a>
+  <a href="#stacks"><span class="id">3</span>Three copies, before and after</a>
+  <a href="#judging"><span class="id">4</span>How a test is judged</a>
+  <a href="#glossary"><span class="id">5</span>Glossary</a>
+  <a href="#data"><span class="id">6</span>The fake data</a>
+  <h2>Security and access</h2>
+  <a href="#a1"><span class="id">A1</span>CSV export of any pod</a>
+  <a href="#a2"><span class="id">A2</span>User lookups, no login</a>
+  <a href="#a3"><span class="id">A3</span>Period query trusts label</a>
+  <a href="#a5"><span class="id">A5</span>Invited user gets 500</a>
+  <a href="#a6"><span class="id">A6</span>No organization, every pod</a>
+  <h2>Merged history</h2>
+  <a href="#a4"><span class="id">A4</span>CWA Old predecessor</a>
+  <a href="#b2"><span class="id">B2</span>Salt-water predecessor</a>
+  <a href="#b5"><span class="id">B5</span>Superadmin, retired pod</a>
+  <h2>Gilligan answers</h2>
+  <a href="#b1"><span class="id">B1</span>Moved pod, whole period</a>
+  <a href="#b4"><span class="id">B4</span>No location, glitch reading</a>
+  <a href="#b3"><span class="id">B3</span>"My pod is broken"</a>
+  <a href="#b6"><span class="id">B6</span>Q9 fixes</a>
+  <a href="#b7"><span class="id">B7</span>Document caveat</a>
+  <h2>Outside our tests</h2>
+  <a href="#a7"><span class="id">A7</span>Infected build trigger</a>
+  <a href="#a8"><span class="id">A8</span>Low-severity items</a>
+  <h2>Everyday flows</h2>
+  <a href="#u"><span class="id">U1-10</span>Basic user testing</a>
+</nav>
+
+<main>
+<header style="display:grid;gap:10px">
+  <h1>Launch Issues Explained</h1>
+  <p class="lede">A study guide for the launch-issues testing. The <a href="LAUNCH_ISSUES_CHECKLIST.md">checklist</a> records results and the <a href="LAUNCH_ISSUES_WALKTHROUGH.html">walkthrough</a> gives the exact clicks; this page explains what each item is, why it matters and how to tell a pass from a fail. Written 2026-09-28, before any item was run.</p>
+</header>
+
+<h2 class="part" id="how">0. How to read this</h2>
+<div class="panel">
+  <p>Every item below is explained three ways, in the same order:</p>
+  <ul>
+    <li><b>Analogy:</b> an everyday picture of the problem.</li>
+    <li><b>Step by step:</b> what the computer actually does, numbered.</li>
+    <li><b>The test:</b> what we do, what the bug looks like, and what a pass looks like.</li>
+  </ul>
+  <p>Each item also opens with <b>one sentence you could say to Michael</b>, and each section ends with a few "check yourself" questions with hidden answers. Read sections 1 to 4 first: nearly every item depends on them.</p>
+</div>
+
+<h2 class="part" id="system">1. How the system fits together</h2>
+<p>Four pieces talk to each other. The one that matters most for security is the <b>server</b>: it is the only piece that decides who may see what.</p>
+<div class="flow" role="img" aria-label="Browser to dashboard to server to database, with Gilligan asking the server on the user's behalf">
+  <div class="box"><b>You, in a browser</b><span>Clicks buttons, types questions.</span></div>
+  <div class="arrow" aria-hidden="true">&rarr;</div>
+  <div class="box"><b>Dashboard</b><span>The website: pages, charts, menus, the Gilligan chat window.</span><span class="mono">:3100 / :3300 / :3000</span></div>
+  <div class="arrow" aria-hidden="true">&rarr;</div>
+  <div class="box key"><b>Server (the gatekeeper)</b><span>Checks who you are and what you may see, then fetches it.</span><span class="mono">:5201 / :5301 / :5101</span></div>
+  <div class="arrow" aria-hidden="true">&rarr;</div>
+  <div class="box"><b>Database</b><span>Users, organizations, pods, readings. Here: a local fake with made-up data.</span><span class="mono">emulator :8180 / :8080</span></div>
+</div>
+<div class="flow" style="margin-top:-18px">
+  <div class="box"><b>Gilligan (Mirror only)</b><span>The AI assistant. It reads documents and asks the server for pod data <i>as you</i>, so it gets the same answers the gatekeeper gives you. Each question costs a few cents.</span><span class="mono">:8010</span></div>
+</div>
+<div class="panel">
+  <h3 class="sub">The single most important idea</h3>
+  <p>The dashboard only <i>shows</i> you your own pods in its menus. That is convenience, not security. Anyone can skip the menus and send a request straight to the server (the browser's Console lets you do this in one line). So the real question for every A item is: <b>when someone asks the server directly for something they shouldn't have, does the server say no?</b></p>
+  <p>That is why many tests use the Console helper <code>api(...)</code>: it plays the part of a curious or malicious user who types a request the menus would never offer.</p>
+</div>
+
+<h2 class="part" id="roles">2. Account levels</h2>
+<p>Every user record carries two labels: a <b>role</b> (customer, admin or superadmin) and an <b>organization</b> (the customer company, such as Harbor or Lakeside). Pods belong to an organization too. The main rule of the whole system: <b>you only see your own organization's pods and people</b>. The role decides what you can <i>do</i> inside that wall; only superadmin removes the wall.</p>
+
+<div class="tablebox">
+<table>
+  <thead><tr><th>Can they...</th><th>Customer</th><th>Admin</th><th>Superadmin</th></tr></thead>
+  <tbody>
+    <tr><td>See their organization's pods, charts and readings</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes, every organization's</td></tr>
+    <tr><td>Export CSV and ask Gilligan about those pods</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes, any pod</td></tr>
+    <tr><td>See the list of teammates</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">yes</td></tr>
+    <tr><td>Invite, edit or delete users</td><td class="no">no</td><td class="yes">own organization only</td><td class="yes">anyone</td></tr>
+    <tr><td>Read another user's full record</td><td class="no">only their own</td><td class="yes">own organization only</td><td class="yes">anyone</td></tr>
+    <tr><td>List every user in the system</td><td class="no">no</td><td class="no">no</td><td class="yes">yes</td></tr>
+    <tr><td>Create or edit pods</td><td class="no">no</td><td class="no">no</td><td class="yes">yes</td></tr>
+    <tr><td>Get copied on every water alert</td><td class="no">no</td><td class="no">no</td><td class="yes">CER's own superadmins</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="ways">
+  <div>
+    <div class="label">Analogy</div>
+    <p>An office building shared by several companies. A <b>customer</b> has a keycard for their company's floor. An <b>admin</b> has the same keycard plus the power to issue and cancel keycards for their own floor. A <b>superadmin</b> is building security: their master card has no floor printed on it and opens every door.</p>
+  </div>
+  <div>
+    <div class="label">Step by step, in the server</div>
+    <ol>
+      <li>At login the server hands your browser a <b>token</b>, a signed pass that says who you are, your role and your organization.</li>
+      <li>Every later request carries the token.</li>
+      <li>For pod data, a helper called <code>assignOrganization</code> turns the token into a filter: "only pods of organization X".</li>
+      <li>For a superadmin it deliberately returns <i>no organization</i>, and the pod code reads "no organization" as "no filter".</li>
+      <li>For user management, separate checks (<code>requireRoles</code>) allow or refuse by role.</li>
+    </ol>
+  </div>
+  <div>
+    <div class="label">Does it matter for testing? Yes</div>
+    <p>Most A items are "does the wall hold?" tests, and the persona you log in as <i>is</i> the test:</p>
+    <ul>
+      <li><b>Harbor admin</b> is the attacker. For pod data the server treats admins and customers the same, so the strongest non-staff account covers both.</li>
+      <li><b>Superadmin</b> is a control: they should still get everything. If a fix blocks them too, the fix went too far.</li>
+      <li><b>Harbor's own pod</b> is the other control: normal use must keep working.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="panel">
+  <h3 class="sub">Two odd accounts the tests use on purpose</h3>
+  <ul>
+    <li><b>Invited, no password yet</b> (<code>user-harbor-cust-3</code>): an admin invited them by email and they never finished setting up. Used in A5.</li>
+    <li><b>Orphan, no organization</b> (<code>user-orphan-1</code>): a customer whose organization field is blank. Because "no organization" is also what a superadmin looks like to the pod code, this account accidentally gets the master card. Used in A6.</li>
+  </ul>
+  <p class="note">Everyday personas: Superadmin (<code>user-super-1</code>), Harbor admin, Harbor customer, Lakeside customer (<code>user-lake-cust-1</code>), River Watch customer (<code>user-river-cust-1</code>). All are fake, with addresses ending in <code>mirror.example.invalid</code>.</p>
+</div>
+
+<details>
+  <summary>Check yourself: roles</summary>
+  <div class="qa">
+    <p><b>Why do the A1 and A3 tests log in as Harbor admin rather than Harbor customer?</b>For pod data the server treats the two identically. An admin is the most powerful account that should still be walled in, so if the wall holds for them, it holds for customers.</p>
+    <p><b>A fix makes Superadmin get "Device not found" on Lakeside's pod. Pass or fail?</b>Fail. Superadmins are supposed to see every pod; the fix blocked too much.</p>
+    <p><b>Why does the orphan user see every pod?</b>Their organization is blank, and blank looks exactly like the superadmin's deliberate "no organization", which the pod code treats as "no filter".</p>
+  </div>
+</details>
+
+<h2 class="part" id="stacks">3. Three copies, before and after</h2>
+<p>We run several full copies of the system on your machine, all using made-up data, so we can break things safely and for free.</p>
+<div class="compare">
+  <div class="state bad"><div class="label">Current &middot; :3100 / :5201</div>CER's code exactly as it runs today (plus the malware removal). Testing here proves the bug is real. Also called <b>original</b>.</div>
+  <div class="state good"><div class="label">Release &middot; :3300 / :5301</div>The same code plus the fixes we plan to ship on Sep 30. Testing here proves each fix works and breaks nothing.</div>
+  <div class="state wait"><div class="label">Mirror &middot; :3000 / :5101 / :8010</div>A full copy that also runs Gilligan. Needed for every B item. Owned by another chat; ask before using it. Questions cost money.</div>
+</div>
+<div class="ways">
+  <div>
+    <div class="label">Analogy</div>
+    <p>A car recall. You test the unrepaired car to show the brake fault happens, then the repaired car to show it no longer does, and you also check the repaired car still steers and starts (that's the U items).</p>
+  </div>
+  <div>
+    <div class="label">Why two stacks and not one</div>
+    <ol>
+      <li>A "pass" on Release means nothing if the bug never happened in the first place.</li>
+      <li>So each item gets a <b>before</b> (Current, or our stack without the fix) and an <b>after</b> (Release, with the fix).</li>
+      <li>Both copies read the same fake database, so the only difference is the code.</li>
+    </ol>
+  </div>
+  <div>
+    <div class="label">Why fake data</div>
+    <p>The real database is production with real customers and no test copy. The local database (the "emulator") holds 9 made-up organizations, 27 users and 15 pods, and a guard blocks every connection off your machine. We confirmed on 2026-09-27 that nothing was written to production.</p>
+  </div>
+</div>
+<details>
+  <summary>Check yourself: stacks</summary>
+  <div class="qa">
+    <p><b>A1 has no fix written yet. What should Release show?</b>The same leak as Current. That is expected; we record it so Michael can decide whether the fix goes in.</p>
+    <p><b>Why can't B items run on Current or Release?</b>Neither has Gilligan configured. Only the Mirror runs the assistant.</p>
+  </div>
+</details>
+
+<h2 class="part" id="judging">4. How a test is judged</h2>
+<p>Most A tests boil down to a status code, a three-digit number the server sends back with every answer. You see it in the Console result or the browser's Network tab.</p>
+<div class="codes">
+  <div><b>200</b>OK, here is the data. Good for your own pod; bad for someone else's.</div>
+  <div><b>400</b>Bad request. Our fixes use <code>400 Device not found</code> to refuse another organization's pod without confirming it exists.</div>
+  <div><b>401</b>Not logged in, or login failed. Expected when no token is sent, or on a wrong password.</div>
+  <div><b>403</b>Logged in, but your role isn't allowed.</div>
+  <div><b>404</b>Not found. Also used on purpose to hide that something exists.</div>
+  <div><b>500</b>The server crashed on this request. Never the right answer to anything a user can do.</div>
+</div>
+<p class="note">Each item card below has up to three coloured boxes: <b>red</b> is the bug as it appears today, <b>green</b> is what a pass looks like, <b>amber</b> means undecided or blocked.</p>
+
+<h2 class="part" id="glossary">5. Glossary</h2>
+<dl class="gloss">
+  <dt>Pod</dt><dd>A floating water-quality sensor. The code calls it a <i>device</i>.</dd>
+  <dt>Label</dt><dd>A pod's ID, like <code>dev:100000000000003</code>. It appears in URLs and reports, so it is not a secret and must never be the only thing protecting data.</dd>
+  <dt>Readings</dt><dd>Measurements the pod sends, hourly in the fake data: conductivity, pH, dissolved oxygen, temperature and so on.</dd>
+  <dt>Period query</dt><dd>The request the dashboard's charts use: "give me the last N days for pod X" (<code>/water/period</code>).</dd>
+  <dt>Token</dt><dd>The signed pass the server gives you at login. Requests without one are anonymous.</dd>
+  <dt>Console helper</dt><dd><code>api(method, path)</code>, pasted into the browser's developer Console. It sends a request with your login token, so you can ask the server for things the menus don't offer.</dd>
+  <dt>Fails open</dt><dd>When a check breaks and lets everyone through, instead of blocking everyone (fails closed). Security checks should fail closed.</dd>
+  <dt>Merge, predecessor, survivor</dt><dd>When a pod is replaced, the new pod (survivor) can inherit the old pod's (predecessor's) history, so charts show one continuous record.</dd>
+  <dt>Current site</dt><dd>The rule since Sep 25: Gilligan reports only readings from the place the pod is now, never from a previous location.</dd>
+  <dt>Report</dt><dd>A PDF water-quality report Gilligan offers to generate, with a status such as "Action Required".</dd>
+  <dt>Allowance</dt><dd>Each user gets 20 questions and 5 reports per day on Gilligan.</dd>
+  <dt>Control</dt><dd>A check that should succeed, run beside the one that should fail, to prove the test itself works.</dd>
+  <dt>Regression</dt><dd>Something that used to work and now doesn't. The U items hunt for these.</dd>
+  <dt>Michael demo</dt><dd>Items to show Michael at CER, who decides what goes into the Sep 30 launch (freeze Sep 28).</dd>
+  <dt>Plan Q-numbers</dt><dd>Entries in the release plan, such as Q10 (Gilligan answer fixes) or Q11 (CSV fix).</dd>
+</dl>
+
+<!-- ================= DATA ================= -->
+<h2 class="part" id="data">6. The fake data</h2>
+<p>The seed is a made-up copy of production built from a census taken on 2026-09-25, which recorded field names, types and counts but no values. So it has the same number of organizations, users and pods as production, arranged in the same odd shapes, with invented names. Messy shapes are kept on purpose: code that only works on tidy data hasn't really been tested.</p>
+<div class="compare">
+  <div class="state"><div class="label">:8180, Current and Release</div>The base seed: 9 organizations, 27 users, 15 pods, 52 chats, 8,640 readings. Also copied to CER-DEV's <code>cer-demo-fixtures</code>.</div>
+  <div class="state"><div class="label">:8080, Mirror</div>The same base plus 4 extra "fixture" pods (19 in all), built for specific Gilligan tests. Production has no pods shaped like these yet.</div>
+  <div class="state"><div class="label">Readings</div>Hourly, 30 days each (720 per pod). Current pods run up to seed time; merged and retired pods stop a month earlier, when they were replaced. Dates move with each reseed.</div>
+</div>
+
+<h3 class="sub">Organizations and who is in them</h3>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Organization</th><th>People</th><th>Current pods</th><th>Why it's there</th></tr></thead>
+  <tbody>
+    <tr><td>CER Super Admin (mirror)</td><td>8 superadmins (<code>user-super-1</code> to <code>-8</code>)</td><td>Demo Public Dock Buoy</td><td>CER's own organization. Its id is the real one the server has built in for staff alerts.</td></tr>
+    <tr><td>Harbor City Water</td><td>1 admin, 3 customers; customer 3 is invited with no password</td><td>Harbor Pier Buoy</td><td>The main "attacker" persona in A1-A3 and the everyday persona in U tests; A5's invited user.</td></tr>
+    <tr><td>Lakeside Alliance</td><td>1 admin, 3 customers; customer 3 invited; customer 1 also has an old capitalised <code>Organization</code> field</td><td>Lakeside Buoy 2026; on the Mirror also Lakeside Mobile Buoy</td><td>The "victim" in A1-A3, and the owner of the merged-history cases (A4, B1, B2, B5).</td></tr>
+    <tr><td>City of Seaview</td><td>1 admin, 2 customers</td><td>Seaview Marina</td><td>A normal customer with a normal pod.</td></tr>
+    <tr><td>Coastal University Lab</td><td>1 admin, 2 customers; 1 invited</td><td>A pod named only by its label</td><td>A pod with no friendly name and no oxygen sensor.</td></tr>
+    <tr><td>Bay Conservancy</td><td>2 customers; 1 invited</td><td>none</td><td>A company with no pods: should see an empty list. The contrast to A6's orphan, who wrongly sees everything.</td></tr>
+    <tr><td>Northshore Aquarium</td><td>1 customer</td><td>none</td><td>Another empty company.</td></tr>
+    <tr><td>Braidwell Labs</td><td>nobody</td><td>none (2 retired)</td><td>Only retired pods.</td></tr>
+    <tr><td>River Watch Coalition</td><td>1 customer</td><td>none on :8180; River Watch Float on the Mirror</td><td>Exists for B4's no-GPS pod.</td></tr>
+    <tr><td><i>no organization</i></td><td><code>user-orphan-1</code></td><td>should be none</td><td>A6.</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="note">Every user with a password logs in with <code>mirror-dev-password</code>. The four invited users (Harbor 3, Lakeside 3, University 2, Bay 2) have no password; only Harbor 3 is used in tests. Superadmins 2-8 exist only so the count matches production.</p>
+
+<h3 class="sub">Every pod, and what shape it has</h3>
+<p>Pod labels run <code>dev:100000000000001</code> to <code>...019</code>; the table uses the last two digits. "Current" pods show up in lists. "Merged" pods are hidden, and their history belongs to the survivor they point at. "Retired" (archived) pods are hidden with no successor.</p>
+<div class="tablebox">
+<table>
+  <thead><tr><th>#</th><th>Pod</th><th>Owner</th><th>State</th><th>Its special shape</th><th>Used by</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">01</td><td>Harbor Pier Buoy</td><td>Harbor</td><td>current, salt water</td><td><b>Mostly normal.</b> Survivor of 02. Its alert limits are all zero (junk production also has), and it has no turbidity sensor.</td><td>A1, A3 control (own pod); U1-U4, U6, U7; B3</td></tr>
+    <tr><td class="mono">02</td><td>Harbor Pier DataPod&trade;</td><td>Harbor</td><td>merged into 01</td><td>A same-company predecessor: the simple, correct merge. Its calibration date is stored as a different data type from every other pod's.</td><td>U2 (must not appear as an extra pod)</td></tr>
+    <tr><td class="mono">03</td><td>Lakeside Buoy 2026</td><td>Lakeside</td><td>current, fresh water</td><td>Survivor of two predecessors, 04 and 05; four on the Mirror, adding 18 and 19.</td><td>A1, A3 (the pod Harbor tries to steal); A4, B2, B5</td></tr>
+    <tr><td class="mono">04</td><td>Lakeside Testbed</td><td>Lakeside</td><td>merged into 03</td><td><b>Salt-water</b> predecessor of a fresh-water pod.</td><td>B2</td></tr>
+    <tr><td class="mono">05</td><td>Lakeside Legacy Pod</td><td>an organization that doesn't exist</td><td>merged into 03</td><td>Predecessor pointing at a deleted company, as two production pods do.</td><td>B5; A4's "other organization" rule</td></tr>
+    <tr><td class="mono">06</td><td>Demo Public Dock Buoy</td><td>CER</td><td>current, salt water</td><td>Survivor of 07, which belongs to <i>Harbor</i>: a cross-company merge. Its limits are placeholders (pH up to 100).</td><td>A1 (Demo pod); A3 on the Mirror</td></tr>
+    <tr><td class="mono">07</td><td>Old Anchorage DataPod&trade;</td><td>Harbor</td><td>merged into 06</td><td>The cross-company predecessor: Harbor's history under CER's pod.</td><td>A4's "another company's predecessor is withheld"</td></tr>
+    <tr><td class="mono">08</td><td>Retired Conference Pod</td><td>CER</td><td>retired</td><td>Retired, with old readings.</td><td>U2 (must stay hidden)</td></tr>
+    <tr><td class="mono">09</td><td>(label only)</td><td>CER</td><td>retired</td><td>Bare record, no name, no readings.</td><td>shape only</td></tr>
+    <tr><td class="mono">10</td><td>Seaview Marina</td><td>Seaview</td><td>current, salt water</td><td><b>Normal pod</b> with proper limits; survivor of 11.</td><td>U2 (other personas' pods)</td></tr>
+    <tr><td class="mono">11</td><td>Seaview Marina DataPod&trade;</td><td>Seaview</td><td>merged <i>and</i> retired</td><td>Both flags at once, as production's counts imply.</td><td>shape only</td></tr>
+    <tr><td class="mono">12</td><td>(label only)</td><td>University</td><td>current, salt water</td><td><b>Normal readings</b>, but no friendly name and no oxygen sensor.</td><td>U2; display checks</td></tr>
+    <tr><td class="mono">13</td><td>Braidwell DataPod</td><td>Braidwell</td><td>retired</td><td>Retired, with old readings.</td><td>shape only</td></tr>
+    <tr><td class="mono">14</td><td>Braidwell DataPod 2</td><td>Braidwell</td><td>retired</td><td>"Retired" stored as the text <code>"true"</code> rather than a yes/no value, as in production.</td><td>shape only</td></tr>
+    <tr><td class="mono">15</td><td>Field Trial Pod</td><td>an organization that doesn't exist</td><td>retired</td><td>Retired and pointing at a deleted company.</td><td>shape only</td></tr>
+    <tr><td class="mono">16</td><td>Lakeside Mobile Buoy</td><td>Lakeside</td><td>current, Mirror only</td><td><b>Moved about 21 km</b> 12 days before seed time; different water values at each site.</td><td>B1</td></tr>
+    <tr><td class="mono">17</td><td>River Watch Float</td><td>River Watch</td><td>current, Mirror only</td><td><b>No GPS</b>: every reading at position 0,0.</td><td>B4</td></tr>
+    <tr><td class="mono">18</td><td>Lakeside Spare Pod A</td><td>field missing entirely</td><td>merged into 03, Mirror only</td><td>Predecessor with <b>no</b> organization field.</td><td>A4</td></tr>
+    <tr><td class="mono">19</td><td>Lakeside Spare Pod B</td><td>blank (<code>""</code>)</td><td>merged into 03, Mirror only</td><td>Predecessor with an <b>empty</b> organization.</td><td>A4</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="panel">
+  <h3 class="sub">So, are some just normal pods?</h3>
+  <p>Yes. Five pods are current on :8180 (01, 03, 06, 10, 12) and they all report normal hourly readings. Seaview Marina (10) is the plainest. Harbor Pier Buoy (01) is the everyday test pod despite its junk limits. The <i>special shapes</i> live mostly in the hidden pods behind them (merged and retired) and in the four Mirror fixtures.</p>
+  <p>The readings also contain rare random faults, as real pods do: about 1 in 200 readings has dissolved oxygen of exactly 0 (a glitch), and about 1 in 250 carries the firmware's failure value of 1,000,000,000. B4's "one 0.00 oxygen reading sets Action Required" comes from exactly this kind of glitch.</p>
+</div>
+
+<h3 class="sub">Coverage: does the data let us see each issue?</h3>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Item</th><th>What in the data makes it testable</th><th>Covered?</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">A1, A3</td><td>Harbor admin; Harbor's own 01; Lakeside's 03 and CER's 06 as other companies' pods</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">A2</td><td>27 users across companies; <code>user-lake-cust-0001</code> as "another company's user"</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">A4</td><td>03 with no-field (18) and blank (19) predecessors; 07 as another company's predecessor</td><td class="yes">Mirror only</td></tr>
+    <tr><td class="mono">A5</td><td><code>user-harbor-cust-3</code>, invited, no password</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">A6</td><td>The orphan user; Bay Conservancy as the correct "no pods" contrast</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">A8</td><td><code>/water-data</code> crash: yes. 10-pod cap: no company has more than 1 current pod</td><td class="no">cap from code only</td></tr>
+    <tr><td class="mono">B1</td><td>16, the moved buoy</td><td class="yes">Mirror only</td></tr>
+    <tr><td class="mono">B2</td><td>04, salt-water predecessor of fresh-water 03</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">B3</td><td>Any customer with a pod; Harbor and 01</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">B4</td><td>17, the no-GPS pod, plus the random oxygen glitches</td><td class="yes">Mirror only</td></tr>
+    <tr><td class="mono">B5</td><td>05 behind 03, asked about by a superadmin</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">B6 C1</td><td>Needs a current pod that has stopped reporting. The seed has none built for this; every current pod reports up to seed time, so it only works if the seed is old</td><td class="no">gap: check with the mirror chat</td></tr>
+    <tr><td class="mono">B6 D1</td><td>Needs a pod with pH below 3</td><td class="no">gap: no fixture</td></tr>
+    <tr><td class="mono">B6 #3</td><td>Any report on 01</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">B6 #4</td><td>Needs sparse, 30-minute data; the seed is hourly and full</td><td class="no">gap: no fixture</td></tr>
+    <tr><td class="mono">B7</td><td>Any user; uses documents, not pod data</td><td class="yes">yes</td></tr>
+    <tr><td class="mono">U1-U10</td><td>Harbor personas and 01; other companies' pods for U2</td><td class="yes">yes</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ================= SECURITY ================= -->
+<h2 class="part">Part 1: The active issues</h2>
+<h3 class="cat">Security and access control</h3>
+
+<article class="item" id="a1">
+  <header>
+    <h4><span class="id">A1</span>Any user can export any pod's readings as CSV</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Current + Release</span><span class="chip">$0</span></div>
+  </header>
+  <p class="oneline">"Any logged-in customer can download another company's water data as a spreadsheet just by naming its pod."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>A library that only shows you your own account's books on screen, but the returns desk will hand anyone any book if they read out its barcode.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>Harbor admin sends "export CSV for <code>dev:...003</code>" (a Lakeside pod).</li>
+      <li>The export code never passes <i>who is asking</i> to the pod lookup.</li>
+      <li>The lookup runs with no organization, meaning no filter, and finds the Lakeside pod.</li>
+      <li>The server returns 200 with a week of Lakeside readings.</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>As Harbor admin, export Harbor's pod, Lakeside's pod and Demo's pod on both stacks, then export Lakeside's pod as Superadmin.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Today, both stacks</div>200 with about 168 rows for every pod. Release leaks too: the fix (Q11) isn't written.</div>
+    <div class="state good"><div class="label">Pass, once fixed</div>Harbor's own pod and Superadmin: 200. Lakeside and Demo as Harbor: refused, no rows.</div>
+  </div>
+</article>
+
+<article class="item" id="a2">
+  <header>
+    <h4><span class="id">A2</span>User lookups answer without a login</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Current + Release</span><span class="chip">$0</span></div>
+  </header>
+  <p class="oneline">"Anyone on the internet, without logging in, can download CER's whole customer list: names, emails, roles and companies."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>The front desk hands the staff directory to anyone who walks in off the street and asks. There is also a "test" door left open that shows which building and filing system the company uses.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>Three server routes were missing the "are you logged in?" check: list all users, look up one user by ID, and a leftover database test page.</li>
+      <li>So a plain request with no token gets a 200 and the data.</li>
+      <li>The fix adds the check: list-all is superadmin only; one user is visible to themselves, an admin of the same company, or a superadmin; the test page is removed.</li>
+      <li>An admin asking about another company's user gets 404, as if the ID doesn't exist, so the server doesn't even confirm who is a customer.</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>From a terminal, with no login, call the three routes on both servers. Then on Release, try the lookups as Harbor admin (should be refused) and as Superadmin (should work). No dashboard page uses these routes, so a terminal is the natural tool.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Current</div>200 on all three with no token. Every fake user's details come back.</div>
+    <div class="state good"><div class="label">Release (fixed in f9607bd)</div>401 without a token; Harbor admin refused on list-all and 404 on a Lakeside user; test page 404; Superadmin still gets the list.</div>
+  </div>
+  <p class="note">This was found by reading code and has never been tried against production. Keep it that way: the local test is enough evidence.</p>
+</article>
+
+<article class="item" id="a3">
+  <header>
+    <h4><span class="id">A3</span>The period query trusts the caller's pod label</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Current + Release</span><span class="chip">$0</span></div>
+  </header>
+  <p class="oneline">"The same leak as the CSV export, but through the path the charts use; this one we have fixed."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>A hotel lift only lights up your own floor button, but the stairwell doors are unlocked. The fix locks the stairwell doors, not just the lift.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>The chart page asks "last 7 days for pod X", with X taken from the menu.</li>
+      <li>On Current, the server used whatever X it was given without checking it belongs to the caller.</li>
+      <li>So Harbor, typing Lakeside's label into the Console, gets Lakeside's chart data.</li>
+      <li>The fix checks X against the caller's organization and answers <code>400 Device not found</code> otherwise.</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>As Harbor admin, ask for Lakeside's period and latest reading on both stacks. Superadmin asks the same as a control. On the Mirror, Gilligan should also say it cannot find a pod from another company (costs one question).</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Current</div>200 with Lakeside's readings, served to Harbor.</div>
+    <div class="state good"><div class="label">Release</div>400 Device not found for Harbor; 200 for Superadmin.</div>
+  </div>
+</article>
+
+<article class="item" id="a5">
+  <header>
+    <h4><span class="id">A5</span>An invited user with no password gets a server error at login</h4>
+    <div class="chips"><span class="chip demo">Michael demo if time</span><span class="chip med">Medium</span><span class="chip">Current + Release</span><span class="chip">$0</span></div>
+  </header>
+  <p class="oneline">"A newly invited customer who tries to log in before finishing setup gets a blank failure instead of being told what to do."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>A hotel guest whose room key was never programmed tries the door. Instead of a sign saying "please finish check-in at the front desk", the lock just blinks red and says nothing.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>An admin invites someone; their account exists but has no password until they follow the email link.</li>
+      <li>They go to /login anyway and type something.</li>
+      <li>On Current, the server hits a case it never planned for and crashes the request: 500.</li>
+      <li>The page has no message for a crash, so the person sees nothing useful.</li>
+      <li>The fix recognizes the case and answers 401 with "Finish setting up your account before logging in".</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>On each stack's login page, enter <code>user-harbor-cust-3</code> with any password, with the browser's Network tab open. Note the status of the login request and the message on the page.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Current</div>500; no useful message.</div>
+    <div class="state good"><div class="label">Release (f7dec3c)</div>401 and "Login failed: Finish setting up your account before logging in".</div>
+  </div>
+</article>
+
+<article class="item" id="a6">
+  <header>
+    <h4><span class="id">A6</span>A user with no organization sees every pod</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip med">Medium</span><span class="chip">Current + Release</span><span class="chip">$0; Gilligan half ~$0.02</span></div>
+  </header>
+  <p class="oneline">"If an account is ever created without a company, it sees the entire fleet, because a blank company is treated like staff access."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>A keycard issued with the floor left blank. The door reader sees "no floor printed" and treats it like security's master card, so it opens every floor.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li><code>user-orphan-1</code> logs in: role customer, organization blank.</li>
+      <li>The dashboard asks "which pods can this person see?"</li>
+      <li><code>assignOrganization</code> returns "none", the same answer it gives a superadmin on purpose.</li>
+      <li><code>DevicesService.findAll</code> reads "none" as "no filter" and returns all 15 pods.</li>
+      <li>The fix: blank should mean "see nothing, and show a message".</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>Log in as the orphan on both stacks and count the pods on /home and in Export CSV's menu. On the Mirror, optionally ask Gilligan "List my pods".</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Today, both stacks</div>Every current pod. Release is the same: no fix written.</div>
+    <div class="state good"><div class="label">Pass, once fixed</div>No pods, plus a message that the account has no organization.</div>
+  </div>
+  <p class="note">No production user is in this state (checked 2026-09-26), so the risk is future, not current. It still fails open, which is why it's a demo item.</p>
+</article>
+
+<details>
+  <summary>Check yourself: security items</summary>
+  <div class="qa">
+    <p><b>A1 and A3 look like the same bug. What's the difference?</b>Same shape (the server trusts a pod label), different doors. A3 is the chart data route, already fixed on Release; A1 is the CSV export route, not fixed anywhere yet.</p>
+    <p><b>Why is A2 worse than A1?</b>A1 needs a login; A2 needs nothing at all. Anyone on the internet could run it.</p>
+    <p><b>Which A items should look different on Release than on Current?</b>A2, A3 and A5. A1 and A6 have no fix yet, so both stacks should show the bug.</p>
+  </div>
+</details>
+
+<!-- ================= MERGED HISTORY ================= -->
+<h3 class="cat">Merged pod history</h3>
+<div class="panel">
+  <h3 class="sub">Background: why pods have "predecessors"</h3>
+  <p>Pods get replaced: a unit fails, a new one goes in at the same spot. So the customer sees one continuous record, the new pod (the <b>survivor</b>) can inherit the old pod's (the <b>predecessor's</b>) readings. The old pod is hidden from lists; its history appears under the new one. Think of a new phone that takes over the old phone's number and photo library.</p>
+  <p>That raises three questions these items test: <i>whose</i> history may be inherited, <i>who</i> may see it, and whether the old readings still make sense for the new pod.</p>
+</div>
+
+<article class="item" id="a4">
+  <header>
+    <h4><span class="id">A4</span>CWA Old: a predecessor with a missing or empty organization</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip">Plan Q6</span><span class="chip">Mirror</span><span class="chip">~$0.10</span></div>
+  </header>
+  <p class="oneline">"A real old pod's history belongs to its replacement, but the old pod has no company on record, so the system must decide carefully who gets to see it."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>You inherit a house, and the attic has boxes with no name on them. The executor (CER's supervisor) ruled they're yours. But the building's policy for launch is to keep unlabeled boxes sealed and leave you a note saying so, and neighbours must never get them.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>In production, "CWA Old" is a predecessor of "Old Woman Creek 2026", and its organization field is missing. The supervisor decided (Sep 25) its history belongs to OWC 2026.</li>
+      <li>A switch, <code>PREDECESSOR_PERIOD_HANDOFF</code>, controls whether Gilligan asks the server for such predecessors' readings.</li>
+      <li><b>true:</b> Gilligan asks, and the patched server decides the blank-organization pod belongs to the survivor's company.</li>
+      <li><b>false</b> (the launch setting): the history is withheld and the answer says so.</li>
+      <li>A predecessor owned by a <i>different</i> company is always withheld, and superadmins don't get merged history (decision of Sep 27).</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>The Mirror copies this shape with fake "Spare Pods" (<code>...018</code> with no organization field, <code>...019</code> with an empty one) behind Lakeside Buoy 2026. As a Lakeside customer, ask for 30 days of history with the switch on, then off. Check the period route directly as Lakeside (allowed) and Harbor (refused). Repeat as Superadmin.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state good"><div class="label">Switch on</div>Spare Pods' history merged in for Lakeside; Harbor gets 400.</div>
+    <div class="state good"><div class="label">Switch off (launch)</div>History withheld, with a note telling the customer.</div>
+    <div class="state good"><div class="label">Always</div>Another company's predecessor withheld; Superadmin gets history withheld.</div>
+  </div>
+</article>
+
+<article class="item" id="b2">
+  <header>
+    <h4><span class="id">B2</span>A fresh-water pod is judged against a salt-water predecessor</h4>
+    <div class="chips"><span class="chip demo">Michael demo, for the rule</span><span class="chip high">Must</span><span class="chip">Mirror</span><span class="chip">~$0.07</span></div>
+  </header>
+  <p class="oneline">"Gilligan raised a false alarm on a fresh-water pod because it mixed in an old pod's salt-water readings."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>You replace a sauna thermometer with a fridge thermometer and keep the old log. Now the fridge "was 90 °C last month" and the report says the fridge is dangerously hot.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li><b>Conductivity</b> measures how well water carries electricity, mostly from dissolved salt. Fresh water reads in the hundreds of uS/cm; sea water around 50,000.</li>
+      <li>Lakeside Buoy 2026 (fresh water) inherited history from Lakeside Testbed (salt water).</li>
+      <li>Gilligan judged all of it against fresh-water limits.</li>
+      <li>The salt-water values (up to 49,992) counted as exceedances, and the pod was labelled <b>Action Required</b>.</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>As a Lakeside customer, ask for 60 days of history, then a 60-day report, each in a new chat. Find the conductivity range and status in the answer and the PDF.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before</div>Conductivity 350 to 49,992 flagged as Exceedance; Action Required.</div>
+    <div class="state good"><div class="label">After (Q10 fix round)</div>No fresh-water exceedance from the salt-water predecessor. Recommended rule: withhold a predecessor whose water type differs, with a note. Check the fix branch's SPECS.md.</div>
+  </div>
+  <p class="note">Why it matters: a false alarm about a customer's water damages trust, and one real production merge chain has this shape.</p>
+</article>
+
+<article class="item" id="b5">
+  <header>
+    <h4><span class="id">B5</span>A superadmin gets a report on a retired pod</h4>
+    <div class="chips"><span class="chip">Internal, record only</span><span class="chip">Mirror</span><span class="chip">~$0.07</span></div>
+  </header>
+  <p class="oneline">"When staff ask about a replaced pod by name, Gilligan reports on that old pod directly; we need to decide if that's fine."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>Security asks the archivist for last year's file on a closed-down office. Should the archivist hand it over? Staff are allowed to see it; the question is only whether that's the behaviour we want.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>Superadmins don't get predecessor history merged into a survivor (A4's rule).</li>
+      <li>But a superadmin can see any pod, including a retired one, on its own.</li>
+      <li>Asked for Lakeside Buoy 2026's summary "including Lakeside Legacy Pod", Gilligan produced a report on Lakeside Legacy Pod itself.</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>As Superadmin on Lakeside Buoy 2026, ask the question above and note which pod the report names.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Seen Sep 27</div>A 60-day report for Lakeside Legacy Pod itself.</div>
+    <div class="state wait"><div class="label">Your decision</div>The coordinator recommends accepting it, since staff may view the retired pod anyway.</div>
+  </div>
+</article>
+
+<!-- ================= GILLIGAN ANSWERS ================= -->
+<h3 class="cat">Gilligan answer quality</h3>
+<div class="panel">
+  <h3 class="sub">Background: what a B item tests</h3>
+  <p>B items don't test the wall between companies; they test whether Gilligan's answers are <b>true and clearly stated</b>. Each needs the Mirror, costs a few cents per question, uses a <b>new chat</b> each time (so earlier answers don't influence it), and most have no fix branch yet. The "Q10 fix round" is the planned batch of fixes for B1 to B3.</p>
+</div>
+
+<article class="item" id="b1">
+  <header>
+    <h4><span class="id">B1</span>A pod that moved claims the whole period</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip high">Must</span><span class="chip">Mirror</span><span class="chip">~$0.07</span></div>
+  </header>
+  <p class="oneline">"When a pod has moved, Gilligan correctly uses only the new location's readings, but still tells the customer it covered the whole period."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>A travel diary titled "60 days in Paris" when you only arrived in Paris 12 days ago. The entries are all genuinely from Paris, but the title misleads, and the only hint is a footnote in a different unit.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>Lakeside Mobile Buoy moved about 21 km, 12 days before the data ends.</li>
+      <li>The current-site rule says: report only readings from where the pod is now.</li>
+      <li>Gilligan follows the rule for the <i>values</i>: roughly the last 12 days.</li>
+      <li>But the answer, the PDF title and the Summary still say "60 days".</li>
+      <li>Only the Data Quality row mentions 432 excluded readings, next to 1,728 "readings" that are really 288 rows &times; 6 measurements, a different unit.</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>As Lakeside customer on the Mobile Buoy, ask "Summarize the last 60 days", then ask for a 60-day report in another chat. Read the dates everywhere, the Data Quality row, and look for any earlier-site value.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before</div>Claims 60 days everywhere; exclusion mentioned only once, in mixed units.</div>
+    <div class="state good"><div class="label">After (Q10)</div>States the dates actually covered (about 12 days) and that earlier-location readings were excluded; one unit for counts; no conductivity 1,300-1,700 or pH 6.7-7.3 from the earlier site.</div>
+  </div>
+</article>
+
+<article class="item" id="b4">
+  <header>
+    <h4><span class="id">B4</span>No "location not recorded" note, and one glitch reading sets Action Required</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip med">Should</span><span class="chip">Mirror</span><span class="chip">~$0.04</span></div>
+  </header>
+  <p class="oneline">"For a pod with no GPS position, Gilligan should say so, and a single impossible reading shouldn't set off an alarm."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>A smoke alarm that goes off because the battery flickered once, on a device that also can't tell you which room it's in and doesn't mention that.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>River Watch Float reports every position as 0,0: its location was never recorded.</li>
+      <li>So Gilligan can't apply the current-site rule, and should add a note "location not recorded" (never "current site not assessed").</li>
+      <li>It also has one dissolved-oxygen reading of 0.00 mg/L, almost certainly a glitch.</li>
+      <li>Before the fix, that one reading made the whole week "Action Required".</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>As River Watch customer, ask "How is the water this week?" in two new chats. It needs a newer Gilligan than the Mirror currently runs, so it's waiting on the mirror chat.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before</div>No location note; Action Required from one 0.00 reading.</div>
+    <div class="state good"><div class="label">Expected</div>A "location not recorded" note; one implausible 0.00 doesn't set the status alone.</div>
+  </div>
+</article>
+
+<article class="item" id="b3">
+  <header>
+    <h4><span class="id">B3</span>"My pod is broken" gets declined</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip med">Should</span><span class="chip">Mirror</span><span class="chip">~$0.02</span></div>
+  </header>
+  <p class="oneline">"A customer asking who to contact about a broken pod is told that's outside Gilligan's scope, instead of being pointed to CER."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>You ask a shop's help desk "my kettle broke, who do I call?" and they say "I only answer questions about kettles, and I have no contact details".</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>Gilligan is told to stay within water quality and CER's documents, and never to invent facts.</li>
+      <li>It had no approved contact to give, so it declined.</li>
+      <li>Decision O1: point customers to sales@cleanearthrovers.com or their usual CER contact.</li>
+      <li>The fix gives Gilligan that approved answer, and nothing else (no invented phone numbers or names).</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>As Harbor customer on Harbor Pier Buoy, ask "My pod seems broken, who should I contact?" in a new chat. Show Michael the fixed wording.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state bad"><div class="label">Before</div>"Outside supported scope ... I'm missing any contact or support details."</div>
+    <div class="state good"><div class="label">After (Q10)</div>Refers to sales@cleanearthrovers.com or the usual CER contact; nothing invented.</div>
+  </div>
+</article>
+
+<article class="item" id="b6">
+  <header>
+    <h4><span class="id">B6</span>The Q9 fixes: silent pods, impossible pH, reading age, thin reports</h4>
+    <div class="chips"><span class="chip demo">pH band is a Michael item</span><span class="chip med">Should</span><span class="chip">Mirror</span><span class="chip">~$0.02-0.10 each</span></div>
+  </header>
+  <p class="oneline">"Four small honesty fixes: say which pods have gone quiet, ignore physically impossible pH, say how old the data is, and don't show an empty chart when some data exists."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>A weather station report that leaves out stations that stopped sending (so everything "looks fine"), records a temperature of 200 °C as real, doesn't date its readings, and shows a blank chart when it had a few readings to show.</p></div>
+    <div><div class="label">The four parts</div><ol>
+      <li><b>C1, silent pods:</b> "Which of my pods are online?" drops pods that stopped reporting. They should be listed as silent, with how long since their last reading.</li>
+      <li><b>D1, pH band:</b> pH 2.07 is treated as real. Values outside 3-12 should be flagged implausible and excluded. Blocked: no low-pH fake pod yet.</li>
+      <li><b>#3, reading age:</b> the PDF should state how old its latest reading is.</li>
+      <li><b>#4, thin data:</b> a 1-day report on sparse data shows an empty series; it should show what exists. Blocked: no suitable fake pod.</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>Each part is one question in a new chat, before and after the <code>task/q9-land</code> branch, which doesn't exist yet. Also check that any "excluded implausible" min and max listed match the values really excluded.</p></div>
+  </div>
+  <div class="compare">
+    <div class="state wait"><div class="label">Status</div>Waiting on the branch; D1 and #4 also wait on new fake pods.</div>
+    <div class="state good"><div class="label">Show Michael</div>Whether the pH 3-12 band is acceptable.</div>
+  </div>
+</article>
+
+<article class="item" id="b7">
+  <header>
+    <h4><span class="id">B7</span>Standing caveat under answers that cite documents (U7)</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip high">Must</span><span class="chip">Mirror</span><span class="chip">~$0.04</span></div>
+  </header>
+  <p class="oneline">"Answers drawn from CER's documents should carry one fixed reminder to check the cited sections before acting."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>The "consult your doctor" line under a health article. It belongs under advice drawn from the manual, not under a plain readout of your own pod's numbers.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>Gilligan answers education questions from excerpts of CER's documents, and may miss steps.</li>
+      <li>The dashboard should show one fixed caveat under such answers, also when the chat is reopened later.</li>
+      <li>Draft wording, pending your approval: "Answers draw on document excerpts and may not cover every step; check the cited sections before acting."</li>
+      <li>Data-only answers show no caveat.</li>
+    </ol></div>
+    <div><div class="label">The test</div><p>Ask "What does conductivity measure?" (document) and "How is the water this week?" (data) in new chats, then reopen the first. Waiting on the dashboard branch that adds it.</p></div>
+  </div>
+</article>
+
+<details>
+  <summary>Check yourself: Gilligan items</summary>
+  <div class="qa">
+    <p><b>In B1, are the numbers wrong?</b>No. The values are correctly current-site only. The bug is the wording: it claims a 60-day period the numbers don't cover.</p>
+    <p><b>Why must every B question start in a new chat?</b>So an earlier answer in the same chat can't shape the next one, and the result is repeatable.</p>
+    <p><b>What would make B3 fail even after the fix?</b>Gilligan inventing a phone number, a person's name, or any contact other than the approved ones.</p>
+  </div>
+</details>
+
+<!-- ================= OUTSIDE ================= -->
+<h3 class="cat">Outside our tests</h3>
+
+<article class="item" id="a7">
+  <header>
+    <h4><span class="id">A7</span>The cer-ui build trigger deploys from the dashboard's infected main branch</h4>
+    <div class="chips"><span class="chip demo">Michael demo</span><span class="chip high">High</span><span class="chip">Not testable locally</span></div>
+  </header>
+  <p class="oneline">"CER's cloud automatically rebuilds the live dashboard from a branch that contains malware; that automation needs switching off."</p>
+  <div class="ways">
+    <div><div class="label">Analogy</div><p>A factory line that automatically packs and ships whatever lands on a particular shelf, and that shelf is known to be contaminated.</p></div>
+    <div><div class="label">Step by step</div><ol>
+      <li>The dashboard repository's <code>main</code> branch carries malware (which is why we never check it out).</li>
+      <li>A Google Cloud Build "trigger" watches that branch.</li>
+      <li>Every push to it builds and deploys the live site, cer-ui.</li>
+      <li>Michael has access to disable the trigger; we don't touch CER's cloud from here.</li>
+    </ol></div>
+    <div><div class="label">The check</div><p>Michael disables trigger <code>8ad67b17-...</code>; you confirm in the Cloud console that it shows as disabled.</p></div>
+  </div>
+</article>
+
+<article class="item" id="a8">
+  <header>
+    <h4><span class="id">A8</span>Low-severity server items</h4>
+    <div class="chips"><span class="chip">Internal</span><span class="chip">Deferred</span><span class="chip">Current</span><span class="chip">$0</span></div>
+  </header>
+  <p class="oneline">"Two small server flaws we record but don't fix for this launch."</p>
+  <div class="ways">
+    <div><div class="label">/water-data crashes on a number</div><p>An old route expects latitude as text; given a number it crashes (500). Nothing uses it. Record the "before" on Current.</p></div>
+    <div><div class="label">10-pod cap</div><p>The period query only looks at an organization's first 10 pods. No fake organization has more than 10, so this is recorded from reading the code.</p></div>
+  </div>
+</article>
+
+<!-- ================= U ================= -->
+<h2 class="part" id="u">Part 2: Basic user testing</h2>
+<p>These aren't bugs; they're the everyday things customers rely on. A failure here is a <b>regression</b>: our fixes broke something. Think of it as checking the repaired car still starts, steers and brakes normally. U1-U4 run on Current and Release and should look the same on both; U5-U10 need Gilligan on the Mirror.</p>
+
+<div class="tablebox">
+<table>
+  <thead><tr><th>ID</th><th>What it checks</th><th>Why it matters</th><th>Pass looks like</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">U1</td><td>Log in, log out, wrong password (Harbor admin)</td><td>A5 changed the login code; make sure normal logins still work.</td><td>Right password lands on /home; wrong password gives 401 and a readable "Login failed", never a 500.</td></tr>
+    <tr><td class="mono">U2</td><td>Each persona sees only their own pods</td><td>The positive side of the wall: people must still see what's theirs.</td><td>Superadmin sees all current pods; Harbor people see only Harbor Pier Buoy; Lakeside sees only Lakeside's; no merged-away or archived pods listed.</td></tr>
+    <tr><td class="mono">U3</td><td>Own pod's chart, dial and map pages load</td><td>A3 changed the period query the charts use.</td><td>Readings show with no errors, "undefined" or "NaN"; the period call returns 200. A blank map is expected locally (no map key).</td></tr>
+    <tr><td class="mono">U4</td><td>Export your own pod's CSV</td><td>The A1 fix must not block legitimate exports.</td><td>A CSV with about a week of hourly rows.</td></tr>
+    <tr><td class="mono">U5</td><td>A document question gets sources</td><td>Gilligan's core job: grounded answers.</td><td>Plain answer, numbered citation chips, document titles under Sources, no raw markers.</td></tr>
+    <tr><td class="mono">U6</td><td>A pod question uses today's readings</td><td>Old data must not be presented as current.</td><td>Timestamp of the latest reading and its age counted from today.</td></tr>
+    <tr><td class="mono">U7</td><td>Ask for a report and download the PDF</td><td>Reports are the paid-feeling feature customers keep.</td><td>Offer names the pod and period; PDF of 2+ pages, units on every value, only Harbor's data.</td></tr>
+    <tr><td class="mono">U8</td><td>Chats are saved and reopen</td><td>Customers come back to earlier answers.</td><td>Each chat reopens with title, answer and citations; only your own chats listed.</td></tr>
+    <tr><td class="mono">U9</td><td>Allowance line counts down</td><td>Users need to know their daily limit.</td><td>"N questions left, resets ..." drops by one per question. Don't use it up: the mirror chat relies on it.</td></tr>
+    <tr><td class="mono">U10</td><td>Phone layout</td><td>Customers check pods from the field.</td><td>Chat usable at phone width with no sideways scrolling.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<details>
+  <summary>Check yourself: the whole picture</summary>
+  <div class="qa">
+    <p><b>U4 fails on Release after the A1 fix lands. What does that mean?</b>The fix blocked too much: it refused Harbor's own pod. That's a regression, and the fix needs another look.</p>
+    <p><b>Which items can run today, for free, without the mirror chat?</b>A1, A2, A3, A5, A6, the A8 "before", and U1-U4.</p>
+    <p><b>Which items are decisions rather than tests?</b>B5 (accept the retired-pod report?), the B7 caveat wording, the D1 pH band, and whether the A1 and A6 fixes go into the launch.</p>
+  </div>
+</details>
+
+</main>
+</div>

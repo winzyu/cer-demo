@@ -5,7 +5,7 @@
   "turns": [
     {
       "turn": 1,
-      "query": "We just moved a pod into a tidal creek. Conductivity is running about 50,000 µS/cm and the water is around 20 °C. The DO sensor has no salt compensation — how do we fix its readings?",
+      "query": "We moved a pod into a tidal creek. Specific conductance normalized to 25 °C is about 50,000 µS/cm, water temperature is 20 °C, and the DO reading has no salinity compensation. Using USGS table 6.2-4, how do we correct it?",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__af61f5c3c21e",

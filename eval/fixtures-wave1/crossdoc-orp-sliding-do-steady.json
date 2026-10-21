@@ -8,8 +8,7 @@
     "usgs-nfm-a6.0-field-measurement-guidelines.pdf"
   ],
   "requires": [],
-  "notes": "The DO-ORP coupling, but pushed past the qualitative statement the slice already carries and onto the question of whether either channel can be believed. ORP verification is A6.5: orp-zobells-shelf-life-01 (90 days chilled at 4 C), orp-table653-25c-430-01 and orp-table653-values-01 (theoretical ZoBell Eh by temperature, 430 mV at 25 C, 443 at 20, 418 at 30), orp-example-22c-01 (the worked check passes within plus/minus 5 mV of the table value), orp-field-cal-equilibrate-01 and orp-equilibrate-15-30-01 (15-30 minutes to thermal equilibrium in the ZoBell), orp-interpolate-tables-01, orp-quinhydrone-30c-01. A6.8 supplies the troubleshooting hook that makes the temperature dependence the first thing to suspect when the check fails (mp-t6-zobell-temperature-11) and the routing of a bad ORP reading back to A6.5 (mp-t6-parameter-chapter-map-06). The DO half of turn 2 is A6.0: a60-xcut-tbl601-all-01 (plus/minus 0.2 mg/L for optical DO) and a60-xcut-sw-60s-median3-01 / a60-xcut-gw-median5-01 (median of the final three or five readings). ORP has no criterion in that table, so A6.5's own constant-potential cadence (orp-reading-cadence-01, orp-thermal-equilibrium-30min-01) is what governs it — a distinction no single file states. Predicted rag: the slice has the DO/ORP coupling and 'trend beats absolute value', but no ZoBell values, no temperature table, and no stabilisation numbers."
-  ,
+  "notes": "Tests crossdoc orp sliding do steady. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: orp-zobells-shelf-life-01, orp-table653-25c-430-01, orp-table653-values-01, orp-example-22c-01, orp-field-cal-equilibrate-01, orp-equilibrate-15-30-01, orp-interpolate-tables-01, orp-quinhydrone-30c-01, mp-t6-zobell-temperature-11, mp-t6-parameter-chapter-map-06, a60-xcut-tbl601-all-01, a60-xcut-sw-60s-median3-01, a60-xcut-gw-median5-01, orp-reading-cadence-01, orp-thermal-equilibrium-30min-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -21,8 +20,8 @@
           "gives the theoretical ZoBell Eh at 25 C as about 430 mV",
           "states values for temperatures between table rows are interpolated",
           "states the solution and sensors must be left to reach thermal equilibrium, on the order of 15 to 30 minutes, before the check is read",
-          "gives the pass window for the check as agreement within roughly 5 mV of the table value",
-          "warns that the ZoBell solution has a limited shelf life (about 90 days kept chilled near 4 C), so an old bottle can fail the check on its own"
+          "Gives the check pass window as calculated Eh, after adding the appropriate reference-electrode potential to measured potential, within 5 mV of the temperature-specific table value.",
+          "States ZoBell's solution is reported stable for at least 90 days chilled at 4 C; does not invent a 90-day expiry."
         ],
         "must_not": [
           "gives a single ZoBell millivolt value with no temperature attached",
@@ -38,26 +37,64 @@
     },
     {
       "role": "user",
-      "content": "And the oxygen side — it moves about 0.3 mg/L between readings at that site. Is that noise or is that a real change I should be logging?",
+      "content": "And the optical oxygen sensor varies by about 0.3 mg/L between consecutive readings at that site. Does that meet the field stability check, and can we tell whether it is noise or a real change?",
       "rubric": {
         "must_contain": [
           "gives the USGS stabilisation criterion for optical dissolved oxygen as about plus or minus 0.2 mg/L across five or more consecutive readings",
-          "concludes a spread of about 0.3 mg/L exceeds that criterion, so the sensor has not stabilised and the reading is not yet reportable",
-          "tells the operator to allow longer equilibration and take further readings, then report the median of the final readings",
+          "States consecutive-reading variation of 0.3 mg/L exceeds the optical-DO routine stability criterion, without diagnosing sensor noise or declaring all qualified reporting impossible.",
+          "Allows longer equilibration and additional readings, then either the median of the final five or more readings or a representative final reading selected using site knowledge and professional judgment with the decision documented.",
           "gives the median rule as the final three or more readings in surface water, or the final five or more in groundwater",
           "notes that ORP is not covered by that stabilisation table and is instead judged by the potential holding constant over the reading sequence"
         ],
         "must_not": [
           "invents a dissolved-oxygen stabilisation threshold other than the manual's",
-          "treats a 0.3 mg/L spread as within criteria",
-          "reports a mean instead of the median",
+          "Treats 0.3 mg/L consecutive-reading variation as meeting the stated optical-DO criterion.",
+          "Substitutes a mean for a prescribed median or presents undocumented discretionary selection as the source-supported alternative.",
           "applies the dissolved-oxygen criterion to the ORP channel"
         ],
         "cite": [
           "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "usgs-nfm-a6.5-orp.pdf"
         ]
-      }
+      },
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "quote": "stable for at least 90 days if kept chilled at 4°C."
+        },
+        {
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "quote": "[From Nordstrom (1977); O C, degrees Celsius; mV, millivolts]"
+        },
+        {
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "quote": "Allow the electrode to reach thermal equilibrium (15 to 30"
+        },
+        {
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "quote": "• If the ZoBell solution check fails, was temperature dependence of the ZoBell solution accounted\nfor?"
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "±3%Dissolved oxygen\nOptical/luminescent sensors \t±0.2 mg/L\npH:\nMeter displays to 0.01 \t±0.1 unit"
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "Surface water: Allow at least 60 seconds (or follow\nthe manufacturer’s guidelines) for sensors to equilibrate\nwith sample water."
+        },
+        {
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "quote": "4. Take readings of the sample temperature and potential (in millivolts) every few"
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "• For sites at which variability exceeds the criteria shown"
+        },
+        {
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "quote": "ment point, either use the median of the final five or"
+        }
+      ]
     }
   ]
 }

@@ -22,6 +22,11 @@ export interface Chunk {
 export interface GetContextOptions {
   /** Upper bound on returned chunks. Clamped to MAX_TOP_K; see options.ts. */
   topK?: number;
+  /**
+   * The user's own words when `query` is a search rewrite of them. Only the gold-context arms read
+   * it, because their labels are keyed by what the user asked.
+   */
+  originalQuery?: string;
 }
 
 export interface RetrievalAdapter {

@@ -1,0 +1,255 @@
+{
+  "fixtureId": "long-groundwater-oxygen",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "do-flowthrough-chamber-01",
+          "rubric": [
+            1
+          ],
+          "why": "Uses a flow-through chamber when downhole DO sensor deployment is impractical."
+        },
+        {
+          "claimId": "do-positive-displacement-pump-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Uses a positive-displacement submersible pump. Uses relatively gas-impermeable high-density plastic or fluorocarbon-polymer tubing."
+        },
+        {
+          "claimId": "do-shield-tubing-sunlight-01",
+          "rubric": [
+            4
+          ],
+          "why": "Protects the exposed tubing and chamber from direct sunlight."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "do-tap-tubing-blunt-tool-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Taps the tubing with a blunt tool to dislodge entrained gas bubbles. Flushes dislodged bubbles from the tubing and chamber."
+        },
+        {
+          "claimId": "do-no-back-pressure-01",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Eliminates back pressure in the chamber. Leaves the chamber outlet free flowing."
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "claims": [
+        {
+          "claimId": "do-downhole-sensor-before-pump-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Lowers the DO and temperature sensors to the measuring point. Lowers the pump after the sensors. Monitors DO variation during purging."
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "claims": [
+        {
+          "claimId": "do-no-back-pressure-01",
+          "rubric": [
+            3
+          ],
+          "why": "Keeps the chamber outlet free flowing."
+        },
+        {
+          "claimId": "mp-gw-no-air-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Secures the tubing fittings to prevent air from entering the cell. Explains that entering air can affect measurement accuracy and stability."
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "claims": [
+        {
+          "claimId": "sc-subsample-bottle-rinse-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Uses a clean sample bottle. Rinses the bottle three times with the sample."
+        },
+        {
+          "claimId": "sc-diw-then-sample-rinse-01",
+          "rubric": [
+            3
+          ],
+          "why": "Rinses the measurement container three times with deionized water as part of preparation."
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "claims": [
+        {
+          "claimId": "sc-subsample-measure-asap-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Fills the prepared bottle completely to the top. Caps the bottle tightly."
+        },
+        {
+          "claimId": "mp-record-method-01",
+          "rubric": [
+            3
+          ],
+          "why": "Records the field-measurement method where applicable."
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "claims": [
+        {
+          "claimId": "do-shield-tubing-sunlight-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Protects the exposed sample tubing from direct sunlight. Protects the chamber from direct sunlight."
+        },
+        {
+          "claimId": "do-tap-tubing-blunt-tool-01",
+          "rubric": [
+            3
+          ],
+          "why": "Dislodges and flushes bubbles by tapping the tubing with a blunt tool."
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "claims": [
+        {
+          "claimId": "do-tap-tubing-blunt-tool-01",
+          "rubric": [
+            3
+          ],
+          "why": "Uses a blunt tool to tap the tubing and dislodge bubbles for flushing."
+        },
+        {
+          "claimId": "do-no-back-pressure-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Eliminates back pressure in the flow-through chamber. Makes the outlet free flowing."
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "claims": [
+        {
+          "claimId": "do-downhole-sensor-before-pump-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Lowers the DO and temperature sensors to the measuring point. Follows the sensors with the pump. Monitors DO variation during purging."
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "claims": [
+        {
+          "claimId": "do-no-back-pressure-01",
+          "rubric": [
+            2
+          ],
+          "why": "Checks for and eliminates chamber back pressure."
+        },
+        {
+          "claimId": "mp-gw-sediment-05",
+          "rubric": [
+            1
+          ],
+          "why": "Notes that accumulated sediment in the cell can adversely affect sensors."
+        },
+        {
+          "claimId": "mp-record-conditions-03",
+          "rubric": [
+            3
+          ],
+          "why": "Records onsite conditions that could have affected data quality."
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "claims": [
+        {
+          "claimId": "do-positive-displacement-pump-01",
+          "rubric": [
+            1
+          ],
+          "why": "Uses relatively gas-impermeable high-density plastic or fluorocarbon-polymer tubing."
+        },
+        {
+          "claimId": "do-tap-tubing-blunt-tool-01",
+          "rubric": [
+            3
+          ],
+          "why": "Dislodges and flushes entrained bubbles from tubing and chamber."
+        },
+        {
+          "claimId": "mp-gw-no-air-01",
+          "rubric": [
+            2
+          ],
+          "why": "Keeps tubing fittings secure so air does not enter the cell."
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "claims": [
+        {
+          "claimId": "do-positive-displacement-pump-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Specifies a positive-displacement submersible pump for the ex situ DO setup. Specifies relatively gas-impermeable high-density plastic or fluorocarbon-polymer tubing."
+        },
+        {
+          "claimId": "do-shield-tubing-sunlight-01",
+          "rubric": [
+            3
+          ],
+          "why": "Protects exposed tubing and the chamber from direct sunlight."
+        }
+      ]
+    }
+  ],
+  "neither": []
+}

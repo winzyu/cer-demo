@@ -1,0 +1,84 @@
+{
+  "fixtureId": "definitional-what-per-centimetre-means",
+  "fixtureClass": "definitional",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "sc-definition-1cm3-25c-01",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Defines specific conductance and its 25 C reference."
+        },
+        {
+          "claimId": "sc-conductance-inverse-resistance-01",
+          "rubric": [
+            1
+          ],
+          "why": "Defines conductance as inverse resistance, measured in siemens."
+        },
+        {
+          "claimId": "sc-conductivity-normalized-01",
+          "rubric": [
+            2
+          ],
+          "why": "Defines normalization by length and area; the explicit cell-constant formula is not in this claim."
+        },
+        {
+          "claimId": "sc-usgs-reporting-units-01",
+          "rubric": [
+            4
+          ],
+          "why": "Identifies the 25 C reporting convention without assuming every output follows it."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "sc-definition-1cm3-25c-01",
+          "rubric": [
+            4
+          ],
+          "why": "Supplies the specific-conductance reference temperature to check when comparing records."
+        },
+        {
+          "claimId": "sc-usgs-reporting-units-01",
+          "rubric": [
+            4
+          ],
+          "why": "Identifies the USGS temperature convention relevant to comparing old values."
+        },
+        {
+          "claimId": "sc-siemens-mhos-equivalence-01",
+          "rubric": [
+            1
+          ],
+          "why": "Establishes unit equivalence of siemens/cm and mhos/cm."
+        },
+        {
+          "claimId": "sc-units-mhos-pre1971-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Gives unit equivalence and the pre-1971 reporting convention."
+        },
+        {
+          "claimId": "sc-terms-interchangeable-01",
+          "rubric": [
+            3
+          ],
+          "why": "Lists the interchangeable names found in the literature."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

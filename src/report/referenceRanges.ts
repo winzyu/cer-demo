@@ -1,31 +1,27 @@
 /**
- * Probe accuracy and turbidity clarity bands. Ported from the Python prototype's
- * `reference_ranges.py`, numbers unchanged for what remains here.
+ * Probe accuracy, source-of-truth v2's fallback ranges and minimum detectable change, and
+ * turbidity clarity bands. Probe accuracy and the clarity bands were ported from the Python
+ * prototype's `reference_ranges.py`, numbers unchanged.
  *
- * **Every numeric baseline range this file used to carry is gone.** It used to transcribe the
- * "Water Quality Metrics -- Source of Truth" doc's per-water-type ranges for pH, dissolved
- * oxygen, ORP and conductivity (`BASELINE_RANGES`, `baselineFor`) plus that doc's DO clinical
- * scale (`DO_ABSOLUTE_THRESHOLDS`, itself already dead -- nothing read it). The project supervisor
- * vetoed the entire source document as a range source on 2026-09-13 (see docs/timeline.md):
- * every number in it is discarded, not just the ones this file already excluded. There is no
- * fallback table. A metric's baseline now comes only from this device's own registry threshold
- * (`operatorThresholds.ts`'s `metricThreshold`), the same path temperature always used -- and
- * when a pod has no usable threshold for a metric, that metric has no baseline, exactly as
- * temperature already behaved before this change. See `buildReportInput.ts` §5 for how all five
- * numeric metrics now resolve their baseline.
+ * **Operator thresholds come first; v2's ranges are the fallback.** A metric's range is this
+ * device's own registry threshold (`operatorThresholds.ts`'s `metricThreshold`) whenever that
+ * threshold is usable. Only when it is rejected does `resolveLimit` fall back to
+ * `V2_FALLBACK_RANGES` below, for the pod's water class, and the range is labelled as a generic
+ * fallback wherever it is shown. A metric with neither is "not assessed" (docs/timeline.md,
+ * 2026-10-10, which partly reverses the 2026-09-13 veto of the earlier source document).
  *
- * Two things that remain true and worth knowing:
+ * Two things worth knowing:
  *
- * 1. Water body type still exists (`WaterBodyType`, `operatingEnvironment`) and still matters --
- *    event classification and narrative text still read it -- but it no longer selects a
- *    baseline table, because there is no longer a table to select from.
- * 2. Turbidity has NO numeric baseline, for the reason it never had one even before the veto: the
- *    value is not a measurement. It is a relative index derived from a raw voltage (see
- *    TURBIDITY_CLARITY_BANDS below). It is reported as a qualitative clarity band, never compared
- *    against a numeric range, and no device carries an operator turbidity threshold either.
+ * 1. Water body type selects the fallback column, so it must come from the device registry: a
+ *    pod whose water type is unknown gets no fallback rather than a guessed column.
+ * 2. Turbidity has NO numeric range, for the reason it never had one: the value is not a
+ *    measurement. It is a relative index derived from a raw voltage (see `TURBIDITY_BAND_EDGES`
+ *    below). It is reported as a qualitative clarity band, never compared against a numeric
+ *    range, and no device carries an operator turbidity threshold either.
  */
 
-import type { ClarityBand } from "./types";
+import type { ClarityBand, WaterBodyType } from "./types";
+import type { MetricThresholdKey } from "./operatorThresholds";
 
 /* -------------------------------------------------------------------------------------------
  * Turbidity: qualitative clarity bands, not a numeric range
@@ -52,7 +48,7 @@ import type { ClarityBand } from "./types";
  * min/max for temperature, pH, dissolved oxygen, ORP and conductivity. There is no turbidity
  * key on any device. Every other metric has an operator-owned numeric range; turbidity has
  * none, so there is nothing to compare a reading against even if the scale were trustworthy.
- * See docs/migration/BACKEND_FIELDS.md §3b and DEVICE_API.md §8.
+ * See docs/reference/BACKEND_FIELDS.md §3b and DEVICE_API.md §8.
  *
  * **The edges below are operator-authoritative.** The operator supplied his own three clarity
  * bands on 2026-09-10 (docs/timeline.md decision log), replacing this
@@ -261,4 +257,114 @@ export const probeAccuracy = (key: string, reading: number): number => {
     return spec.accuracyPct * Math.abs(reading);
   }
   return 0;
+};
+
+/* -------------------------------------------------------------------------------------------
+ * Source-of-truth v2: fallback ranges (§3) and minimum detectable change (§8.3)
+ * -----------------------------------------------------------------------------------------*/
+
+/**
+ * The device registry's `operating_environment` as a report water body type, or `undefined` when
+ * the registry does not say anything usable.
+ *
+ * Returns `undefined` rather than taking a fallback argument so the caller can tell "the registry
+ * classified this pod" from "nothing was on file and a default was applied" -- a distinction the
+ * report prints, and because a defaulted type must never select a v2 fallback column.
+ */
+export const mapWaterType = (
+  operatingEnvironment: string | null | undefined,
+): WaterBodyType | undefined => {
+  if (!operatingEnvironment) {
+    return undefined;
+  }
+  const normalized = operatingEnvironment.toLowerCase();
+  if (normalized.includes("salt") || normalized.includes("marine")) {
+    return "Marine";
+  }
+  if (normalized.includes("brackish") || normalized.includes("estuar")) {
+    return "Brackish";
+  }
+  if (normalized.includes("fresh")) {
+    return "Freshwater";
+  }
+  return undefined;
+};
+
+/** The v2 §3 column a water body type reads. Estuarine water uses the brackish column. */
+export type FallbackWaterClass = "freshwater" | "brackish" | "coastal";
+
+export const fallbackWaterClass = (water: WaterBodyType): FallbackWaterClass => {
+  if (water === "Marine") return "coastal";
+  if (water === "Brackish" || water === "Estuarine") return "brackish";
+  return "freshwater";
+};
+
+export interface FallbackRange {
+  min: number;
+  max: number;
+  /** Said beside the range wherever it is shown, when v2 qualifies it. */
+  note?: string;
+}
+
+/** v2 §3 says coastal dissolved oxygen and pH dip naturally during upwelling. */
+const UPWELLING_NOTE = "Coastal upwelling can naturally lower this below the general range for a "
+  + "few days (v2 §3: dissolved oxygen to about 4-5 mg/L, pH to about 7.6).";
+
+/**
+ * v2 §3's "Fallback Baseline Ranges (Use Only Without a Site Baseline)", for the metrics where v2
+ * gives a usable number, keyed by `MetricThresholdKey` in the device API's units.
+ *
+ * Left out on purpose (docs/timeline.md, 2026-10-11):
+ * - Temperature: v2 calls it "site and season dependent"; its coastal values are seasonal
+ *   approximations, not a range.
+ * - Conductivity: v2's ranges (freshwater 50-1,500, brackish 1,000-46,000, coastal
+ *   50,000-52,000 µS/cm) are specific conductance, corrected to 25 °C. Whether the pods report a
+ *   corrected value is unconfirmed (STAKEHOLDER_QUESTIONS.md item 24); against uncorrected
+ *   readings the coastal range would flag ordinary seawater every day.
+ * - Coastal ORP: v2 says to judge it by trend and residual, "not absolute value".
+ * - Turbidity: a relative index with no calibrated scale (see the clarity bands above).
+ */
+export const V2_FALLBACK_RANGES: Record<
+  FallbackWaterClass, Partial<Record<MetricThresholdKey, FallbackRange>>
+> = {
+  freshwater: {
+    ph: { min: 6.5, max: 8.5 },
+    dissolvedOxygen: { min: 6, max: 11 },
+    orp: { min: 100, max: 400 },
+  },
+  brackish: {
+    ph: { min: 7.0, max: 8.3 },
+    dissolvedOxygen: { min: 5, max: 9 },
+    orp: { min: 100, max: 350 },
+  },
+  coastal: {
+    ph: { min: 7.8, max: 8.3, note: UPWELLING_NOTE },
+    dissolvedOxygen: { min: 6, max: 8.5, note: UPWELLING_NOTE },
+  },
+};
+
+const FAHRENHEIT_PER_CELSIUS = 9 / 5;
+
+/**
+ * v2 §8.3's minimum detectable change for one wire metric, in that metric's own units, near the
+ * given reading: a change smaller than this is not a detected change. It replaces the probe
+ * datasheet accuracy as the flag rules' noise floor (`PROBE_SPECS` stays for its other uses).
+ *
+ * Temperature is v2's "about 2 x accuracy", using the PT-1000 formula, which needs Celsius: the
+ * reading arrives in °F, is converted, and the result is converted back to a °F difference.
+ * Conductivity is the low end of v2's "2 to 3 percent of reading". Turbidity returns 0: it is
+ * never range-compared.
+ */
+export const minimumDetectableChange = (key: string, reading: number): number => {
+  switch (key) {
+    case "ph": return 0.2;
+    case "dissolved_oxygen": return 1;
+    case "orp": return 50;
+    case "conductivity": return 0.02 * Math.abs(reading);
+    case "temperature": {
+      const celsius = (reading - 32) / FAHRENHEIT_PER_CELSIUS;
+      return 2 * temperatureAccuracyC(celsius) * FAHRENHEIT_PER_CELSIUS;
+    }
+    default: return 0;
+  }
 };

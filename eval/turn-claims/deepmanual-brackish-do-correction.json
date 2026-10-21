@@ -1,0 +1,48 @@
+{
+  "fixtureId": "deepmanual-brackish-do-correction",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "do-t624-20c-50000-08235-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Gives 0.8235 at the specified conditions and identifies table 6.2-4."
+        },
+        {
+          "claimId": "do-example-873-product-01",
+          "rubric": [
+            1
+          ],
+          "why": "Demonstrates multiplying by the salinity factor."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "do-t624-0uscm-unity-01",
+          "rubric": [
+            2
+          ],
+          "why": "Supports unity only at zero conductance; its broader freshwater conclusion does not support this rubric."
+        },
+        {
+          "claimId": "do-saline-above-2000-01",
+          "rubric": [
+            1
+          ],
+          "why": "Gives the operational 2,000 microsiemens/cm saline-water threshold."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

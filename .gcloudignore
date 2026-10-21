@@ -1,0 +1,28 @@
+# What `gcloud builds submit` uploads to Cloud Build (runbook §3.3).
+# Without this file gcloud skips everything .gitignore lists, which includes data/, so the
+# Dockerfile's copy of the corpus and embedding cache fails. An allow-list like .dockerignore:
+# nothing else leaves the machine, so .env, serviceAccountKey.json, .claude/ and eval/ stay out.
+# Patterns follow .gitignore rules, not Docker's: a file under an excluded directory cannot be
+# let back in, so each directory on the way to a data file is re-included and then emptied.
+# Check with `gcloud meta list-files-for-upload .`.
+/*
+!/.gcloudignore
+!/.dockerignore
+!/Dockerfile
+!/package.json
+!/package-lock.json
+!/tsconfig.json
+!/src/
+!/release/
+/release/*
+!/release/artifacts.sha256
+
+# The two approved data files (release plan S1), checked against release/artifacts.sha256.
+!/data/
+/data/*
+!/data/corpus/
+/data/corpus/*
+!/data/corpus/corpus.json
+!/data/embeddings/
+/data/embeddings/*
+!/data/embeddings/cache.json

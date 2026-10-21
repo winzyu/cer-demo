@@ -1,0 +1,2251 @@
+### EC_K_1.0_probe.pdf (chunk EC_K_1.0_probe.pdf)
+
+Range 	5 − 200,000 μS/cm
+90% in 1s	Response time
+3,447 kPa (500 PSI)	Max pressure
+1 meter	Cable length
+No	Internal temperature sensor
+~10 years	Time before recalibration
+Graphite
+Reads 	Conductivity
+1 − 110 °C	Temperature range °C
+352m (1,157 ft)	Max depth
++/ – 2%	Accuracy
+Male SMA / Male BNC	Connector
+~10 years	Life expectancy
+Conductivity
+Gen 3
+Probe K 1.0
+(Optional)
+Revised 10/25
+V 4.2
+
+-- 1 of 9 --
+
+Operating principle
+An E.C. (electrical conductivity) probe measures the electrical conductivity in a solution.
+It is commonly used in hydroponics, aquaculture and freshwater systems to monitor the
+amount of nutrients, salts or impurities in the water.
+Inside the conductivity probe, two electrodes are positioned opposite from each other,
+an AC voltage is applied to the electrodes causing cations to move to the negatively
+charged electrode, while the anions move to the positively electrode. The more free
+electrolyte the liquid contains, the higher the electrical conductivity.
+AC voltage
+Epoxy body
+Graphite
+Epoxy body
+Graphite
+Epoxy body
+Glass stem
+Platinum
+ody
+e
+Epoxy body
+Graphite
+The entire conducting area must be
+submerged in order to get accurate
+readings.
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 9 --
+
+112.7mm
+(4.4”)
+150.3mm
+(5.9”)
+37.6mm
+(1.4”)
+12mm (0.5”)
+Cable Length
+1m (3.2’)
+29mm
+(1.1”)
+Ø 8mm
+Ø 2.6mm
+Optional
+Sensing area
+15.5mm
+(0.6”)
+16mm
+(0.6”)
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 9 --
+
+PVC
+ABS 	Polyethylene
+Titanium Nitride
+ABS
+Graphite
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Graphite
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Conductivity Probe K 1.0
+Part # ENV-40-EC-K1.0
+Complies with NSF/ANSI Standard 51
+Food Safe
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 9 --
+
+Specifications
+• 	Standard Lab use
+• 	Field use
+• 	Aquarium
+• 	Hydroponics
+• 	Fish keeping
+• 	Mixed aqueous/organic
+• 	Samples containing Heavy metals
+• 	Soil Samples
+• 	Strong reducing agents
+Typical applications
+This Conductivity probe can be 	fully
+submerged 	in fresh or salt water, up
+to the SMA connector indefinitely.
+Materials
+PVC
+ABS
+Polyethylene
+ABS 	Graphite
+Titanium Nitride
+K 1.0
+Max depth
+Cable length
+Weight
+Speed of response
+Measuring Surface
+Dimensions
+SMA connector
+Sterilization
+Food safe
+5 μS/cm – 200,000 μS/cm
+352m (1,157 ft)
+1 meter
+43 grams
+90% in 1 second
+Graphite
+12mm x 145.5mm (0.47" x 5.7")
+Male
+Chemical only
+Yes
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 9 --
+
+A conductivity probe is a very simple device. It is just two conductors with a fixed surface
+area at a fixed distance from each other. This distance and surface area is known as the
+conductivity cell. The cells distance and surface area is quantified as the conductivity cells
+K constant.
+How often do you need to
+recalibrate a conductivity probe?
+Conductivity probes work by measuring the electrical current of the water between two
+graphite plates. The plates do not go bad, or change, so recalibration is not necessary. After
+the first calibration your conductivity probe is good to go.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 9 --
+
+Extending the probe cable length
+You can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific
+has tested up to 300 meters without a problem, however you run the risk of turning your
+E.C. probe into an antenna, picking up noise along the length of your cable.
+If you want to extend your cable, we recommend that you use proper isolation, such as
+the Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your
+probe with the extended cable.
+Extending a probe cable can be easily done with our SMA Extension Cables. Simply
+connect the SMA end of the probe to the Extension cable, and you are all set.
+If you need to water proof a SMA connection, we highly recommend using a product like
+Coax-Seal to safely cover and prevent any water damage that may occur.
+Water proof
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 9 --
+
+Helpful operating tips
+Be sure to watch out for air bubbles, as they can get caught between the two
+graphite plates and throw off your results. Lightly tap your conductivity probe to
+knock out any bubbles caught in the probe.
+Bubbles
+Over time conductivity probes can become dirty and covered in deposits, which can
+change the basic electrical properties of the probe and cause inaccurate readings.
+Soft coatings can be removed by lightly brushing around the conducting area.
+Probe cleaning
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 9 --
+
+Hard coatings should be chemically removed. We highly recommend you use the
+Atlas Scientific conductivity probe cleaner.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 9 --
+
+
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf)
+
+Range 	-2000mV – 2000mV
+95% in 1s	Response time
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+No	Internal temperature sensor
+~1 Year	Time before recalibration
+Reads 	ORP
+Platinum	Sensing element
+1 − 99 °C	Temperature range °C
+70m (230’)	Max depth
+SMA or Tinned leads	Connector
++/– 1mV	Accuracy
+~4 Years +	Life expectancy
+or
+ORP Probe
+Industrial
+Gen 3
+with Platinum sensing element
+Revised 8/25
+V 3.2
+
+-- 1 of 11 --
+
+Operating principle
+ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and
+reduction is the gain of electrons. The output of the probe is represented in millivolts and
+can be positive or negative.
+Just like a pH probe measures hydrogen ion activity in a liquid; an ORP probe measures
+electron activity in a liquid. The ORP readings represents how strongly electrons are
+transferred to or from substances in a liquid. Keeping in mind that the readings do not
+indicate the amount of electrons available for transfer.
+pH Probe 	ORP Probe
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 11 --
+
+Add just a drop of bleach
+(which is an oxidizing agent)
+606.9
+Reading A
+605.3
+Reading B
+-234.6
+Reading A
+24.2
+Reading B
+A	
+A
+B	
+B
+Tap water 	Tap water
+The water is unreactive and has only trace amounts of electron movement. These
+readings are equivalent to the readings you see with an unconnected multimeter.
+An ORP probe has a platinum tip that is connected to a silver wire, surrounded by
+silver chloride. That silver wire is then connected to a KCL reference solution. Because
+platinum is an unreactive metal it can “silently observe” the electron activity of the
+liquid without becoming apart of whatever reaction is occurring in the liquid.
+When reading the ORP of a liquid that has very few electrons available for
+transfer, ORP readings can appear to be inconsistent.
+(Theoretical value)
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 3 of 11 --
+
+46.6mm
+(1.8”)
+Soaker bottle
++ 	–
+10ml
+Ø 8mm
+197mm
+(7.7”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Ø 2.8mm
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+Measurements
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 11 --
+
+Platinum
+Teflon
+PVC
+EPDM
+Delrin ®
+(body)
+Polyethylene
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --
+
+Body material
+Max depth
+Cable length
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+70m (230 ft)
+3m (9.8 feet)
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This ORP probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Platinum
+Teflon
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 11 --
+
+An ORP probe is a passive device that detects a current generated from the oxidation or
+reduction chemical substances in water. This current (which can be positive or negative)
+is very weak and cannot be detected with a multimeter, or an analog to digital converter.
+How often do you need
+to recalibrate an ORP probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that has
+generally weak levels of chemical reactions you will only need to recalibrate your probe
+once per year for the first 2 years. After that every ~6 months.
+If you are using the ORP probe in batch chemical manufacturing, industrial process, or
+in a solution that is known to have strong chemical reactions, then calibration should be
+done monthly or in extreme cases after each batch.
+V
+V
+0000
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 11 --
+
+AtlasScientific
+PWR
+RX
+TX
+225 	B	A
+ORP
+How to connect the
+industrial ORP probe
+The Atlas Scientific ™ Industrial ORP probe can be connected in several different ways.
+The following show two examples:
+Using our EZO Complete-ORP ™ you can easily connect the
+Gen 3 Industrial ORP probe, via the probes SMA connector.
+Gen 3 Industrial ORP probe
+with the SMA connector option.
+Gen 3 Industrial ORP probe
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial ORP probe, can
+be easily connected to our Industrial ORP Transmitter via
+the probes tinned leads.
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 11 --
+
+Remove the Industrial ORP probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the ORP probe must stay wet and cannot be
+allowed to dry out, this is why every Industrial ORP probe is shipped with a plastic cap
+containing ORP probe storage solution. The cap should remain on the probe until it is used.
+fi
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --
+
+Probe cleaning
+Coating of the platinum tip can lead to erroneous readings including shortened span
+(slope). The type of coating will determine the cleaning technique. Soft coatings can
+be removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or
+hard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%
+hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use
+abrasive materials on the ORP probe.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 11 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 11 --
+
+
+
+---
+
+### Industrial-DO-probe.pdf (chunk Industrial-DO-probe.pdf)
+
+Range 	0 − 100 mg/L
+~0.1 mg/L/per sec	Response time
+300 PSI	Max pressure
+3 Meters	Cable length
+Yes (PT-1000)	Internal temperature sensor
+~1 Year	Time before recalibration
+~ 4 Years	Life expectancy
+~18 Months	Maintenance
+Reads 	Dissolved Oxygen
+1 − 99 °C	Temperature range °C
+212m (694 ft)	Max depth
++/– 0.05 mg/L	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+D.O. Probe
+or
+Revised 4/26
+V 2.4
+
+-- 1 of 13 --
+
+Wastewater
+Treatment
+Food
+Production
+Chemical
+Production
+Envriomental
+Monitoring
+(No Organic Solvents)
+This Probe can be used for:
+2	Copyright © Atlas Scientific LLC
+
+-- 2 of 13 --
+
+Operating principle
+This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed
+in an electrolyte and a cathode. Oxygen molecules defuse through the probes membrane
+at a constant rate (without the membrane the reaction happens too quickly). Once the
+oxygen molecules have crossed the membrane they are reduced at the cathode and
+a small voltage is produced. If no oxygen molecules are present, the probe will output
+0 mV. As the oxygen increases so does the mV output from the probe. Each probe will
+output a different voltage in the presence of oxygen. The only thing that is constant is that
+0mV = 0 Oxygen.
+Electrolyte
+Cathode (Pure silver rod)
+Membrane
+Anode (Zinc)
+Time (sec)
+90%
+60%
+5 	10 	15 	20 	25 	30	0
+Dissolved Oxygen
+Stagnant water
+Oxygen being
+consumed by probe
+20%
+One of the drawbacks from using a galvanic
+probe is that it consumes a VERY small amount
+of the oxygen it reads. Therefore, a small amount
+of water movement is necessary to take accurate
+readings. Approximately 60 ml/min.
+3	Copyright © Atlas Scientific LLC
+
+-- 3 of 13 --
+
+Ø 4.4mm
+Ø 5.3mm
+D.O.
+D.O.
+PT-1000(There is no polarity)
+PT-1000
+175.5mm
+(6.9”)
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+47.9mm
+(1.8”)
+19.7mm (.7”)
+Cable Length
+3m (10’)
+3/4 NPT
+28.4mm
+(1.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+Measurements
+4	Copyright © Atlas Scientific LLC
+
+-- 4 of 13 --
+
+PVC
+PVCDelrin ®
+(body)
+Polyethylene
+HDPE
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+HDPE
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+ABS
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Dissolved Oxygen Probe
+Part # ENV-50-DO
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+Food Safe
+5	Copyright © Atlas Scientific LLC
+
+-- 5 of 13 --
+
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Temp. probe type
+Temp. accuracy
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+212m (694 ft)
+3m (10 feet)
+Yes
+Class A platinum, RTD
++/- (0.15 + (0.002*t))
+SMA or Tinned Leads
+195 grams
+(3/4") NPT
+Chemical only
+Yes
+Materials
+Polyethylene
+Delrin® thermoplastic
+ABS
+HDPE
+PVC 	PVC
+PVC
+PVC
+Polyethylene
+Polyethylene Titanium Nitride
+Titanium Nitride
+This Dissolved Oxygen probe can be
+fully submerged in fresh or salt water,
+up to the SMA connector or Tinned
+leads indefinitely.
+6	Copyright © Atlas Scientific LLC
+
+-- 6 of 13 --
+
+This galvanic dissolved oxygen probe is a passive device that generates a small voltage
+from 0mv – 60+ mv depending on the oxygen saturation of the sensing membrane. This
+voltage can easily be read by a multimeter or an analog to digital converter.
+Because every use case is different, there is no set schedule for recalibration.
+The dissolved oxygen probe reacts with oxygen in the water, the more oxygen it reacts
+with the more the probe is depleted of its electrolyte solution. Typically an industrial
+dissolved oxygen probe will last 2 years before the electrolyte is depleted (results will
+vary). When the electrolyte is depleted, the probe will read very low numbers. Best practice is
+to replace the electrolyte solution and membrane every 1 – 2 years.
+How often do you need to
+recalibrate a dissolved oxygen probe?
+V
+V
+0000
+7	Copyright © Atlas Scientific LLC
+
+-- 7 of 13 --
+
+9 - 36VDC
+	L H
+DO
+A 	Low 	High
+AtlasScientific
+PWR
+RX
+TX
+AtlasScientific
+PWR
+RX
+TX
+How to connect the industrial
+Dissolved Oxygen probe
+The Atlas Scientific ™ Gen 3 Industrial Dissolved Oxygen probe can be connected in
+several different ways. The following show two examples:
+For industrial purposes, the Gen 3 Industrial DO probe,
+can be easily connected to our Industrial DO Transmitter
+via the probes tinned leads.
+Using 	our 	EZO 	Complete-DO™ and
+EZO 	Complete-TMP™ you can easily
+connect the Gen 3 Industrial DO probe,
+via the probes SMA connectors.
+8	Copyright © Atlas Scientific LLC
+
+-- 8 of 13 --
+
+How to add more electrolyte solution
+During usage, a small amount of electrolyte solution within the dissolved oxygen probe
+will deplete. In this case, you will need to add more solution into the probe.
+To add more electrolyte solution: Carefully unscrew the probes membrane cap, and
+drain any remaining electrolyte solution. Using the supplied syringe, inject solution into
+the membrane cap until it's filled half way. Screw the membrane cap back onto probe.
+Once the probe is reassembled, rinse of the probe.
+1 	Rinse
+probe
+Fill half way
+2 	3 	4 	5 	6 	7
+RIGHT SIDE UP 	UPSIDE DOWN
+9	Copyright © Atlas Scientific LLC
+
+-- 9 of 13 --
+
+How to recondition the industrial
+Dissolved Oxygen probe
+During usage, a small amount of corrosion (zinc oxide) may build up around the anode of
+the probe, this will cause irregular readings. In this case, you will need to recondition the
+probe.
+To recondition the probe: Carefully unscrew the probes membrane cap, and drain any
+remaining electrolyte solution. Using a small file, carefully file off the corrsion buildup
+around the anode of the probe. Do not file the cathode, as this will damage the probe.
+Once the corrosion has been removed, rinse the off the anode.
+Using the supplied syringe, inject solution into the membrane cap until it's filled half
+way. Screw the membrane cap back onto probe. Once the probe is reassembled, rinse
+of the probe.
+1 	2
+anode
+cathode
+3 	4
+RIGHT SIDE UP 	UPSIDE DOWN
+10	Copyright © Atlas Scientific LLC
+
+-- 10 of 13 --
+
+Over time, the membrane can wear out, this will lead to irregular readings from
+the probe. To correct this issue, the probes membrane cap must be replaced.
+To replace membrane cap: Carefully unscrew the probes membrane cap, drain
+any remaining electrolyte solution; Then discard the damaged membrane cap.
+With a new membrane cap ready, fill the new membrane cap half way with electrolyte
+solution and screw back on to probe body.
+How to replace the membrane cap
+1 	2 	3
+RIGHT SIDE UP 	UPSIDE DOWN
+Fill half way
+5	4 	6
+OLD &
+DAMAGED
+NEW
+11	Copyright © Atlas Scientific LLC
+
+-- 11 of 13 --
+
+Over time dissolved oxygen probes can become dirty and covered in chemical deposits.
+Soft coatings can be removed by lightly brushing around the sides of the probe and
+membrane cap. If the probes membrane is in need of cleaning, use a mild bleach mixture
+to gently wash away any deposits.
+DO NOT USE A BRUSH TO CLEAN THE MEMBRANE
+If the probes membrane is ripped it must be replaced, as it will cause irregular readings.
+Probe cleaning
+12	Copyright © Atlas Scientific LLC
+
+-- 12 of 13 --
+
+Dried KCl residue
+from Electrolyte
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+13	Copyright © Atlas Scientific LLC
+
+-- 13 of 13 --
+
+
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf)
+
+pH Probe
+Range 	0 − 14
+95% in 1s	Response time
++/- 0.001	Resolution
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+Double junction silver / silver chloride
+No Temp
+Reads 	pH
+-5 − 99 °C	Temperature range °C
+70m (230’)	Max depth
++/– 0.002	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+~1 Year	Time before recalibration
+~4 Years +	Life expectancy
+or
+Revised 11/25
+V 5.3
+
+-- 1 of 12 --
+
+Operating principle
+A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.
+At the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen
+ions from the liquid being measured to defuse into the outer layer of the glass, while
+larger ions remain in the solution. The difference in the concentration of hydrogen ions
+(outside the probe vs. inside the probe) creates a VERY small current. This current
+is proportional to the concentration of hydrogen ions in the liquid being measured.
+Base: pH > 7	Neutral: pH = 7	Acid: pH < 7
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 2 of 12 --
+
+46.6mm
+(1.8”)
+Soaker cap
+~3 – 4 pH
+pH
+197mm
+(7.7”)
+99.2mm
+(3.9”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+10ml
+Ø 2.8mm
+Ø 8mm
+Minimum
+Immersion
+Unique
+12-digit
+serial #
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 12 --
+
+Glass
+Teflon
+PVC
+EPDM
+Delrin ®
+(body) Polyethylene
+Titanium
+Nitride
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+Glass
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Food Safe
+Atlas Scientific LLC, hereby certifies that,
+Gen 3 Industrial pH Probe – No Temp
+Part # ENV-50-pH-NT
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 12 --
+
+Reference electrode
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --
+
+A pH electrode is a passive device that detects a current generated from hydrogen ion
+activity. This current (which can be positive or negative) is very weak and cannot be
+detected with a multimeter, or an analog to digital converter. This weak electrical signal
+can easily be disrupted and care should be taken to only use proper connectors and cables.
+The current that is generated from the hydrogen ion activity is the reciprocal of that
+activity and can be predicted using this equation:
+Because a pH probe is a passive device it can pick up voltages that are transmitted
+through the solution being measured. This will result in incorrect readings and will
+slowly damage the pH probe over time. In this instance, proper isolation is required.
+Where R is the ideal gas constant.
+T is the temperature in Kelvin.
+F is the Faraday constant.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 12 --
+
+AtlasScientific
+PWR
+RX
+TX
+9 - 36VDC
+pH
+How to connect the
+industrial pH probe
+The Atlas Scientific ™ Gen 3 Industrial pH probe - No Temp, can be connected in several
+different ways. The following show two examples:
+Using our EZO Complete-pH ™ you can easily connect the
+Gen 3 Industrial pH probe - No Temp, via the probes SMA
+connector.
+Gen 3 Industrial pH probe - No Temp
+with the SMA connector option.
+Gen 3 Industrial pH probe - No Temp
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial pH probe -
+No Temp, can be easily connected 	to our Industrial pH
+Transmitter via the probes tinned leads.
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 12 --
+
+Remove the Industrial pH probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the pH probe can be left dry for up to 3 weeks
+without damaging the probe, this is why every Industrial pH probe is shipped with a
+plastic cap containing pH probe storage solution. The cap should remain on the probe
+until it is used.
+Long term storage
+When you are finished using the Industrial pH probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has pH probe storage
+solution within it. If not, just add some from the pH probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+Ready to use
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 12 --
+
+Unlike most pH probes, this probe can dry out. It can be left dry for up to 3 weeks without
+damaging the probe. However, repeated wetting and drying cycles will eventually damage
+the probe. For best results, keep the probe wet at all times. But if the probe is left out to
+dry, it should not be considered damaged. It just needs to be rehydrated.
+If a pH probe is kept in a hot environment during shipping, KCl creep may cause the soaker
+bottle to dry out. KCl will form a salt channel that wicks the water out of the probe's soaker
+bottle.
+Follow these instructions to rehydrate your industrial pH probe:
+1. Place the probe into a beaker of tap water.
+2. Let the probe sit in the water for 3 – 5 mins.
+3. Add a scoop of KCL (best) or NaCl (good) to the beaker.
+(a scoop = so much salt that no human could drink the water)
+4. Let the probe sit in the salt water for 15 – 20 mins.
+5. Done.
+The probe is now ready to use.
+Probe can dry out
+
+-- 9 of 12 --
+
+Probe cleaning
+Coating of the pH bulb can lead to erroneous readings including shortened span (slope).
+The type of coating will determine the cleaning technique. Soft coatings can be removed
+by vigorous stirring or by the use of a squirt bottle. Organic chemical, or hard coatings,
+should be chemically removed using a light bleach solution. If cleaning does not restore
+performance, reconditioning may be tried. Do not use a brush or abrasive materials
+on the pH probe.
+How often do you need
+to recalibrate a pH probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that
+has generally weak levels of acids and bases you will only need to recalibrate your probe
+once per year for the first two years. After that every ~six months.
+If you are using the pH probe in batch chemical manufacturing, industrial process,
+or in a solution that is known to have strong acids and bases, then calibration should be
+done monthly or in extreme cases after each batch.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 12 --
+
+Probe reconditioning
+When reconditioning your pH probe is required due to aging, we recommend you use
+the Atlas Scientific pH probe reconditioning kit.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 12 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+12 Copyright © Atlas Scientific LLC
+
+-- 12 of 12 --
+
+
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__463363d709a0, score 0.749463497270566)
+
+-- 14 of 32 --2.0 	Equipment and Supplies 	7
+2.3 	Standard pH Buffer Solutions
+Standard pH buffer solutions (buffers) are ionic solutions
+that are used to calibrate the pH meter and electrodes. Buffers
+maintain constant pH values (at a single temperature) because
+of their ability to resist changes to the specific pH value for
+which they are produced. However, the pH of solutions is
+affected by temperature, because the calibration slope (which
+is related to the Nernst equation) and the isopotential point
+change with temperature. Modern pH meters are typically
+calibrated with pH buffers having well-known pH-temper-
+ature correlations; quality-assured and National Institute of
+Standards and Technology- (NIST) traceable pH buffers are
+available from USGS One-Stop1. Most pH meters recognize
+the e.m.f. range of certain pH buffers (commonly pH 1.68,
+4.01, 7.00, and 10.01 buffers) and are able to automatically
+compensate for temperature during calibration. Verify that
+the buffers you are using are NIST-traceable, that the values
+are recognized correctly by the meter, and that the buffers are
+compatible with the ATC for your meter. Consult the manu-
+facturer’s manual to be sure that the meter will adjust the
+expected value of the buffer for the temperature measured. The
+user may be responsible for entering the temperature-adjusted
+buffer pH value into the meter for calibration from a chart or
+the meter may automatically generate a temperature-adjusted
+pH value for the buffer.
+Measurements of pH are only as accurate as the buffers
+used to calibrate the meter and electrodes.
+The commonly used pH buffer solutions and their corre-
+sponding pH values from 0 to 90 °C are shown in table 6.4–3.
+The pH buffers 1.68, 4.01, and 10.01 are primary standards
+(pH values determined by using the standard hydrogen-gas
+electrode). Their compositions are typically similar for various
+manufacturers; therefore, their variations in pH with tem-
+perature are well known. The pH-7.00 buffer is a secondary
+standard (pH values determined by interpolation to primary
+standards) and its composition (and therefore pH dependence
+on temperature) may differ with the manufacturer. However,
+the pH-7.00 buffer is typically made either from potassium
+dihydrogen phosphate plus sodium hydroxide or from potas-
+sium dihydrogen phosphate plus sodium hydrogen phosphate;
+the pH values of both buffer formulations are comparable to
+within 0.02 pH units from 0 to 90 °C.
+Use the following precautions and protocols to ensure the
+accuracy of the pH buffers—(modified from Busenberg and
+Plummer, 1987):
+1Equipment and supplies that are tested and quality assured are avail-
+able to USGS field studies from the National Field Supply Service (NFSS)
+and the Hydrologic Instrumentation Facility (HIF), and are sold through
+the USGS One Stop ordering system (accessed February 5, 2020, at
+https://1stop.usgs.gov/) (internal USGS access only).
+• Use only buffers that have been certified traceable to a
+NIST standard reference material.
+• Label pH buffer containers with the date opened and
+the expiration date. Copy the expiration date and the
+buffer lot number onto any reagent containers into
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__b1653e60dd01, score 0.7389230734841745)
+
+-- 18 of 32 --4.0 	Calibration of the pH Instrument System 	11
+have an isopotential point at pH 7 (the pH at which e.m.f. is
+equal to 0 mV). Most modern pH meters are equipped with
+ATC, which compensates for the temperature dependence of
+the standard buffers. The Nernst equation gives the expected
+(theoretical) response potential of the pH buffer at the specific
+temperature of the calibration (Hem, 1989), and after calibra-
+tion most meters report the calibration slope as a percentage
+of the Nernstian theoretical slope. To successfully calibrate
+pH instrumentation, (1) the meter and pH electrode must be
+functioning properly, (2) the system must be calibrated with
+pH buffers so the pH of the solution being measured is within
+the calibrated range, and (3) the temperature of the pH buffers
+during calibration needs be stable and similar to (within 10 °C
+of) the temperature of the solution being measured.
+A properly working pH system has—
+• new or adequately charged batteries
+• a thermistor that functions properly and accurately
+measures the temperature
+• a pH electrode with an accurate Nernstian response
+(slope of 95–101 percent of the theoretical
+Nernstian slope)
+• an isopotential point near pH 7
+• a quick response time (1–2 minutes) in standard
+buffer solutions.
+Accurate measurement of the pH of environmental
+samples requires calibration with pH buffers that bracket the
+pH of the sample. Before the pH instrument system is cali-
+brated, it is useful to estimate (or anticipate from historical
+site data, if available) the pH and conductivity of the waters to
+be encountered at the field sites. If no data are available from
+which to estimate sample pH, then pH indicator paper can
+be used onsite as a gross indicator of the pH of the site, but
+under no circumstances should a pH value from indica-
+tor paper be recorded as the site pH. A two- or three-point
+calibration can be performed. Most manufacturers use a linear
+calibration curve for all calibrations (including multipoint
+calibrations). For most modern meters, a two-point calibration,
+typically with buffers selected from pH 10.01, 7.00, 4.01, or
+1.68, is recommended. pH meters that use either a point-to-
+point calibration or a nonlinear function are not recommended.
+Follow the manufacturer’s instructions with respect to recom-
+mended buffers and the sequence of buffer calibration.
+Examples: When measuring pH in a stream—
+• If pH values are expected to be between 7 and 8,
+then the standard pH-7 and pH-10.01 buffers (at a
+minimum) should be selected.
+• If pH values are expected to be less than 7, then the
+standard pH-7 and pH-4.01 buffers (at a minimum)
+should be selected.
+For the two examples above, a three-point calibration
+using pH-4.01, -7.00, and -10.01 buffers could also be used to
+allow measurement of a larger range of pH.
+The pH of a solution changes with temperature, and most
+modern pH meters automatically compensate for temperature
+differences between the buffers used for calibration and the
+measurements made in samples. However, electrodes may not
+behave ideally and this feature should be tested regularly. Cali-
+brating a pH meter and electrode with buffers that are within
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__07fe9c0e1117, score 0.7366693369224983)
+
+osal company, if necessary.
+pH buffers 	Standard buffers are pH 4, 7, and 10. Temperature-correction chart(s) supplied by the buffer
+manufacturer or distributor are required. See NFM A6.4.
+SC standards 	Choose the SC standard(s) nearest to and/or that bracket(s) the expected measurement or range. To
+field check the calibration, select additional standard(s) that bracket the expected sample SC. SeeNFM A6.3.
+DO standard 	Zero-DO solution. Dissolve 2 g of sodium sulfite in 1 L of DIW (prepared onsite or during the week of
+use). Zero-DO solution can be obtained commercially. See NFM A6.2.
+ORP standard 	ZoBell’s solution. This solution contains cyanide and may be harmful if absorbed through skin,
+inhaled, or swallowed. Check the SDS for guidance on safe handling. See NFM A6.5.
+Turbidity standard 	Turbidity standards (Stablcal1) with various ranges are available commercially or from USGS
+One-Stop Shopping. Most sensor manufacturers recommend either formazin-based or SDVB-
+polymer standards for calibration. Do not use gel or solid verification standards for calibrating
+instruments. See NFM A6.7.
+• Turbidity-free water which is DIW filtered through a ≤0.2-μm membrane filter.
+• Formazin stock suspension can be obtained commercially.
+1Stablcal is a registered trademark of Hach.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__ff61308669d5, score 0.7337315821493812)
+
+ow measurement of a larger range of pH.
+The pH of a solution changes with temperature, and most
+modern pH meters automatically compensate for temperature
+differences between the buffers used for calibration and the
+measurements made in samples. However, electrodes may not
+behave ideally and this feature should be tested regularly. Cali-
+brating a pH meter and electrode with buffers that are within±10 °C of the sample temperature is recommended. This task
+can be accomplished by placing the buffers in a mesh bag and
+equilibrating them to the temperature of the water at the sam-
+pling location before calibration. However, for most sampling
+situations, where the temperature of the water is between 5 and
+35 °C and the pH is between 4.0 and 9.5, the recommended
+procedure is to calibrate the meter in the more controlled
+environment of the office laboratory, and then allow the meter
+to compensate for temperature differences at the sampling site.
+Again, the accuracy of field measurements should be checked
+regularly with buffers equilibrated to the environmental-
+sample temperatures to verify the readings. If the pH of the
+buffers checked at the field site at ±10 °C of the temperature of
+the environmental sample is more than ±0.05 pH unit different
+from the value the buffer should return at that temperature, the
+meter and electrode should be recalibrated at a temperature
+that is ±10 °C of the field-measurement temperature.
+For multiparameter sondes that will be deployed for
+continuous measurements in the field in a range of conditions,
+the recommended procedure is to calibrate in the laboratory
+and then conduct checks in the field at ambient tempera-
+tures to verify the accuracy of the readings. Recalibration
+may be necessary if the initial check is more than ±0.05 pH
+unit different from the value the buffer should return. If the
+measurement temperature is more than ±10 °C different from
+the laboratory calibration temperature, checks in the field are
+more likely to fail and recalibration may be necessary.
+The following guidelines and standard procedures
+generally apply whenever a pH instrument system is to be
+calibrated. Because calibration and operating procedures can
+differ with the instrument system, check the manufacturer’s
+recommended calibration procedures and calibration buffer
+solution requirements. Modern pH meters typically compen-
+sate for buffer temperatures automatically during calibration.
+When using these instruments, follow the manufacturer’s
+calibration instructions and the more general instructions in
+the following procedures—do not take shortcuts.
+• Before each field trip and site visit, check pH-meter/
+electrode logbook records for electrode performance.
+Remember—any noted calibration slope of less
+than 95 percent or greater than 101 percent indicates
+probable electrode deterioration. If the slope is outside
+the acceptable range (95–101 percent), the electrode
+should be cleaned, reconditioned, or replaced, and the
+new electrode calibrated. If a liquid-filled electrode is
+being used, try reconditioning it (section 3.2) in the
+laboratory before replacing it with a new electrode.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__d36f674ffd4f, score 0.7315697067402991)
+
+r a multipoint calibration, repeat steps
+4 through 6 for each standard, beginning with the
+lowest conductivity standard and continuing the
+calibration in ascending order.
+8. 	Record the following in the instrument log
+book, field sheets, or personal computing field
+forms (PCFFs):
+a. 	The concentrations and lot numbers of the
+conductivity standards and their known and
+measured specific conductance,b. 	The temperature of the standard solution,
+c. 	The water-temperature compensation
+utilized (unless the user changes the settings
+or uses a low-pH conductivity method, the
+temperature compensation may only need to
+be recorded once in the log book),
+d. 	The cell constant (one-point calibration)
+or the slope and intercept (multipoint
+calibration), and
+e. 	The meter type, meter serial number, and
+probe serial number.
+9. 	Verify that the new calibration parameters are
+consistent with previous calibrations and are
+within the limits established by the manufacturer.
+10. 	Discard the standard solution into a waste
+container, thoroughly rinse the cell with DIW,
+and dry.
+11. 	Check the accuracy of the calibration by
+measuring at least one additional standard. For
+a one-point calibration, the additional standard
+should be one that brackets the expected specific
+conductance value of the sample. For a multi-
+point calibration, the additional standard should
+have a value near the expected range of environ-
+mental values to be measured. The specific
+conductance of USGS SRSs also can be mea-
+sured to check accuracy. The specific conduc-
+tance of check standards should be within ±5 μS/
+cm for measurements ≤100 μS/cm or ±3 percent
+for measurements >100 μS/cm. Recalibrate the
+specific conductance meter if the measured spe-
+cific conductance of the check standards does not
+meet the calibration criteria.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__434fe1dc3109, score 0.7311089326076824)
+
+-- 19 of 32 --12 	Chapter A6.4. Measurement of pH
+• Use at least two pH buffer solutions with documented,
+NIST-traceable pH values that bracket the sample pH
+for accurate calibration of the pH instrument system.
+• If a large primary source of pH buffer is purchased
+initially, use a secondary bottle to store pH buffers
+while in the field to minimize the chance of contami-
+nating the main pH buffer source. Pour the amount of
+each buffer needed from the source container into a
+clean polyethylene bottle dedicated for the respective
+buffer, and label the bottle with the buffer’s pH value,
+lot number, and expiration date. Keep a printed chart
+of the temperature-adjusted pH values provided by the
+manufacturer for that buffer.
+• A calibration check of the pH meter’s temperature
+sensor is required to be performed at least annually
+(NFM A6.1). Most single-analyte pH meters use a
+thermistor built into the electrode. Multiparameter
+instruments typically have the temperature sensor
+in a different part of the instrument system than the
+pH electrode.
+• The pH instrumentation should be calibrated daily
+and recalibrated if a check of either of the two pH
+buffers nearest to the pH of the sample at a temperature
+that is ± 10 °C of the sample deviates by more than
+± 0.05 pH units.
+• The isopotential point is the characteristic pH where
+the e.m.f. is equal to 0 mV. Most modern pH electrodes
+are designed to have an isopotential point at or near
+pH=7. Test the electrode when it is new by placing it
+in pH-7.00 buffer and record the voltage. Repeat this
+test regularly and verify that the value is ±15 mV of
+the original value. If the isopotential point is more than
+±15 mV of the original value, clean, recondition, or
+replace the electrode.
+Do not use pH buffers that have exceeded their date of
+expiration. Buffers that have been transferred to a second-
+ary bottle for use while in the field should be refreshed
+before every field trip.
+4.1 	Calibration Procedure
+The following calibration procedure is expected to yield
+accurate sample-pH measurements for waters with specific
+conductance less than 60,000 μS/cm, temperatures from 0 to
+90 °C, and pH in the range from 1.68 to 10. Standard buffer
+solutions and combination pH electrode can be appropri-
+ately used to achieve an accurate measurement of the pH
+of environmental waters that is within these environmental
+ranges. Studies of waters with conditions that fall outside
+the ranges described above may require pH calibration and
+measurement modifications.
+4.1.1 	Calibration of a Single-Parameter Meter
+and pH Electrode used for Sample Measurement
+or an Alkalinity Titration
+1. 	Under most situations, it is recommended to calibrate
+the pH meter and electrode in a controlled environment
+such as a laboratory rather than in the field. Most mod-
+ern meters automatically adjust pH measurements for
+changes in temperature, and these corrections are usually
+accurate within a temperature range of 5 to 35 °C and for
+pH measurements between 4.0 and 9.5. Electrodes may
+not behave ideally, however, and this feature should be
+tested regularly with measurements on buffers equili-
+brated to ambient field temperatures.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__82b12bdb95cd, score 0.7309395185263141)
+
+-- 25 of 32 --18 	Chapter A6.4. Measurement of pH
+Step 4. Recheck instrument calibration.
+Check the stability of the pH meter and electrode in the
+field by measuring the pH of the buffer whose pH is nearest
+to that of the samples. If the pH of the buffer differs by more
+than 0.05 pH units from the certified value at the measured
+temperature (table 6.4–3), recalibrate the pH system and then
+remeasure the pH of the sample.
+5.2 	Measurement of pH in Waters with Low
+Specific Conductance
+Accurate and precise measurement of pH in low-specific-
+conductance waters (less than 100 μS/cm) is challenging
+because (1) the water is not sufficiently conductive to complete
+the electrical circuit and allow for a stable pH reading using
+a combination pH electrode, (2) differences in ionic strength
+between the sample and buffers are large, and (3) the potential
+of the liquid junction is larger than normal. Modern reference
+junctions are designed to decrease the effects of low specific
+conductance, but may not always produce the desired accuracy
+for measurements of pH. Low-resistance glass pH electrodes
+or reference junctions with a fast, continuous leak rate can
+be used to make accurate measurements of pH in low-ionic-
+strength waters; however, because these electrodes are expen-
+sive, generally are not designed for fieldwork, and only work
+well in dilute waters, they do not replace traditional electrodes.
+Some methods recommend calibrating with low-ionic-strength
+buffers to minimize liquid junction potential errors, but these
+buffers are easily contaminated and should be avoided in
+field settings.
+The recommended method allows for using normal
+pH field electrodes and standard pH buffers (table 6.4–3)
+by adding a small amount of potassium chloride (KCl) to a
+subsample of water to increase the specific conductance by
+approximately 150 μS/cm. Increasing the specific conduc-
+tance by this amount has little effect on the hydrogen ion
+activity coefficient; the pH is expected to be affected by less
+than 0.01 pH units (Busenberg and Plummer, 1987). It is first
+recommended to determine the pH by using the procedures
+described in section 5.1. If the sample pH does not stabilize,
+and the specific conductance is less than 100 μS/cm, then the
+following procedure is recommended:
+1. 	Before going to the field, prepare small glass vials
+containing 20 milligrams (mg) of dry potassium chlo-
+ride (KCl—crystalline, American Chemical Society-
+certified). Prepare more vials than the expected number
+of pH measurements. (Note: Addition of other salts [for
+example, sodium chloride] also will increase the specific
+conductance, but KCl is recommended to minimize
+effects on the liquid junction potential.)
+2. 	At the sample site, fill a 250-mL polyethylene bottle with
+raw sample water. Immediately transfer 20 mg KCl to
+the sample solution, cap the solution to minimize trans-
+fer of gases, and gently swirl the bottle to dissolve the
+KCl. Maintain the sample at ambient temperature. This
+procedure will increase the specific conductance of the
+sample by approximately 150 μS/cm.
+3. 	Measure the pH on an aliquot of the KCl-amended
+sample from the 250-mL bottle following the procedure
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__147ba11e0c62, score 0.7299349397077598)
+
+-- 21 of 32 --14 	Chapter A6.4. Measurement of pH
+• To calculate the slope in units of millivolts per pH
+unit for a two-point calibration at 25 °C:
+slope  	( 	)
+(
+millivolts of buffer 	millivolts of buffer
+pH of buffer
+1 	2
+22 	1	 pH of buffer )
+and the slope as a percentage of the expected slope
+from the theoretical Nernst relation at 25 °C is
+slope 	in percent slope
+ 	  	
+59 16 100
+.
+This straightforward calculation of slope and relative
+slope is valid only at 25 °C because the expected
+slope from the theoretical Nernst relation varies
+with temperature. For example, the Nernstian slope
+is 55.18 mv/pH unit at 5 °C and 64.12 mV/pH unit
+at 50 °C (Bates, 1965). To calculate relative slope
+at a temperature other than 25 °C, the value for the
+theoretical Nernst response must be substituted for
+59.16 in the equation.
+• The millivolt test—For pH meters that display
+and store millivolt readings, troubleshoot a suspect
+electrode or calibration by using the following
+guidelines to determine adequate voltage potentials
+for each buffer:
+• pH 10.01 buffer: readings between −192 and
+−162 mV
+• pH 7.00 buffer: readings between −15 and 15 mV
+• pH 4.01 buffer: readings between 162 and 192 mV
+• pH 1.68 buffer: readings between 300 and 330 mV
+• The meter may not recognize the pH buffer or
+may incorrectly identify the pH buffer if the mil-
+livolt response is outside the acceptable range. The
+acceptable range may vary with the manufacturer.
+• If buffers other than the standard pH 1.68, 4.01, 7.00,
+and 10.01 buffers are used, refer to the information
+provided with the specific buffer lot to determine
+the correct, temperature-compensated pH value for
+that buffer. Buffers other than pH 1.68, 4.01, 7.00,
+and 10.01 should be used for calibration only in
+cases where expected measured pH is less than 1.68
+or greater than 10, or if the pH meter specifically
+requires their use.
+13. 	Clean, recondition, or replace the electrode if, after reca-
+libration, the slope remains outside the acceptable range
+of 95 to 101 percent or the acceptable range of the mil-
+livolt response is not met at any of the calibration points.
+TECHNICAL NOTE:
+After calibration, measure the pH of the final pH buffer and
+check that the measured pH at the calibration temperature is
+within 0.05 pH units of the certified value (table 6.4–3).
+• 	If the measured pH is equal to or within 0.05
+pH units of the certified value, proceed with the
+sample measurement.
+• 	If the measured pH is more than ±0.05 pH units
+from the certified value, recalibrate the pH electrode
+or determine whether the electrode is not functioning
+properly and should be reconditioned or replaced.
+4.1.2 	Calibration of the pH Sensor in
+Multiparameter Sondes
+Before beginning calibration of the pH electrode in a
+multiparameter sonde, carefully read and follow the manufac-
+turer’s instructions. Guidelines that incorporate USGS proto-
+cols for pH calibration and measurement using multiparameter
+sondes also are described in NFM A6.8.
+General procedures for calibration of the pH sensor on a
+multiparameter sonde—
+1. 	Calibrate the sonde in a controlled environment such as a
+laboratory. Most modern multiparameter sondes auto-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__4c8cc53480b4, score 0.7262499965150251)
+
+ow-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and-- 10 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__c4d565e70268, score 0.7253646682487789)
+
+ response falls outside the acceptable range for the
+response slope and the deviation cannot be corrected through
+cleaning or reconditioning. Also, for any problem encountered,
+first check that the instrument batteries are fully charged, and
+keep spare fresh batteries on hand.
+Table 6.4–4 provides a general guide for troubleshooting
+pH meters, electrodes, and multiparameter sondes.
+
+-- 27 of 32 --20 	Chapter A6.4. Measurement of pH
+Table 6.4–4. 	Troubleshooting guide for pH measurement.
+[Modified from Ritz and Collins, 2008; DIW, deionized water; NIST, National Institute of Standards and Technology]
+Symptom 	Possible cause—corrective action
+Instrument system will not
+calibrate satisfactorily
+• Buffers may be contaminated or old—use fresh buffers.
+• Are buffers the correct NIST standards for this meter? Most meters recognize a certain set of pH
+buffers; refer to the pH meter manual for use of specific buffers.
+• Electrode may be faulty—clean, recondition, or replace electrode (see section 3.0).
+• Batteries may be weak—replace with new or fully charged batteries.
+Slow response 	For liquid-filled electrodes:
+• Weak or incorrect filling solution—change filling solution to correct molarity.
+• No or low filling solution—add fresh solution of correct molarity.
+• Contaminated electrode (for example, visible chemical deposits or organic or biological matter
+on the electrode)—rinse with DIW; if residue persists, use solution and cleaning method recom-
+mended by the manufacturer. Take care not to scratch the electrode bulb. Refer to section 3.1
+for electrode care and cleaning information.
+• Clogged or partially clogged junction—follow the manufacturer’s instructions to unclog the junc-
+tion.
+• Water is cold or of low ionic strength—see section 5.2. Allow more time for equilibration; con-
+sider using a different electrode—refer to table 6.4–2.
+• Slow response to pH changes; refer to table 6.4–2.
+For gel-filled electrodes:
+• Dirty glass bulb—rinse bulb carefully with DIW. If organic/inorganic/biological residue persists,
+consult the manufacturer’s recommendations.
+• Clogged junction—follow the manufacturer’s instructions to unclog the junction
+• Water is cold or of low ionic strength—see section 5.2. Allow more time for equilibration, con-
+sider using a different electrode—refer to table 6.4–2.
+Erratic readings 	Check the following:
+• Tighten, clean, or replace loose or defective connections.
+• Repair or replace broken or defective cables.
+• Loose battery connection—tighten connection.
+• Air bubbles in the electrode bulb—shake electrode gently.
+• Pressure in flow-through chamber—reduce pressure.
+• Weak batteries—replace with new, fully charged batteries.
+Electrode voltage potential and (or)
+slope of the relation between
+millivolts and pH are outside
+acceptable range
+Check the following:
+• Clean, recondition, or replace electrode (see section 3.0).
+• Replace calibration buffers that yield inaccurate results with fresh NIST-traceable buffers.
+
+-- 28 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__1e3d2efc7ac5, score 0.7213245229738529)
+
+ent rather than a
+computed measurement, and avoids the mathematical
+procedure required to compute a mean pH by using loga-
+rithmic operations. Enter the data on the field forms.
+EXAMPLE: Table 6.0–2 shows an example of how
+mean conductivity measured in situ is calculated using the
+EDI method.
+• In the example, the correct value for the discharge-
+weighted mean conductivity is 163 μS/cm, calculated-- 14 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__54d8135ca69b, score 0.7203447670413172)
+
+• pH-meter/electrode logbook, either paper or digital, for recording calibrations, maintenance, and repairs
+• Spare batteries and, if available, spare meter and electrode
+• Safety Data Sheets for all pH buffers and other reagents to be used-- 12 of 32 --
+
+2.0 	Equipment and Supplies 	5
+reached, resulting in a small electrical potential (measured in
+millivolts). The voltage potential across the glass membrane
+during sample measurement is pH dependent and is defined by
+the Nernst equation. The internal solution is typically a pH-7
+buffer solution and, therefore, most pH electrodes have an
+isopotential point (e.m.f.=0 mV) at pH 7 (pHiso).
+The response of the pH electrode conforms to the Nernst
+equation, which is modified below:
+E 	E 	k 	pH 	pH	iso	 	 	 		 		0
+where E is the potential (in millivolts) of the solution being
+measured, E0 is the isopotential point (e.m.f.=0 mV) for a
+pH-7 solution (pHiso), and k=59.16 mV at 25 °C=2.3RT/F,
+where R is the gas constant, T is the temperature, and F is
+Faraday’s constant.
+The reference electrode is not responsive to hydrogen
+ions, and therefore provides a constant reference potential
+against which the glass membrane potential can be measured.
+Most manufacturers make reference electrodes using silver
+wire coated in silver chloride (silver-silver chloride); however,
+calomel (mercury-mercury chloride) and ROSS (platinum-
+iodine/iodine) reference electrodes are commonly used. A
+liquid junction separates the filling solution in the reference
+electrode from the external solution being measured and com-
+pletes the circuit (fig. 6.4–2).
+The reference-electrode filling solution is an ionic
+solution that is the source of mobile ions that complete the
+electrical circuit between the reference and pH-measurement
+electrodes. The reference electrode may be filled with either
+an ionic liquid solution (liquid-filled pH electrode) or an ionic
+gel solution (gel-filled pH electrode). Typically, these ionic
+solutions contain a chloride salt (commonly silver or potas-
+sium) of a known and specific concentration. For liquid-filled
+electrodes, maintaining a sufficient volume and the correct
+concentration of the filling solution, as recommended by the
+electrode manufacturer, within the electrode is required to
+obtain accurate measurements.
+Figure 6.4–2. 	Diagram of a combination (single-junction) pH electrode (Ag, silver; AgCl, silver chloride). Modified from pH-meter.info—
+pH electrode construction, accessed February 4, 2020, at http://www.ph-meter.info/pH-electrode-construction.
+
+-- 13 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__854f1ead5e7e, score 0.7187650071470014)
+
+alibration of the pH instrument system is crucial
+to accurate measurement of the pH of environmental samples.
+A calibration curve is created by measurement of two or
+more standard pH buffers that bracket the pH of the water
+being measured. The ideal slope of the calibration curve
+at 25 °C, based on the Nernst equation (see section 2.2), is
+59.16 mV/pH unit. Almost all pH electrodes are designed to-- 18 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__164de423e5e7, score 0.7172375871650766)
+
+-- 22 of 32 --5.0 	Measurement of pH 	15
+6. 	Always record temperature, buffer lot numbers, and
+expiration dates with calibration information in the pH
+meter/electrode logbook.
+5.0 	Measurement of pH
+Standard procedures for pH measurement are expected
+to yield accurate sample pH measurements for waters with
+specific conductance between 100 and 60,000 μS/cm, tem-
+perature from 0 to 90 °C, and pH from 1.68 to 10. Some of
+the procedures will need to be amended to accurately measure
+pH at the extremes of these ranges, but standard pH calibra-
+tions and combination pH electrodes can be appropriately
+used to achieve an accurate pH measurement of environmental
+waters whose characteristics fall within these ranges. Studies
+of waters whose properties fall outside the ranges described
+above (low-ionic-strength waters and [or] waters with pH less
+than 1.68 or greater than 10) require further modifications of
+pH calibration or measurement procedures.
+The pH of sample water should be measured in situ or as
+soon as possible after removal of the sample from its environ-
+mental source. The pH of a water sample can change substan-
+tially within hours or even minutes after sample collection
+as a result of temperature change; changes in concentra-
+tions of gases (carbon dioxide, hydrogen sulfide, ammonia);
+changes in redox conditions; mineral precipitation; metabolic
+respiration by microorganisms; and other chemical reac-
+tions, physical changes, and biological activity (Hem, 1989).
+Field conditions, including rain, wind, cold, heat, dust, direct
+sunlight, and direct exposure to vehicle exhaust, can cause
+measurement problems. Always protect the instrument system
+and the measurement process from the effects of harsh weather
+and transportation damage.
+In addition to potential changes in the composition of the
+sample water, the reliability of pH measurements depends on
+the accuracy of the calibration, and temperature measurement.
+The physical limitations and characteristics of the electrode,
+including response time, liquid junction potentials, and drift,
+can affect the accuracy of the pH measurement.
+5.1 	Making the pH Measurement
+To measure pH, follow the steps in the procedure outlined
+in figure 6.4–3. Details for each step in the procedure are
+provided below.
+Step 1. Calibrate the pH meter and probe (section 4.0).
+Single-parameter pH meters and electrodes or multipa-
+rameter instruments used for discrete sampling are required
+to be calibrated on the day of use and to be checked at each
+field site to ensure that the calibration is stable. The frequency
+of calibration is determined by the stability of the meter.
+Typically, the calibration should be done in a controlled
+laboratory environment. Most modern meters have built-in
+temperature compensation that works well in the temperature
+range from 5 to 35 °C and pH from 4.0 to 9.5, but this assump-
+tion should be checked regularly with buffers that are equili-
+brated to ambient field-sample temperatures. See section 4.0
+for information about and procedures for meter and electrode
+calibration for pH measurements.
+Step 2. Determine the location and method for the pH
+measurement.
+1. 	The pH of surface water can be determined—
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__e7c93d2b2493, score 0.7160021408834738)
+
+-- 19 of 24 --12 	Chapter A6.3. Specific Conductance
+TECHNICAL NOTES:
+• 	If the measurement is made on a sample in an open
+container and readings do not stabilize within several
+minutes, the cause may be CO2 degassing. Use a closed
+system to make the measurement.
+• 	Filter a sample to measure specific conductance if clay
+or other suspended particles interfere with the stability
+of the readings.
+4.3 Measurement of Specific Conductance of a
+Water Sample with Low or High pH
+Specific conductance (and electrical conductivity) data
+are reported at 25 °C. Most modern specific conductance
+meters have the capability to compensate for temperature auto-
+matically. Equation 2 is used most commonly to determine the
+specific conductance at 25 °C and commercially available field
+specific conductance meters typically use either a constant α
+(typically 0.019–0.020 per °C) or a nonlinear α (International
+Organization for Standardization, 1985). Whereas these com-
+monly used temperature-compensation factors work well for
+waters having a pH between 4 and 11, they can be the source
+of errors as large as 50 percent for low-pH samples.
+4.3.1 Measurement of Specific Conductance of
+a Water Sample with Low pH (<4)
+The specific conductance measurement error for low-pH
+(<4) waters can be large if the commonly used temperature-
+compensation factors are used. To determine whether an alter-
+native temperature-compensation method should be used for
+samples with pH <4, the in situ specific conductance should
+be compared to the specific conductance of a sample equili-
+brated to 25 °C. If the measurements are comparable (within
+±5 μS/cm for specific conductance ≤100 μS/cm or ±3 percent
+for specific conductance >100 μS/cm), then the temperature
+algorithm used is likely sufficient. If a temperature-compen-
+sation factor is required for a water sample with pH <4, the
+method described by McCleskey (2013) is recommended.
+4.3.2 Measurement of Specific Conductance of
+a Water Sample with High pH (>11)
+No temperature-compensation method is available for
+waters with high pH (>11); therefore, the specific conduc-
+tance should be checked by making a measurement at ambient
+temperature and at 25 °C for waters with pH >11. At high pH,
+hydroxide becomes a major ion in the solution and its mobility
+is different than that of most other ions. However, the hydrox-
+ide-equivalent conductivity is much lower than the hydrogen-
+equivalent conductivity and, unlike in low-pH waters, the stan-
+dard temperature-compensation approaches may be adequate.
+Furthermore, relatively few natural waters have a pH >11, so
+this situation is fairly rare.
+5.0 Troubleshooting
+Contact the instrument manufacturer if the actions sug-
+gested in table 6.3–3 fail to resolve the problem. One of the
+first things to check is the battery voltage. Always have fresh
+batteries in meters and carry spares when taking meters out
+into the field.
+Check the voltage of batteries. Always have fresh batteries
+in field meters and carry spares.
+6.0 	Reporting Specific Conductance in
+Natural Waters
+• Follow USGS standard protocols for reporting spe-
+cific conductance in the National Water Information
+System (NWIS) database—
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206, score 0.7159631949701193)
+
+he following equation:
+ = K 	G	cell 	(1)
+where 𝐾cell is the cell constant (in units of cm-1). The cell con-
+stant is the ratio of the distance between two electrode plates
+(d) and their area (A). The units of electrical conductivity are
+siemens per centimeter (S/cm), which is the equivalent of
+mhos per centimeter (mhos/cm). Most values reported prior to
+1971 were in units of mhos per centimeter.Electrical conductivity increases by 0.5 to 3 percent per
+degree Celsius and varies depending on the ionic species
+present (Robinson and Stokes, 1970; McCleskey, 2013). For
+natural waters, conductometric measurements are typically
+used to estimate the concentrations of total dissolved solids
+(TDS); therefore, the electrical conductivity is reported at
+25 °C (κ25 °C, which is equivalent to specific conductance), to
+facilitate this estimation of TDS by removing the effects of
+temperature. The value of κ25 °C is typically calculated by using
+the following equation:
+κ
+κ
+α
+25 1 	25
+° 	= + 	− 	°
+C t 	C	( 	) (2)
+where α is the temperature-compensation factor and t is the
+measured temperature in degrees Celsius. Modern specific
+conductance field meters typically have preprogrammed
+temperature-compensation factors (α) and report specific
+conductance (or electrical conductivity) at 25 °C (κ25 °C).
+Most specific conductance meters utilize either linear
+(0.019–0.020 per °C) or nonlinear (International Organiza-
+tion for Standardization, 1985) temperature-compensation
+algorithms that are applicable for most natural waters. The
+temperature compensation used is likely described in the
+meter’s manual or can be determined by using standard
+solutions and the method described by McCleskey (2013).
+Conductance and temperature can be measured accurately
+with modern instrumentation, and temperature compensation
+is typically accurate to ±5 percent for water in the range from
+5 to 35 ºC and whose pH is between 4 and 11. For low-pH
+(pH <4) waters, using the standard temperature-compensation
+factors can result in κ25 °C errors as large as 50 percent, because
+the transport properties of the hydrogen ion are different from
+those of most other ions, and the hydrogen ion contributes sub-
+stantially to the electrical conductance at low pH (McCleskey,
+2013). For low-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__4eb25a3b143b, score 0.7159301160745567)
+
+a of
+increment, in
+ft2
+Increment
+discharge, in
+ft3/s
+Median
+conductivity1, in
+μS/cm
+LEW 	0 	– 	– 	– 	– 	– 	–
+1 	20 	2.0 	22 	5.7 	125 	250 	185
+2 	20 	2.2 	11 	10.4 	114 	250 	170
+3 	20 	2.3 	9 	12.0 	109 	250 	155
+4 	20 	3.9 	5 	12.8 	64 	250 	155
+5 	20 	3.4 	10 	7.4 	74 	250 	150
+REW 	0 	– 	– 	– 	– 	– 	–
+1Calculation of conductivity: mean of median conductivity measurements ( 815
+5 ) = 163 μS/cm-- 15 of 32 --
+
+8 	Chapter A6.0. Guidelines for Field-Measured Water-Quality Properties
+multiple depths) within the vertical. Repeat this pro-
+cedure at each vertical. The value recorded at each
+vertical should be the median of values observed
+within approximately 60 seconds after the sensor(s)
+have equilibrated with streamwater.
+• Subsample method— Collect an isokinetic, depth-
+integrated sample at the centroid of each equal-width
+increment, emptying the increment sample into
+a compositing device. Measure field parameters
+either in the sample collected at each increment or
+in a subsample taken from the composite of all the
+increment samples.
+2. 	The final field-measurement value is the mean of the in
+situ or individual increment-sample value for all the EWI
+verticals in the section (the composite subsample yields
+a single value). Use a median value for pH. Recording
+a median value for pH ensures that the reported value
+represents an actual measurement rather than a computed
+measurement, and avoids the mathematical procedure
+required to compute a mean pH by using logarithmic
+operations. Enter the data on the field forms.
+EXAMPLE: Table 6.0–3 shows an example of an area-
+weighted median measurement for conductivity measured in
+situ.
+• In the example, the area-weighted median conductivity
+equals 130 μS/cm.
+• To calculate an area-weighted median, multiply the
+area of each increment by its corresponding field mea-
+surement, sum the products of all the increments, and
+divide by total cross-sectional area.
+• Note that if the conductivity reported were selected at
+mid-depth of the vertical of centroid of flow (section
+10), it would have been reported as 125 μS/cm; if the
+conductivity reported were near the left edge of the
+water, it would have been reported as 150 μS/cm.
+• The final field-measurement value typically is calcu-
+lated as the mean of the values recorded at all EWI
+increments, resulting in an area-weighted mean. Use a
+median value for pH.
+Table 6.0–3. 	Example of field notes for an area-weighted conductivity measurement.
+[ft, feet; LEW, left edge of water; ft2, square feet; SC, conductivity (specific electrical conductance); μS/cm, microsiemens per centimeter at 25 degrees Celsius;
+—, not available; REW, right edge of water]
+Section
+number
+Cumulative
+percent of flow
+in section
+Vertical
+location, in ft
+from LEW
+Width of
+section, in
+ft
+Depth of
+vertical, in
+ft
+Area of section,
+in
+ft2
+Median SC1, in
+μS/cm
+Product of
+median SC and
+area
+LEW 	0 	0 	– 	– 	– 	– 	–
+1 	2 	2 	4 	1.0 	4.0 	150 	600
+2 	4 	6 	4 	2.0 	8.0 	145 	1,160
+3 	6 	10 	4 	2.6 	10.4 	145 	1,508
+4 	10 	14 	4 	3.2 	12.8 	140 	1,792
+5 	16 	18 	4 	3.5 	14.0 	135 	1,890
+6 	22 	22 	4 	4.0 	16.0 	130 	2,080
+7 	28 	26 	4 	4.5 	18.0 	130 	2,340
+8 	34 	30 	4 	5.4 	21.6 	125 	2,700
+9 	42 	34 	4 	6.0 	24.0 	125 	3,000
+10 	50 	38 	4 	5.7 	22.8 	125 	2,850
+11 	62 	42 	4 	5.1 	20.4 	125 	2,550
+12 	76 	46 	4 	4.6 	18.4 	125 	2,300
+13 	88 	50 	4 	3.5 	14.0 	125 	1,750
+14 	96 	54 	4 	1.4 	5.6 	135 	756
+15 	99 	58 	4 	1.0 	4.0 	140 	560
+REW 	100 	60 	– 	– 	– 	– 	–
+1Calculation of SC: sum of values in last column divided by the total cross-sectional area ( 27 836
+214
+, 	) = 130 μS/cm
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__9fd4fb61c959, score 0.7156144626166651)
+
+, do not
+store the electrode in buffer solution for a long period.
+• Gel-filled electrodes should be stored according to the
+manufacturer’s instructions.
+General guidelines for long-term storage:
+• Store electrodes in the appropriate storage solu-
+tion and cap as recommended by the manufacturer.
+For long-term storage, wrap the electrode cap and
+filling-hole plug with lab plastic wrap (Parafilm) toprevent formation of excess salts or evaporation of
+the reference solution. Liquid-filled electrodes may
+need to be drained of filling solution; follow the
+manufacturer’s instructions.
+• Clean the electrode cable contacts and connector
+(with alcohol, if necessary). Allow the contacts to dry
+thoroughly, and seal and store them in a plastic bag.
+• Store every component of the pH-measuring system in
+an area that is clean, dry, and protected from extreme
+hot or cold temperatures.
+4.0 	Calibration of the pH
+Instrument System
+Proper calibration of the pH instrument system is crucial
+to accurate measurement of the pH of environmental samples.
+A calibration curve is created by measurement of two or
+more standard pH buffers that bracket the pH of the water
+being measured. The ideal slope of the calibration curve
+at 25 °C, based on the Nernst equation (see section 2.2), is
+59.16 mV/pH unit. Almost all pH electrodes are designed to
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__91f856db8d42, score 0.7154323817151151)
+
+-- 9 of 32 --2 	Chapter A6.0. Guidelines for Field-Measured Water-Quality Properties
+concentration, specific electrical conductance (SC), pH,
+reduction-oxidation potential (redox/ORP), alkalinity and
+acid-neutralizing capacity (ANC)2, and turbidity.3 The field
+methods for measuring field parameters described in this
+chapter are applicable to most natural waters.
+USGS guidelines for continuous monitoring of selected
+field measurements are described in Wagner and others (2006).
+Specific guidance for the use of multiparameter instruments—
+instruments for which the individual field-measurement
+sensors are combined into a sonde and deployed to the water
+body for in situ measurements—is provided in NFM A6.8.
+Before 2017, the NFM chapters were released in the
+USGS Techniques of Water-Resources Investigations series.
+Effective in 2018, new and revised NFM chapters are being
+released in the USGS Techniques and Methods series; this
+series change does not affect the content and format of the
+NFM. More information is in the general introduction to the
+NFM (USGS Techniques and Methods, book 9, chapter A0)
+at https://doi.org/10.3133/tm9A0. The authoritative current
+versions of NFM chapters are available in the USGS Publica-
+tions Warehouse at https://pubs.er.usgs.gov/. Comments, ques-
+tions, and suggestions related to the NFM can be addressed
+to nfm@usgs.gov.
+2.0 	Quality Assurance
+Adherence to standard U.S. Geological Survey (USGS)
+quality-assurance protocols is required, and quality-controlled
+procedures are to be incorporated into every USGS data-
+collection effort to monitor water quality. Quality assurance
+of the data collected includes the timely and accurate docu-
+mentation of field information in electronic and (or) paper
+records, as well as second- or third-party auditing of such
+records. Included in these records of quality-control data for
+field measurements are the records of replicate measurements.
+Training in measurement techniques and the collection of
+quality-control data is essential to the consistency of the field-
+measurement procedures.
+2.1 	Records
+Recordkeeping is the responsibility of all field personnel.
+Electronic and (or) paper records must be established and
+maintained for each uniquely identified sampling location to
+2Alkalinity/acid-neutralizing capacity (ANC) is a field analysis, not a
+direct field measurement; however, the analysis is performed routinely during
+the same field trip in which the other field-measurements are made. In this
+section, the term “alkalinity” is used when referring to either alkalinity or
+ANC.
+3Each of these field measurements is discussed in detail in the following
+chapters of the National Field Manual: temperature (NFM A6.1), dissolved
+oxygen (NFM A6.2), specific electrical conductance (NFM A6.3), pH
+(NFM A6.4), reduction-oxidation potential (NFM A6.5), alkalinity and acid-
+neutralizing capacity (NFM A6.6), and turbidity (NFM A6.7).
+permanently document field activities, measurement readings,
+instrument calibration, and any other information needed to
+meet programmatic or regulatory requirements (see NFM A1
+and A4 for detailed information about records).
+• For every field visit, instrument-performance informa-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__32214136fa02, score 0.7134968150605874)
+
+through chamber—reduce pressure.
+• Weak batteries—replace with new, fully charged batteries.
+Electrode voltage potential and (or)
+slope of the relation between
+millivolts and pH are outside
+acceptable range
+Check the following:
+• Clean, recondition, or replace electrode (see section 3.0).
+• Replace calibration buffers that yield inaccurate results with fresh NIST-traceable buffers.
+
+-- 28 of 32 --Selected References 	21
+Acknowledgments
+The information in the U.S. Geological Survey (USGS)
+National Field Manual (NFM) is based on existing manuals,
+various reference documents, and a broad spectrum of
+expertise provided by USGS colleagues. Authors of previous
+versions of NFM chapter A6.4 were Eurybiades Busenberg,
+J.A. Collins, J.K. Kurklin, D.B. Radtke, G.F. Ritz, and F.D.
+Wilde. The persistence and spirit that all of our colleagues
+brought to the development of a national field manual were
+invaluable.
+The following USGS colleagues provided content and
+detailed reviews that improved the technical quality of this
+report: Blaine McCleskey, Cherie Miller, Gerolamo Casile,
+Leslie DeSimone, Jacob Gibs, Andrew Hickey, William
+Mcbride, Teri Snazelle, Katie Walton-Day. Editorial and
+production assistance from Marilyn Billone, Sandy Cooper,
+Elizabeth Good, Cathy Knutson, Katharine Schindler, and
+Dale Simmons is greatly appreciated. These individuals con-
+tributed to the accuracy, quality, and usability of the NFM, and
+demonstrated much patience as we traversed the difficult task
+of developing the new format.
+Special thanks are extended to Franceska Wilde (USGS),
+who led the effort for the NFM from its inception until her
+retirement in 2014; the USGS NFM Steering Committee
+(Gerolamo Casile, Alissa Coes, Michael Manning, Che-
+rie Miller, Timothy Oden, Lisa Olsen, Michael Rosen, and
+Stanley Skrobialowski; Cherie Miller, who led the effort from
+2016 to 2018; and Gerolamo Casile, who assumed responsibil-
+ity for the NFM in 2018.
+Selected References
+Bates, R.G., 1973, Determination of pH, theory and practice
+(2d ed.): New York, John Wiley and Sons, Inc., 435 p.
+Benjamin, M.M., 2015, Water chemistry (2d ed.): Long Grove,
+Ill., Waveland Press, Inc., 905 p.
+Buck, R.P., Rondinini, S., Covington, A.K., Baucke, F.G.K.,
+Brett, C.M.A., Camoes, M.F., Milton, M.J.T., Mussini, T.,
+Naumann, R., Pratt, K.W., Spitzer, P., and Wilson, G.S.,
+2002, Measurement of pH—Definition, standards, and
+procedures (IUPAC recommendations 2002): Pure and
+Applied Chemistry, v. 74. no. 11, p 2169–2200.
+Busenberg, E., and Plummer, L.N., 1987, pH measurement
+of low-conductivity waters: U.S. Geological Survey
+Water-Resources Investigations Report 87–4060, 21 p.,
+https://pubs.usgs.gov/wri/1987/4060/report.pdf.
+Gibs, Jacob, Wilde, F.D., and Heckathorn, H.A., 2012, Use
+of multiparameter instruments for routine field measure-
+ments (ver. 1.1): U.S. Geological Survey Techniques of
+Water-Resources Investigations, book 9, chap. A6, section
+6.8, accessed February 13, 2020, at https://pubs.er.usgs.gov/
+publication/twri09A6.8.
+Hem, J.D., 1989, Hydrogen-ion activity, in Study and
+interpretation of the chemical characteristics of natural
+water (3d ed.): U.S. Geological Survey Water-Supply
+Paper 2254, p. 61–66, accessed February 12, 2020, at
+https://doi.org/10.3133/wsp2254.
+Mottl, M.J., 2009, Highest pH?: Geochemical News, v. 141,
+accessed February 12, 2020, at https://www.geochemsoc.org/
+publications/geochemicalnews/gn141oct09/highestph.
+Nordstrom, D.K., 1997, Geochemistry for groundwater
+systems: U.S. Geological Survey Training Course given
+at the USGS National Training Center, Denver, Colo.,

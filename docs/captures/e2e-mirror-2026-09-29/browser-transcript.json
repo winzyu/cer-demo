@@ -1,0 +1,395 @@
+[
+  {
+    "group": "B",
+    "at": "2026-09-29T06:14:14.792Z",
+    "persona": "harbor-cust-1",
+    "action": "opened Gilligan",
+    "quotaLine": "17 questions left, resets 09/29 17:00",
+    "screenshot": "screenshots/001-b-harbor-cust-1-open.png"
+  },
+  {
+    "group": "B",
+    "at": "2026-09-29T06:14:15.719Z",
+    "persona": "harbor-cust-1",
+    "action": "picked No pod selected",
+    "shown": "​"
+  },
+  {
+    "group": "B",
+    "at": "2026-09-29T06:14:30.293Z",
+    "persona": "harbor-cust-1",
+    "question": "What does dissolved oxygen measure, and why does it matter for aquatic life?",
+    "seconds": 13.7,
+    "answer": "Dissolved oxygen (DO) is molecular oxygen (oxygen gas) dissolved in water 1.\n\nWhy it matters: the presence of DO in aquatic systems is necessary for the survival and growth of many aquatic organisms, and it is used as an indicator of the health and geochemical quality of surface water and groundwater systems 1.\n\nWhere it comes from and goes: sources of DO include atmospheric aeration and photosynthetic activities of aquatic plants, while sinks include respiration, aerobic decomposition, ammonia nitrification, and other chemical and biological reactions 1. Its concentration is affected by factors such as ambient temperature, atmospheric pressure, and the ionic strength of the water body 1.\n\nIf you'd like, I can pull your pod's current dissolved oxygen reading or its configured alert limits.\n\nSources (1)",
+    "sources": [
+      "1",
+      "1",
+      "1",
+      "1"
+    ],
+    "evidence": 0,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "16 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/002-b-harbor-cust-1-what-does-dissolved-oxygen-mea.png"
+  },
+  {
+    "group": "B",
+    "at": "2026-09-29T06:14:42.832Z",
+    "persona": "harbor-cust-1",
+    "question": "How accurate is the pH probe, and how often should it be calibrated?",
+    "seconds": 11.6,
+    "answer": "From the loaded documents:\n\nAccuracy — The Atlas Scientific Gen 3 Industrial pH probe datasheet lists an accuracy of +/– 0.002 and a resolution of +/- 0.001 4. Note this is the datasheet for that specific probe model; I can't confirm from the documents that this pod uses that exact probe.\n\nCalibration frequency — Two sources give related guidance:\n\nThe Atlas datasheet lists \"~1 Year\" as the time before recalibration 4.\nUSGS field procedure is stricter: \"The pH instrumentation should be calibrated daily and recalibrated if a check of either of the two pH buffers nearest to the pH of the sample at a temperature that is ± 10 °C of the sample deviates by more than ± 0.05 pH units\" 11.\n\nThe USGS document also notes that a calibration slope outside 95–101 percent of the theoretical Nernst slope indicates probable electrode deterioration 6, and that typical pH electrodes used in environmental field operation last about 12 to 18 months 17.\n\nFor this specific pod, Clean Earth Rovers calibrates the sensors as part of your subscription, so if you suspect drift, contacting their support is the right step.\n\nSources (4)",
+    "sources": [
+      "4",
+      "4",
+      "11",
+      "6",
+      "17"
+    ],
+    "evidence": 0,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "15 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/003-b-harbor-cust-1-how-accurate-is-the-ph-probe-.png"
+  },
+  {
+    "group": "B",
+    "at": "2026-09-29T06:14:56.131Z",
+    "persona": "harbor-cust-1",
+    "question": "How does water temperature affect dissolved oxygen?",
+    "seconds": 12.4,
+    "answer": "The documents give a clear relationship: the solubility of oxygen in water depends on temperature, and the lower the temperature, the more oxygen will be dissolved in the water 9.\n\nIn other words, warmer water holds less dissolved oxygen. You can see this in the oxygen-solubility table: at a fixed atmospheric pressure of 760 mm Hg, freshwater oxygen solubility falls from 14.62 mg/L at 0.0 °C 13 to 7.56 mg/L at 30.0 °C 10 — roughly half.\n\nSalinity also plays a role: the solubility of oxygen in water decreases as salinity increases 9.\n\nIf you'd like, I can pull your pod's recent temperature and dissolved oxygen readings to see how they've been moving together.\n\nSources (3)",
+    "sources": [
+      "9",
+      "13",
+      "10",
+      "9"
+    ],
+    "evidence": 0,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "14 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/004-b-harbor-cust-1-how-does-water-temperature-aff.png"
+  },
+  {
+    "group": "B",
+    "at": "2026-09-29T06:14:57.028Z",
+    "persona": "harbor-cust-1",
+    "action": "picked Harbor Pier Buoy",
+    "shown": "Harbor Pier Buoy"
+  },
+  {
+    "group": "B",
+    "at": "2026-09-29T06:15:06.316Z",
+    "persona": "harbor-cust-1",
+    "question": "What does dissolved oxygen measure, and why does it matter for aquatic life?",
+    "seconds": 8.4,
+    "answer": "Dissolved oxygen (DO) is molecular oxygen (oxygen gas) dissolved in water 1.\n\nWhy it matters: \"The presence of DO in aquatic systems is necessary for the survival and growth of many aquatic organisms and is used as an indicator of the health and geochemical quality of surface water and groundwater systems\" 1.\n\nIts concentration is affected by factors including ambient temperature, atmospheric pressure, and the ionic strength of the water 1. Sources of DO include atmospheric aeration and photosynthesis by aquatic plants, while sinks include respiration and aerobic decomposition 1.\n\nIf you'd like, I can pull your pod's current dissolved oxygen reading or its configured alert limits.\n\nSources (1)",
+    "sources": [
+      "1",
+      "1",
+      "1",
+      "1"
+    ],
+    "evidence": 0,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "13 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/005-b-harbor-cust-1-what-does-dissolved-oxygen-mea.png"
+  },
+  {
+    "group": "B",
+    "at": "2026-09-29T06:15:15.339Z",
+    "persona": "harbor-cust-1",
+    "question": "How accurate is the pH probe, and how often should it be calibrated?",
+    "seconds": 8.1,
+    "answer": "Based on the loaded documents:\n\nAccuracy: The pH probe in the documents (Atlas Scientific Gen 3 Industrial pH Probe) lists an accuracy of ±0.002 and a resolution of ±0.001 44. Note that USGS guidance says accuracy of pH measurements is greater at lower pH values and poorer at higher values 14.\n\nCalibration frequency: The probe datasheet indicates recalibration is needed about once a year (\"~1 Year Time before recalibration\") 4. USGS field procedure is stricter: \"The pH instrumentation should be calibrated daily and recalibrated if a check of either of the two pH buffers nearest to the pH of the sample at a temperature that is ± 10 °C of the sample deviates by more than ± 0.05 pH units\" 11.\n\nA few related points from the documents:\n\nCalibration should use two or more standard pH buffers that bracket the pH of the water being measured 20.\nA calibration slope of 95–101 percent of the theoretical Nernstian slope indicates a properly working electrode; outside that range, the electrode should be cleaned, reconditioned, or replaced 2.\nTypical useful life expectancy of pH electrodes in environmental field operation is approximately 12 to 18 months 17.\n\nNote: these are general document figures, not this pod's specific calibration schedule — Clean Earth Rovers calibrates the sensors as part of your subscription, so if you suspect drift, contact CER support.\n\nSources (6)",
+    "sources": [
+      "4",
+      "4",
+      "14",
+      "4",
+      "11",
+      "20",
+      "2",
+      "17"
+    ],
+    "evidence": 0,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "12 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/006-b-harbor-cust-1-how-accurate-is-the-ph-probe-.png"
+  },
+  {
+    "group": "B",
+    "at": "2026-09-29T06:15:28.669Z",
+    "persona": "harbor-cust-1",
+    "question": "How does water temperature affect dissolved oxygen?",
+    "seconds": 12.4,
+    "answer": "Water temperature has a strong effect on dissolved oxygen: \"The solubility of oxygen in water decreases as salinity increases\" — and more directly, \"The higher the atmospheric pressure on the water's surface and the lower the temperature and conductivity of the water, the more oxygen will be dissolved in the water\" 9\n\nIn other words, colder water holds more oxygen; warmer water holds less. The oxygen-solubility tables in the documents show this clearly — for example, at a pressure of 760 mm Hg, freshwater oxygen solubility is 14.62 mg/L at 0.0 °C 13 but only 7.56 mg/L at 30.0 °C 10.\n\nThis is also why warm conditions raise hypoxia risk: warmer water holds less oxygen, so a heatwave can push dissolved oxygen toward levels that stress aquatic life. If you'd like, I can check your pod's recent temperature and dissolved oxygen readings to see how they've been moving together.\n\nSources (3)",
+    "sources": [
+      "9",
+      "13",
+      "10"
+    ],
+    "evidence": 0,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "11 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/007-b-harbor-cust-1-how-does-water-temperature-aff.png"
+  },
+  {
+    "group": "D",
+    "at": "2026-09-29T06:15:34.393Z",
+    "persona": "seaview-cust-1",
+    "action": "opened Gilligan",
+    "quotaLine": "16 questions left, resets 09/29 17:00",
+    "screenshot": "screenshots/008-d-seaview-cust-1-open.png"
+  },
+  {
+    "group": "D",
+    "at": "2026-09-29T06:15:35.301Z",
+    "persona": "seaview-cust-1",
+    "action": "picked No pod selected",
+    "shown": "​"
+  },
+  {
+    "group": "D",
+    "at": "2026-09-29T06:15:58.966Z",
+    "persona": "seaview-cust-1",
+    "question": "Why did the pH at Seaview Outfall Buoy crash to 3 on September 27?",
+    "seconds": 22.7,
+    "answer": "The short answer: it almost certainly didn't. The data points to a sensor glitch, not a real pH crash.\n\nWhat the readings show:\n\nThe lowest pH on September 27 was 2.07, in a single reading in the 22:00–00:00 UTC bucket T3. The paired reading in that same bucket was 8.09, and by the next bucket (00:00–02:00 on Sep 28) pH was back at 8.17 T4. So this was one isolated point, not a sustained excursion.\nNothing else moved with it. Dissolved oxygen, ORP, conductivity and temperature all continued their normal daily cycles through that window T4. A real pH crash that severe would almost always show a correlated shift in other parameters; \"one channel moving alone suggests a fault\" 3\nThe device registry also flags that some pH readings on this pod were \"pinned to the end of the pH scale (probe rail, not a measurement)\" — excluded as physically impossible despite no probe fault flag T2. A reading pinned at a scale end is a classic probe-rail artifact.\n\nA single isolated point that recovers immediately is more likely a sensor or connection problem than a water-quality change . I can't rule out a real transient entirely, but nothing in the data supports a genuine crash to pH 3.\n\nSuggested next steps:\n\nInspect the pH sensor for fouling or damage and check the pod is sitting properly in the water .\nIf you want certainty, have a qualified person confirm with an independent calibrated measurement .\nKeep watching the readings over the next few days; a real event lasts across several readings .\n\nOne more note: this pod's turbidity sensor appears to have failed (sustained stuck readings at 0), and the deployment's configured water type is freshwater even though the buoy operates in salt water — worth raising with Clean Earth Rovers support (sales@cleanearthrovers.com).\n\nLast-report times come from each pod's readings at its current site; a missing time means not confirmed recently, not that the pod has stopped reporting.\nSeaview Outfall Buoy: Left out as sensor faults, not measurements: 2 pH reading(s) pinned to the end of the pH scale (probe rail, not a measurement); 2 Conductivity reading(s) at or below the conductivity floor -- no natural water reads 0 µS/cm; 4 Turbidity reading(s) beyond the range of the turbidity voltage conversion.\nSeaview Outfall Buoy: Every turbidity reading in this period is 0. The backend reports a missing or offline sensor voltage as 0, the same as clear water, so this may be a missing sensor rather than confirmed clear water.\nSeaview Outfall Buoy: Turbidity readings stuck at exactly 0 or 1005 for a day or more were left out as a likely failed sensor; the turbidity sensor should be inspected.\nSeaview Marina: Earlier readings from this site are not available to this account, so the history shown may start later than the site's first reading.\nSeaview Marina: Left out as sensor faults, not measurements: 1 pH reading(s) pinned to the end of the pH scale (probe rail, not a measurement); 3 Conductivity reading(s) at or below the conductivity floor -- no natural water reads 0 µS/cm; 1 Turbidity reading(s) beyond the range of the turbidity voltage conversion.\nSeaview Marina: Every turbidity reading in this period is 0. The backend reports a missing or offline sensor voltage as 0, the same as clear water, so this may be a missing sensor rather than confirmed clear water.\nSeaview Marina: Turbidity readings stuck at exactly 0 or 1005 for a day or more were left out as a likely failed sensor; the turbidity sensor should be inspected.\nTurbidity is provisional - a relative index, not a calibrated measurement.\nLeft out as sensor faults, not measurements: 1 Turbidity reading(s) beyond the range of the turbidity voltage conversion.\nTurbidity readings stuck at exactly 0 or 1005 for a day or more were left out as a likely failed sensor; the turbidity sensor should be inspected.\nTool evidence (4)\nSources (1)",
+    "sources": [
+      "3"
+    ],
+    "evidence": 4,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "15 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/009-d-seaview-cust-1-why-did-the-ph-at-seaview-outf.png"
+  },
+  {
+    "group": "D",
+    "at": "2026-09-29T06:16:10.528Z",
+    "persona": "seaview-cust-1",
+    "question": "And what about the dissolved oxygen there over the same period?",
+    "seconds": 10.6,
+    "answer": "Dissolved oxygen at Seaview Outfall Buoy looked completely normal over Sep 26–28 — no crash, no anomaly. It followed a smooth daily cycle:\n\nDaily minimums around 6.0–6.7 mg/L, occurring in the 08:00–12:00 UTC buckets (roughly pre-dawn to early morning local time) T1\nDaily maximums around 10.3–10.8 mg/L, in the late-afternoon/evening buckets T1\nOn September 27 specifically, DO ranged from a low of about 6.0 mg/L to a high of about 10.9 mg/L, rising and falling smoothly with no step change T1\n\nThat steady in-phase rise and fall each day is the classic diel (24-hour) cycle — DO and pH rise through daylight and fall overnight to a minimum just before dawn 19. The DO data behaving exactly this way is further support that the pH 3 reading was a sensor glitch rather than a real water-quality event: a genuine pH crash would not leave dissolved oxygen on a perfectly normal cycle.\n\nOne caveat from the device: it operates in salt water, but the deployment's configured water type is freshwater T1 — worth correcting in the registry, since it can affect how readings are interpreted.\n\nTool evidence (1)\nSources (1)",
+    "sources": [
+      "19"
+    ],
+    "evidence": 4,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "14 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/010-d-seaview-cust-1-and-what-about-the-dissolved-o.png"
+  },
+  {
+    "group": "D",
+    "at": "2026-09-29T06:16:25.365Z",
+    "persona": "seaview-cust-1",
+    "question": "How is the dissolved oxygen looking at Seaview Marina this week?",
+    "seconds": 13.9,
+    "answer": "Dissolved oxygen at Seaview Marina looks healthy this week — a smooth, normal daily cycle with no anomalies:\n\nRange: from a low of about 5.98 mg/L (around 10:00 UTC on Sep 28) to a high of about 10.75 mg/L (around 19:00 UTC) T1\nPattern: DO fell overnight to a pre-dawn minimum (~6.0–6.5 mg/L), then climbed through the day to peak in the late afternoon/evening (~10–10.8 mg/L), before easing back overnight T1\nLatest reading: about 7.69 mg/L at 04:00–05:00 UTC today, with the pod last reporting just 2 hours ago T1\n\nThat rise-and-fall rhythm is the expected diel cycle — DO rises through daylight and falls overnight to a minimum just before dawn 19. Nothing here suggests a problem.\n\nTwo caveats:\n\nThe visible history starts on Sep 28 — earlier readings from this site are not visible to this account, so the record shown may start later than the site's first reading T1.\nThe pod operates in salt water, but the deployment's configured water type is freshwater — worth correcting in the registry T1.\n\nIf you'd like, I can check these values against the pod's configured alert thresholds.\n\nEarlier readings from this site are not available to this account, so the history shown may start later than the site's first reading.\nTool evidence (1)\nSources (1)",
+    "sources": [
+      "19"
+    ],
+    "evidence": 5,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "13 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/011-d-seaview-cust-1-how-is-the-dissolved-oxygen-lo.png"
+  },
+  {
+    "group": "E",
+    "at": "2026-09-29T06:16:30.528Z",
+    "persona": "lake-cust-1",
+    "action": "opened Gilligan",
+    "quotaLine": "16 questions left, resets 09/29 17:00",
+    "screenshot": "screenshots/012-e-lake-cust-1-open.png"
+  },
+  {
+    "group": "E",
+    "at": "2026-09-29T06:16:31.498Z",
+    "persona": "lake-cust-1",
+    "action": "picked Lakeside Buoy 2026",
+    "shown": "Lakeside Buoy 2026"
+  },
+  {
+    "group": "E",
+    "at": "2026-09-29T06:16:41.535Z",
+    "persona": "lake-cust-1",
+    "question": "Give me a water quality report for the last 7 days",
+    "seconds": 9.1,
+    "answer": "Your report for Lakeside Buoy 2026 (dev:100000000000003) is ready — use the \"Download report (PDF)\" button to get it.\n\nStatus: Action Required\n\nReason: dissolved oxygen went beyond its configured threshold by more than the exceedance margin — it ranged from 0.00 to 11.15 mg/L against the configured 5–14 mg/L limit.\nAll other parameters (ORP, pH, conductivity, temperature) were Normal against their configured thresholds; turbidity is qualitative only.\nEvents flagged: 0. Reporting period: 2026-09-22 to 2026-09-29 (pod last reported 2 hours ago).\n\nData quality caveats (important):\n\nOnly 862 of 1,014 readings for the period were usable: 149 were excluded as likely failed sensor readings, 1 on the probe's own fault flag, and 2 as physically impossible.\nTurbidity showed a sustained zero-variance run at exactly 0 or 1005, which points to a likely failed sensor; 2 turbidity readings were also sensor rails reported without a fault flag. The affected readings were excluded — inspect and recalibrate the turbidity probe.\n\nSuggested next steps:\n\nInspect the sensors for fouling or damage and check the pod is sitting properly in the water, so an instrument problem can be ruled out; clean only if safe and within site rules. If a sensor looks damaged, contact Clean Earth Rovers support (sales@cleanearthrovers.com).\nA sensor problem can look like a water-quality change — a single isolated point or readings stuck at one value are more often a sensor or connection issue than a real event.\nHave a qualified person confirm the flagged dissolved-oxygen readings with an independent measurement (calibrated handheld meter or lab sample) before drawing conclusions.\nKeep watching the readings over the coming days; a change lasting across several readings is more likely real.\nShare this report with whoever is responsible for the site, such as your site manager or monitoring team.\n\nNote: the configured limits are alert points, not health standards — a reading inside them isn't necessarily healthy for aquatic life.\n\nEarlier readings from this site are not available to this account, so the history shown may start later than the site's first reading.\nLeft out as sensor faults, not measurements: 2 Turbidity reading(s) beyond the range of the turbidity voltage conversion.\nEvery turbidity reading in this period is 0. The backend reports a missing or offline sensor voltage as 0, the same as clear water, so this may be a missing sensor rather than confirmed clear water.\nTurbidity readings stuck at exactly 0 or 1005 for a day or more were left out as a likely failed sensor; the turbidity sensor should be inspected.\nTool evidence (1)\nDownload report - Lakeside Buoy 2026 (PDF)",
+    "sources": [],
+    "evidence": 0,
+    "reports": [
+      "Download report - Lakeside Buoy 2026 (PDF)"
+    ],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "15 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/013-e-lake-cust-1-give-me-a-water-quality-report.png"
+  },
+  {
+    "group": "E",
+    "at": "2026-09-29T06:16:42.250Z",
+    "persona": "lake-cust-1",
+    "action": "download",
+    "labelsWhilePreparing": [
+      "09/28/2026 - Give me a water quality report for the last 7 days",
+      "Preparing report..."
+    ],
+    "file": "cer-report-lakeside-buoy-2026-2026-09-22-to-2026-09-29.pdf",
+    "screenshot": "screenshots/014-e-lake-cust-1-download.png"
+  },
+  {
+    "group": "H",
+    "at": "2026-09-29T06:16:48.307Z",
+    "persona": "harbor-cust-1",
+    "action": "opened Gilligan",
+    "quotaLine": "11 questions left, resets 09/29 17:00",
+    "screenshot": "screenshots/015-h-harbor-cust-1-open.png"
+  },
+  {
+    "group": "H",
+    "at": "2026-09-29T06:16:48.339Z",
+    "persona": "harbor-cust-1",
+    "action": "H1 layout at 390 x 844",
+    "layout": {
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "inputTop": 725,
+      "historyTop": 880,
+      "pickerTop": 1108,
+      "inputInView": true,
+      "sendInView": true
+    },
+    "screenshot": "screenshots/016-h-h1-layout.png"
+  },
+  {
+    "group": "H",
+    "at": "2026-09-29T06:17:08.125Z",
+    "persona": "harbor-cust-1",
+    "question": "What units is conductivity measured in?",
+    "seconds": 18.5,
+    "answer": "Conductivity is reported in microsiemens per centimeter (µS/cm) at 25 °C — the USGS \"typically reports the electrical conductivity of water as specific conductance in units of microsiemens per centimeter (μS/cm) at 25 °C\" 5. More generally, electrical conductivity's units are siemens per centimeter (S/cm), equivalent to mhos/cm 1.\n\nSources (2)",
+    "sources": [
+      "5",
+      "1"
+    ],
+    "evidence": 0,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "10 questions left, resets 09/29 17:00",
+    "inputLabel": "Ask Gilligan",
+    "screenshot": "screenshots/017-h-harbor-cust-1-what-units-is-conductivity-mea.png"
+  },
+  {
+    "group": "H",
+    "at": "2026-09-29T06:17:08.991Z",
+    "persona": "harbor-cust-1",
+    "action": "H2 tapped a source chip",
+    "after": {
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    "screenshot": "screenshots/018-h-h2-source.png"
+  },
+  {
+    "group": "I",
+    "at": "2026-09-29T06:17:09.081Z",
+    "action": "set user-super-0000000005 questions used to 19 for 2026-09-29 in the emulator"
+  },
+  {
+    "group": "I",
+    "at": "2026-09-29T06:17:14.096Z",
+    "persona": "super-5",
+    "action": "opened Gilligan",
+    "quotaLine": "Almost out: 1 question left, resets 09/29 17:00.",
+    "screenshot": "screenshots/019-i-super-5-open.png"
+  },
+  {
+    "group": "I",
+    "at": "2026-09-29T06:17:14.099Z",
+    "persona": "super-5",
+    "action": "I1 counter before the last question",
+    "quotaLine": "Almost out: 1 question left, resets 09/29 17:00.",
+    "inputLabel": "Ask Gilligan"
+  },
+  {
+    "group": "I",
+    "at": "2026-09-29T06:17:21.547Z",
+    "persona": "super-5",
+    "question": "What is ORP?",
+    "seconds": 6.1,
+    "answer": "ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and reduction is the gain of electrons, and the probe's output is represented in millivolts, which can be positive or negative 1. Just as a pH probe measures hydrogen ion activity in a liquid, an ORP probe measures electron activity — the reading represents how strongly electrons are transferred to or from substances in the liquid, though it does not indicate the amount of electrons available for transfer 1.\n\nA couple of practical notes from the documents: ORP is measured with an inert (typically platinum) electrode against a reference electrode, and the measured potential is temperature dependent 3. Interpretation also has limits — Eh measurements may show qualitative trends but generally cannot be interpreted as equilibrium values 8.\n\nIf you'd like, I can pull your pod's current ORP reading.\n\nSources (3)",
+    "sources": [
+      "1",
+      "1",
+      "3",
+      "8"
+    ],
+    "evidence": 0,
+    "reports": [],
+    "error": "",
+    "rawMarker": false,
+    "quotaLine": "You have used this period’s questions. Resets 09/29 17:00.",
+    "inputLabel": "Message limit reached",
+    "screenshot": "screenshots/020-i-super-5-what-is-orp-.png"
+  },
+  {
+    "group": "I",
+    "at": "2026-09-29T06:17:21.612Z",
+    "persona": "super-5",
+    "action": "I2 after the last question",
+    "quotaLine": "You have used this period’s questions. Resets 09/29 17:00.",
+    "inputLabel": "Message limit reached",
+    "seePlans": true,
+    "sendDisabled": true,
+    "inputDisabled": true,
+    "screenshot": "screenshots/021-i-i2-limit.png"
+  },
+  {
+    "group": "I",
+    "at": "2026-09-29T06:17:24.908Z",
+    "persona": "super-5",
+    "action": "opened Gilligan",
+    "quotaLine": "You have used this period’s questions. Resets 09/29 17:00.",
+    "screenshot": "screenshots/022-i-super-5-open.png"
+  },
+  {
+    "group": "I",
+    "at": "2026-09-29T06:17:24.972Z",
+    "persona": "super-5",
+    "action": "I3 after reload",
+    "quotaLine": "You have used this period’s questions. Resets 09/29 17:00.",
+    "inputLabel": "Message limit reached",
+    "seePlans": true,
+    "sendDisabled": true,
+    "screenshot": "screenshots/023-i-i3-reload.png"
+  }
+]

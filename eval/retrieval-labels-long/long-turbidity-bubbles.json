@@ -1,0 +1,1963 @@
+{
+  "fixtureId": "long-turbidity-bubbles",
+  "set": "committed",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Our submerged turbidity sensor has little bubbles stuck to its window after we lower it into the pond. What should I do before taking a reading?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "Once the window is clear, what run of readings counts as steady enough here, and would that change in a pumped chamber?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "query": "The screen lights up straight away. How soon can I start the sequence, and which number from the accepted set goes in the report?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "query": "A colleague wants to take a bottle back to a bench meter instead. Why might the reading change if the pond has sandy material in it?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "query": "Unrelated kit question: we've made up ZoBell's solution for the redox checks next week. What bottle and fridge conditions should we use, and how long is it reported to stay stable?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "query": "The bench where we'll use it has rusty tools and dust on it. What should the crew watch out for, and what should we use if we need to repeat a suspect check?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "query": "OK, back to the turbidity sensor in the pond. We cleared the window but some bubbles have come back; how do we deal with them, and which way could they push the reading?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "query": "That accepted run you described near the start - we're moving the same setup into a pumped chamber tomorrow. What changes about the number and spacing?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "query": "And that wait before the sequence - is two minutes always enough, and do I report the highest reading once it settles?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "query": "The optical window also looks dirty, so bubbles might not be the whole problem. What should we do if cleaning reveals a damaged sensor?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "query": "We've got a replacement submerged meter with a different design. Can we just splice its values into the old series, or do we need to preserve that distinction?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "query": "That window problem I opened with - what's the physical fix again, and could it make the number look too high?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__96a634629b66",
+          "contentHash": "96a634629b66",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Agitate the turbidity sensor to remove bubbles from the optical\nsurface: move the sensor up and down or in a circular pattern and\n(or) activate the wiper mechanism, if available.",
+          "locator": "§6.7.3.B steps 4-12 — \"Allow at least 2 minutes before recording the required number of sequential readings\"",
+          "claimIds": [
+            "tby-dynamic-agitate-bubbles-01",
+            "tby-dynamic-stability-3-or-5-01",
+            "tby-dynamic-2min-warmup-10-20-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__6155013556ef",
+          "contentHash": "6155013556ef",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "bubbles or gases in the water can cause apparent turbidity (positive",
+          "locator": "§6.7.1 Equipment and §6.7.1.A Interferences and Instrument Design — \"identical optical and data-processing configurations\"",
+          "claimIds": [
+            "tby-bubbles-positive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "For dynamic measurement—Report the median of the three or\nmore sequential measurements that meet the ±10-percent\ncriterion for stability (NFM 6.0).",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-dynamic-median-10pct-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2acda5bb76f0",
+          "contentHash": "2acda5bb76f0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Dynamic determination generally reflects the dynamic\nconditions in a water body more accurately than static\nmeasurements of discrete samples because it avoids\nproblems of particle settling.",
+          "locator": "§6.7.3.B steps 1-3 — \"verify that the instrument has retained its calibration within 5 percent\"",
+          "claimIds": [
+            "tby-dynamic-avoids-settling-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__5321b7c2e3d0",
+          "contentHash": "5321b7c2e3d0",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Keep in mind that the static\nmeasurement will likely be biased low if sand or coarse silt\nare present.",
+          "locator": "§6.7.4.A Variability tests, static and dynamic — \"Cross-sectional variability: At a field site, measure turbidity at a number of verticals\"",
+          "claimIds": [
+            "tby-static-biased-low-coarse-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__c564f9f482cc",
+          "contentHash": "c564f9f482cc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "If particles rapidly settle to the bottom\n(within 3-5 seconds), then coarse materials are present and the\nsample cannot be measured accurately using the static method.",
+          "locator": "§6.7.3.A Static (benchtop) determination opening — \"If particles rapidly settle to the bottom (within 3-5 seconds)\"",
+          "claimIds": [
+            "tby-static-settling-3-5s-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__eecff21cd579",
+          "contentHash": "eecff21cd579",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "3. Store the solution in a dark bottle, clearly labeled with its chemical",
+          "locator": "Section 6.5.1.C Equipment Maintenance — \"Dissolve these chemicals in deionized water\"",
+          "claimIds": [
+            "orp-zobells-storage-01",
+            "orp-zobells-toxic-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__a49a822f593f",
+          "contentHash": "a49a822f593f",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "stable for at least 90 days if kept chilled at 4°C.",
+          "locator": "Sections 6.5.1.A Electrode Selection and 6.5.1.B ZoBell's Solution",
+          "claimIds": [
+            "orp-zobells-shelf-life-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",
+          "contentHash": "9dfb772d652d",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "ZoBell’s reacts readily with minute particles of iron, dust, and",
+          "locator": "Section 6.5.2 Equipment Test Procedure — \"Eh measuring systems can be tested for accuracy\"",
+          "claimIds": [
+            "orp-zobells-iron-reactive-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.5-orp.pdf__d2968873c795",
+          "contentHash": "d2968873c795",
+          "filename": "usgs-nfm-a6.5-orp.pdf",
+          "grade": 2,
+          "evidence": "• Read emf with fresh aliquot of ZoBell’s solution;",
+          "locator": "Section 6.5.4 Troubleshooting and Table 6.5-4 troubleshooting guide",
+          "claimIds": [
+            "orp-fresh-zobells-troubleshoot-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__aa95685a3a9c",
+          "contentHash": "aa95685a3a9c",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "commonly do not yield identical or equivalent results.",
+          "locator": "Section 6.7 introduction and guidance box — \"Report turbidity on the basis of the individual instrument design\"",
+          "claimIds": [
+            "tby-designs-not-equivalent-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__15413a2933fc",
+          "contentHash": "15413a2933fc",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "Relations among different instrument types are site\nspecific.",
+          "locator": "§6.7.3.C Spectrophotometric determination — \"An FAU is equivalent to an NTU when measuring formazin\"",
+          "claimIds": [
+            "tby-instrument-relations-site-specific-01"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "contentHash": "d154f3467ba4",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "To minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4",
+          "locator": "§6.7.5 Data reporting and interpretation — \"a value of 43.12 units displayed by an instrument would be reported as 45\"",
+          "claimIds": [
+            "tby-store-by-design-units-01"
+          ]
+        }
+      ]
+    }
+  ]
+}

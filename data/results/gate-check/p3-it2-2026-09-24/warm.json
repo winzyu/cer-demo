@@ -1,0 +1,598 @@
+[
+  {
+    "arm": "gold-context",
+    "pass": "warm",
+    "turns": 90,
+    "refusal": {
+      "required": 8,
+      "exact": 1,
+      "normalized": 4,
+      "tolerance": 0,
+      "offContract": 0,
+      "answered": 3,
+      "met": false
+    },
+    "citations": {
+      "total": 216,
+      "valid": 197,
+      "rate": 0.9120370370370371,
+      "met": false
+    },
+    "figures": {
+      "total": 512,
+      "unexplained": 3,
+      "conversions": 7,
+      "met": false
+    },
+    "quotes": {
+      "total": 188,
+      "supported": 137,
+      "elided": 15,
+      "short": 2,
+      "rate": 0.7287234042553191
+    },
+    "gatesMet": false,
+    "findings": [
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"the commonly used temperature‑compensation factors… can be the source of errors as large as 50 percent for low‑pH samples.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.3-specific-conductance.pdf__e7c93d2b2493\""
+      },
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"within ±5 μS/cm for specific conductance ≤ 100 μS/cm or ±3 percent for specific conductance > 100 μS/cm\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__e7c93d2b2493\""
+      },
+      {
+        "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【9†\"most modern meters automatically adjust pH measurements for changes in temperature, and these corrections are usually accurate within a temperature range of 5 to 35 °C and for pH measurements between 4.0 and 9.5.\"】 not found verbatim in \"usgs-nfm-a6.4-ph.pdf__164de423e5e7\""
+      },
+      {
+        "fixtureId": "crossdoc-bailed-orp-jumping",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【5†\"Bailers are not recommended for purging because … water subsampled from a bailed sample may not be used for measurements of DO concentration, Eh, and water temperature.\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__f1715861e455\""
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【3†\"Stabilization criteria for recording direct field measurements.\"】 not found verbatim in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__e157e31940ab\""
+      },
+      {
+        "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【2†\"Temperature Thermistor ±0.2 °C … DO ±0.2 mg/L … pH ±0.1 unit … Turbidity ≤100 FNU … ±0.5 TU or ±5%\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【7†\"To test Eh equipment, complete the following 7 steps and record results on the Eh data record form for the equipment test procedure (fig. 6.5–1):\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__79b5d6c04cc9\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"Measured temperature = 22°C\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__b575099996ac\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"emf = 238 mV.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__b575099996ac\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"interpolated reference potential = 202 mV for Ag:AgCl‑saturated KCl at 22°C.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__b575099996ac\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"Eh = emf + Eref where:\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__b575099996ac\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"Eh (ZoBell’s) = 238 mV + 202 mV = 440 mV.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__b575099996ac\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"25 430\"】 quote is 6 chars, under 12 — too short to be evidence"
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【8†\"test value of 440 mV is within ± 5 mV of 438 mV from table 6.5–3.\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__b575099996ac\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【1†\"±5 mV or ±10%, whichever is greater\"】 not found verbatim in \"usgs-nfm-a6.0-field-measurement-guidelines.pdf__1b7e9852e841\""
+      },
+      {
+        "fixtureId": "crossdoc-orp-sliding-do-steady",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【1†\"±0.2 mg/L\"】 quote is 9 chars, under 12 — too short to be evidence"
+      },
+      {
+        "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+        "fixtureClass": "cross-document",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【1†\"If the accuracy check date/information is not included with the instrument or the last check was over a year, the temperature sensor accuracy needs to be checked at the beginning of the sampling event\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__443c31100934\""
+      },
+      {
+        "fixtureId": "deepmanual-do-air-calibration",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【1†\"Allow the confined air to become saturated with water vapor (saturation occurs in approximately 10 to 15 minutes).\"}.\n\nAfter the probe has warmed up and the temperature reading is stable you select the calibration mode, enter the local barometric pressure, and run the “DO %” calibration【2†\"Enter the local barometric pressure (usually in mm of mercury) for the sampling location into the instrument.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__738f644915c9\""
+      },
+      {
+        "fixtureId": "deepmanual-ec-standard-choice",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【4†\"It is recommended to calibrate specific conductance with standards with values greater than 200 µS/cm.\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__d8ae5e803001\""
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"0–<1 \\t0.05 \\t0.05 \\t0.05 \\t0.05 \\t0.01\"】 not found verbatim in \"usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79\""
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"40–<100 \\t1 \\t1 \\t5 \\t5 \\tN/A\"】 not found verbatim in \"usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79\""
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "figures",
+        "detail": "\"0.40\" not in context — U . Rounded to the nearest 0.05 gives **0.40 NTU**. * 63.7 NTU falls in the 40–<10"
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【2†\"0–<1 \\t0.05 \\t0.05 \\t0.05 \\t0.05 \\t0.01\"】 not found verbatim in \"usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79\""
+      },
+      {
+        "fixtureId": "deepmanual-turbidity-rounding",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【2†\"40–<100 \\t1 \\t1 \\t5 \\t5 \\tN/A\"】 not found verbatim in \"usgs-nfm-a6.7-turbidity.pdf__ac8bab5fcc79\""
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【10†\"Follow the manufacturers’ recommendations for instrument warm up and operation.\"】 quotes context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【10†\"Record the type of reference electode being used.\"】 quotes context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【10†\"Check the level of the filling solution and replenish to the bottom of the fill hole.\"】 quotes context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【10†\"Pour ZoBell’s solution into a measurement beaker … Allow 15 to 30 minutes for the solution and sensors to equilibrate to ambient temperature.\"】 quotes context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【10†\"Switch the meter to the millivolt function, allow the reading to stabilize (±5 mV), and record the temperature and millivolt value.\"】 quotes context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【11†\"Eh = emf + Eref\"】 quotes context #11, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【10†\"If the value is within 5 mV of the ZoBell Eh given on table 6.5–3, the equipment is ready for field use.\"】 quotes context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【11†\"Check table 6.5–3. The test value of 440 mV is within ± 5 mV of 438 mV from table 6.5–3.\"】 quotes context #11, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"Follow the manufacturers’ recommendations for instrument warm up and operation.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"Record the type of reference electode being used.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"Check the level of the filling solution and replenish to the bottom of the fill hole.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"Pour ZoBell’s solution into a measurement beaker … Allow 15 to 30 minutes for the solution and sensors to equilibrate to ambient temperature.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"Switch the meter to the millivolt function, allow the reading to stabilize (±5 mV), and record the temperature and millivolt value.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【11†\"Eh = emf + Eref\"】 points at context #11, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【10†\"If the value is within 5 mV of the ZoBell Eh given on table 6.5–3, the equipment is ready for field use.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【11†\"Check table 6.5–3. The test value of 440 mV is within ± 5 mV of 438 mV from table 6.5–3.\"】 points at context #11, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【10†\"Allow 15 to 30 minutes for the solution and sensors to equilibrate to ambient temperature.\"】 quotes context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【10†\"Switch the meter to the millivolt function, allow the reading to stabilize (±5 mV), and record the temperature and millivolt value.\"】 quotes context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【14†\"Thermal equilibrium can take longer than 30 minutes but it is essential before beginning the measurements.\"】 quotes context #14, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【14†\"Allow the reading to stabilize (±5 mV).\"】 quotes context #14, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【14†\"Stabilization should occur within 30 minutes.\"】 quotes context #14, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【16†\"If the readings do not stabilize within about 30 minutes, record the potential and its drift; assume a single quantitative value is not possible.\"】 quotes context #16, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【10†\"Allow 15 to 30 minutes for the solution and sensors to equilibrate to ambient temperature.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【10†\"Switch the meter to the millivolt function, allow the reading to stabilize (±5 mV), and record the temperature and millivolt value.\"】 points at context #10, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【14†\"Thermal equilibrium can take longer than 30 minutes but it is essential before beginning the measurements.\"】 points at context #14, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【14†\"Allow the reading to stabilize (±5 mV).\"】 points at context #14, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【14†\"Stabilization should occur within 30 minutes.\"】 points at context #14, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "deepmanual-zobell-check",
+        "fixtureClass": "deep-in-manual",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【16†\"If the readings do not stabilize within about 30 minutes, record the potential and its drift; assume a single quantitative value is not possible.\"】 points at context #16, but 5 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "definitional-what-a-bare-tu-label-tells-us",
+        "fixtureClass": "definitional",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【3†\"NTU…FNU…designations…broad spectrum…near infrared…\"】 elided quote's fragments not found in order in \"usgs-nfm-a6.7-turbidity.pdf__0663ce0e133d\""
+      },
+      {
+        "fixtureId": "followup-jumpy-temperature-trace",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"Erratic sensor readings \t• Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\"】 quotes context #2, but 1 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "followup-jumpy-temperature-trace",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"• Break in the cables—replace cables, which may require recertification.\"】 quotes context #2, but 1 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "followup-jumpy-temperature-trace",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"• Weak batteries—replace with new batteries.\"】 quotes context #2, but 1 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "followup-jumpy-temperature-trace",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"Erratic sensor readings \t• Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\"】 points at context #2, but 1 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "followup-jumpy-temperature-trace",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"• Break in the cables—replace cables, which may require recertification.\"】 points at context #2, but 1 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "followup-jumpy-temperature-trace",
+        "fixtureClass": "follow-up",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【2†\"• Weak batteries—replace with new batteries.\"】 points at context #2, but 1 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "followup-jumpy-temperature-trace",
+        "fixtureClass": "follow-up",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【2†\"• Break in the cables—replace cables, which may require recertification.\"】 quotes context #2, but 1 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "followup-jumpy-temperature-trace",
+        "fixtureClass": "follow-up",
+        "turn": 2,
+        "gate": "citations",
+        "detail": "【2†\"• Break in the cables—replace cables, which may require recertification.\"】 points at context #2, but 1 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "precedence-do-hypoxia-qa-trigger-not-pod-limit",
+        "fixtureClass": "precedence",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"hypoxic to anoxic (concentration less than 1.0 mg/L)\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__f3c3c9519851\""
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【6†\"If a multiparameter instrument that includes a calibrated conductivity sensor is used, salinity correction to the DO concentration reading is performed automatically\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__2d5d863cf1da\""
+      },
+      {
+        "fixtureId": "probecal-do-saturation-target",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【6†\"use correction factors based on specific conductance. Report the corrected values. Most multiparameter instruments that include DO and specific‑conductance sensors automatically correct the DO reading for salinity\"】 not found verbatim in \"usgs-nfm-a6.2-dissolved-oxygen.pdf__2d5d863cf1da\""
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【6†\"The plates do not go bad, or change, so recalibration is not necessary. After the first calibration your conductivity probe is good to go.\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__603c9e54d9bd\""
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【5†\"standard with values of 500, 1,413, or 12,900 μS/cm. Select the standard with a specific conductance that is closest to the expected specific conductance of the samples.\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__d8ae5e803001\""
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"485\" not in context — cm standard therefore must read between 485 µS/cm and 515 µS/cm to be considered ac"
+      },
+      {
+        "fixtureId": "probecal-ec-never-recalibrate",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "figures",
+        "detail": "\"515\" not in context — erefore must read between 485 µS/cm and 515 µS/cm to be considered accurate . **"
+      },
+      {
+        "fixtureId": "probecal-end-of-day-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【1†\"the instrument can be recalibrated during the day if the instrument drifted out of calibration and only the data measured prior to the check would need to be qualified.\"】 not found verbatim in \"epa-sop-field-instrument-calibration-2010.pdf__dd989c168d7e\""
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【2†\"If the value is within 5 mV of the ZoBell Eh given on table 6.5–3, the equipment is ready for field use\"】 not found verbatim in \"usgs-nfm-a6.5-orp.pdf__9dfb772d652d\""
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "quotes",
+        "detail": "【11†\"Check the value is within ± 5 mV of 438 mV from table 6.5–3. Thus, the equipment is functioning well and ready for field use\"】 quotes context #11, but 6 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "probecal-orp-standard-check",
+        "fixtureClass": "probe-calibration",
+        "turn": 1,
+        "gate": "citations",
+        "detail": "【11†\"Check the value is within ± 5 mV of 438 mV from table 6.5–3. Thus, the equipment is functioning well and ready for field use\"】 points at context #11, but 6 chunk(s) were supplied"
+      },
+      {
+        "fixtureId": "probecal-sonde-calibration-order",
+        "fixtureClass": "probe-calibration",
+        "turn": 2,
+        "gate": "quotes",
+        "detail": "【2†\"Rinse the probe with DIW three times.\"】 not found verbatim in \"usgs-nfm-a6.3-specific-conductance.pdf__603c9e54d9bd\""
+      },
+      {
+        "fixtureId": "refusal-buffering-capacity-not-measured",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-buffering-capacity-not-measured",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "answered: stated 5 figure(s) (2, 4, 1) on a turn that had to refuse; term overlap 9%"
+      },
+      {
+        "fixtureId": "refusal-how-long-can-it-stay-in",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "answered: stated 4 figure(s) (5, 10, 2) on a turn that had to refuse; term overlap 9%"
+      },
+      {
+        "fixtureId": "refusal-temperature-harm-threshold",
+        "fixtureClass": "refusal",
+        "turn": 1,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-temperature-harm-threshold",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "normalized: matched after folding; first raw difference at 82: answer U+2011 \"‑\" vs pinned U+002D \"-\""
+      },
+      {
+        "fixtureId": "refusal-turbidity-sensor-hardware",
+        "fixtureClass": "refusal",
+        "turn": 2,
+        "gate": "refusal",
+        "detail": "answered: stated 4 figure(s) (400, 680, 780) on a turn that had to refuse; term overlap 8%"
+      }
+    ]
+  }
+]

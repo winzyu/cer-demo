@@ -22,14 +22,14 @@ import { resolveTopK } from "../options";
  * authoritative tier, RAG the long manuals" (`docs/timeline.md`) — and the adapter registry was
  * built to compose it without a rewrite.
  *
- * It also preserves a property neither the pure-vector arm nor a top-k reranker can guarantee:
- * **the operator's source-of-truth is always in the prompt.** The system prompt's authoritative
- * ranges outrank any document, and several `precedence` fixtures turn on the model seeing the
- * operator reference alongside a manual that disagrees with it. A vector arm can rank that
- * reference out of the top k; this one structurally cannot.
+ * It was also built to keep the operator's source-of-truth document in every prompt, which a
+ * vector arm can rank out of the top k. **That reason lapsed on 2026-09-13**, when the document
+ * left the corpus under the supervisor's range veto (`DOC_META`): the slice is now the four probe
+ * datasheets alone, and the measurements above predate the change.
  *
- * The cost is the slice's tokens on every request (~9.4K), which is exactly what direct-feed
- * already pays and what its 99% prompt-cache hit rate makes cheap.
+ * The cost is the slice's tokens on every request (about 6.5K for the four datasheets, measured on
+ * the 2026-09-25 capture), which is what direct-feed already pays and what prompt caching makes
+ * cheap.
  */
 export class HybridSliceVectorAdapter implements RetrievalAdapter {
   readonly mode: string;

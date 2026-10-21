@@ -10,8 +10,8 @@ Firestore**.
 
 ## Where do I go?
 
-**If you read one thing first:** [`docs/STATUS.md`](docs/STATUS.md) - current state, open work,
-and the traps that cost time.
+**If you read one thing first:** [§1 Overview](#1-overview), then the table below; the companion
+docs are listed by folder after it.
 
 | I want to… | Go to |
 |---|---|
@@ -32,19 +32,16 @@ and the traps that cost time.
 
 ### Companion docs
 
-| doc | what it covers |
+| folder | what it holds |
 |---|---|
-| [`docs/STATUS.md`](docs/STATUS.md) | **Start here.** Current state, open work, active traps. Rewritten every session. |
-| [`docs/SPECS.md`](docs/SPECS.md) | Architecture as built today, section by section. |
-| [`docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md`](docs/migration/GILLIGAN_TARGET_ARCHITECTURE.md) | The Gilligan release: target architecture, roadmap and decisions D1-D12. |
-| [`docs/timeline.md`](docs/timeline.md) | Phased plan, and the **◆ decision gates** that block work. |
-| [`docs/RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) | The direct-feed vs RAG cost experiment (◆G7). |
-| [`docs/RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) · [`docs/RETRIEVAL_LABELS.md`](docs/RETRIEVAL_LABELS.md) | The offline retrieval harness (`npm run retrieval:eval`) and its ground truth. **Read the 20.2% floor in §3 before reading any recall number.** |
-| [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) | The sensor API contract, verified live. **Read §12 before trusting any reading.** |
-| [`docs/migration/MIGRATION_SPEC.md`](docs/migration/MIGRATION_SPEC.md) | Behaviour of the legacy FastAPI system being ported. |
-| [`docs/migration/CONVENTIONS.md`](docs/migration/CONVENTIONS.md) | Coding conventions this repo follows. |
-| [`docs/migration/SECURITY_FINDINGS.md`](docs/migration/SECURITY_FINDINGS.md) | Device-authorization findings — upstream, and two in this service fixed 2026-08-21 (§6). |
-| [`docs/EVAL_REBUILD.md`](docs/EVAL_REBUILD.md) · [`eval/README.md`](eval/README.md) | The eval rebuild plan, the committed question set and captured runs. |
+| [`docs/`](docs/) | The behaviour spec [`SPECS.md`](docs/SPECS.md), the decision log [`timeline.md`](docs/timeline.md) (phases and ◆ gates), stakeholder questions, the index of retired docs [`ARCHIVED.md`](docs/ARCHIVED.md), and the eval docs: [`EVAL_REBUILD.md`](docs/EVAL_REBUILD.md), `GRADING_GUIDE.md`, [`RETRIEVAL_BAKEOFF.md`](docs/RETRIEVAL_BAKEOFF.md) (◆G7) and the retrieval harness in [`RETRIEVAL_EVAL.md`](docs/RETRIEVAL_EVAL.md) and `RETRIEVAL_LABELS.md` (**read the 20.2% floor in §3 before reading any recall number**). |
+| [`docs/reference/`](docs/reference/) | Facts about the system to read before changing code: the sensor API contract [`DEVICE_API.md`](docs/reference/DEVICE_API.md) (**read §12 before trusting any reading**), the legacy behaviour in [`MIGRATION_SPEC.md`](docs/reference/MIGRATION_SPEC.md), [`CONVENTIONS.md`](docs/reference/CONVENTIONS.md), the device-authorization findings in [`SECURITY_FINDINGS.md`](docs/reference/SECURITY_FINDINGS.md), and the Gilligan architecture and decisions D1-D12 in [`GILLIGAN_TARGET_ARCHITECTURE.md`](docs/reference/GILLIGAN_TARGET_ARCHITECTURE.md). |
+| [`docs/runbooks/`](docs/runbooks/) | Step-by-step procedures: deployment, the manual test guide, the local stack and the Mirror. |
+| [`docs/plans/`](docs/plans/) | Work not yet done: the post-launch backlog, open task lists and live handoffs. |
+| [`docs/people/`](docs/people/) | What was sent to or prepared for stakeholders. |
+| [`docs/records/`](docs/records/) | Dated, finished documents: test results, build records, incidents and decisions with their reasoning. |
+| [`docs/captures/`](docs/captures/) | Captured output folders, never edited. |
+| [`eval/README.md`](eval/README.md) | The committed question set and captured eval runs. |
 
 ---
 
@@ -105,7 +102,7 @@ Firestore (`@google-cloud/firestore`) · Fireworks via the `openai` SDK · Jest 
 
 1. Create an account at **https://fireworks.ai**.
 2. **API Keys** → generate a key → put it in `.env` as `FIREWORKS_API_KEY`.
-3. Model ids are already in `.env.example` (`accounts/fireworks/models/gpt-oss-120b`,
+3. Model ids are already in `.env.example` (`accounts/fireworks/models/glm-5p3-flash`,
    `nomic-ai/nomic-embed-text-v1.5`). **Confirm the exact id in the console first** — the serverless
    catalogue rotates.
 
@@ -179,7 +176,7 @@ Getting a token:
    ```
 
 > ⚠️ **There is no QA mirror.** Any live call reads **production** data — a real customer fleet.
-> Read-only, no bursts. See [`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md) §3.
+> Read-only, no bursts. See [`docs/reference/DEVICE_API.md`](docs/reference/DEVICE_API.md) §3.
 >
 > ⚠️ **Tokens never expire** and are **org-scoped**. A leaked one is valid forever; a wrong-org one
 > returns a short, plausible device list rather than an error.
@@ -301,8 +298,9 @@ pkill -f "[t]s-node-dev"
 
 ## 5. Configuration reference
 
-`cp .env.example .env`. Nothing here blocks boot; invalid *values* fail fast with a message listing
-every problem, missing secrets are warnings only.
+`cp .env.example .env`. Invalid *values* fail fast at boot with a message listing every problem;
+missing secrets are warnings only, except that production (`NODE_ENV=production`) refuses to boot
+without `CER_RAG_SERVICE_KEY`.
 
 ### Core
 
@@ -311,8 +309,14 @@ every problem, missing secrets are warnings only.
 | `NODE_ENV` | `development` | `development` \| `test` \| `production`. Controls error-stack exposure. |
 | `PORT` | `8000` | HTTP port. |
 | `LOG_LEVEL` | `info` | Log verbosity label. |
-| `MAX_HISTORY_MESSAGES` | `20` | Cap on prior turns per request. Oldest dropped, not rejected. |
+| `MAX_HISTORY_MESSAGES` | `20` | Cap on prior messages per request, normally 10 question-answer pairs. Oldest exchanges are dropped. |
+| `CER_RAG_SERVICE_KEY` | *(unset)* | Shared secret the CER server sends on every `/api/v1` call (`requireServiceKey`), compared in constant time; at least 32 characters. Set, it also makes the server's user and organization headers the caller identity. Unset, the check is off and those headers are ignored, which keeps local runs and the eval harness working. Required in production. |
 | `WATER_TYPE` | `freshwater` | `freshwater` \| `saltwater`. A deployment-wide label that frames chat answers; the prompt carries no ranges since 2026-09-13 (pod limits come from `get_pod_thresholds`), and reports read each pod's registry `operatingEnvironment` instead. **Global — see the caveat in [§7e](#7e-known-limits).** |
+
+`POST /api/v1/chat` accepts JSON bodies up to 1 MiB; other endpoints retain the 100 KiB limit.
+After validation, the model receives the newest contiguous history fitting both `MAX_HISTORY_MESSAGES` and a fixed 64 KiB serialized UTF-8 budget.
+Trimming preserves complete question-answer pairs and never cuts message text; if the newest exchange cannot fit, no history is replayed.
+Requests above the transport limit receive JSON HTTP 413 before validation, so callers should also bound history before sending it.
 
 ### LLM (Fireworks)
 
@@ -320,11 +324,17 @@ every problem, missing secrets are warnings only.
 |---|---|---|
 | `FIREWORKS_API_KEY` | *(unset)* | Required before any chat works. |
 | `FIREWORKS_BASE_URL` | `https://api.fireworks.ai/inference/v1` | OpenAI-compatible endpoint. |
-| `LLM_MODEL` | *(unset)* | e.g. `accounts/fireworks/models/gpt-oss-120b`. |
-| `LLM_MAX_TOKENS` | `4096` | **Raise to 16384 for tool use or capture runs.** gpt-oss emits reasoning tokens and returns an *empty answer* if starved — the API call still succeeds. |
+| `LLM_MODEL` | *(unset)* | The release uses `accounts/fireworks/models/glm-5p3-flash` (`.env.example`), chosen 2026-09-26 over `gpt-oss-120b` (`docs/EVAL_REBUILD.md`). |
+| `LLM_MAX_TOKENS` | `4096` | **Raise to 16384 for tool use or capture runs.** Reasoning models (gpt-oss, GLM) spend tokens before visible output and return an *empty answer* if starved - the API call still succeeds. |
+| `LLM_REASONING_EFFORT` | `default` | `default` \| `low` \| `medium` \| `high`, sent as `reasoning_effort`; `default` sends nothing. The release runs GLM at `low`, which cannot switch reasoning off. |
+| `LLM_THINKING` | `default` | `disabled` sends `thinking: {type: "disabled"}` for models such as `minimax-m3`; `default` sends nothing. |
+| `LLM_MAX_CONCURRENT` | `8` | Model calls in flight at once across the process; extra calls queue, so a burst waits instead of hitting Fireworks' rate limits. |
+| `LLM_QUEUE_TIMEOUT_MS` | `20000` | How long a call may wait for a slot before it is told the service is busy. |
+| `LLM_RETRY_DELAY_MS` | `2000` | Wait before the single retry after a Fireworks 429 or 503, unless `Retry-After` asks for less. |
 | `LLM_TEMPERATURE` | `0` | **Leave at 0 for eval captures** — sampling variance would measure the sampler, not the change under test. |
 | `FIREWORKS_USER` | `clean-earth-rag` | Sent as the OpenAI `user` field; drives serverless prompt-cache affinity. |
 | `EMBEDDING_MODEL` | `nomic-ai/nomic-embed-text-v1.5` | 768-dim. |
+| `RERANK_MODEL` | `fireworks/qwen3-reranker-8b` | Cross-encoder for the `*-rerank` retrieval modes (`RerankService`). Measured and not adopted for launch (`docs/EVAL_REBUILD.md`). |
 
 ### Retrieval ([§6](#6-retrieval-arms))
 
@@ -332,8 +342,10 @@ every problem, missing secrets are warnings only.
 |---|---|---|
 | `DEFAULT_RETRIEVAL` | `stub` | `stub` \| `firestore-direct` \| `firestore-vector` \| `local-vector` \| `local-hybrid` \| `hybrid-slice-vector` \| `hybrid-slice-lexvec` \| `gold-context` ([§6](#6-retrieval-arms)). `gold-context` is eval-only: it answers only fixture questions that have retrieval labels. **`pgvector-rag` is no longer a selectable value** — the arm was archived 2026-08-19 ([§6](#6-retrieval-arms)). A stale `.env` still naming it throws on the **first chat request**, not at startup — see [§11](#11-troubleshooting). |
 | `DEBUG_RETRIEVAL` | `false` | When `true`, a request's `"retrieval"` field is honoured. Required by the bake-off runner. |
-| `AUDIT_LOG` | `false` | When `true`, every chat response is persisted to Firestore for dispute reconstruction (`docs/RESPONSIBILITY.md` §6). Keep off until the retention and access policy is settled. |
+| `AUDIT_LOG` | `false` | When `true`, every chat response is persisted to Firestore for dispute reconstruction (`docs/records/RESPONSIBILITY.md` §6). Keep off until the retention and access policy is settled. |
 | `CORPUS_SOURCE` | `artifact` | Where `firestore-direct` reads text: `artifact` (local file, no credentials) or `firestore`. Explicit rather than auto-detected — a silent fallback would measure the wrong source. |
+| `QUERY_REWRITE` | `false` | Rewrite a follow-up into a standalone search query before retrieval (`src/retrieval/queryRewrite.ts`); one extra model call per follow-up. On in the release. |
+| `QUERY_REWRITE_FIRST_TURN` | `false` | With `QUERY_REWRITE` on, also rewrite first turns. On in the release; ignored while `QUERY_REWRITE` is off. |
 
 ### Query quota (`POST /api/v1/chat`)
 
@@ -350,11 +362,9 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `QUERY_QUOTA_REPORTS` | `unlimited` | report PDFs per key per window (`POST /api/v1/reports`); refuses with 429 `quota_reports_exceeded`. |
 | `QUERY_QUOTA_TOKENS` | `unlimited` | `usage.totalTokens` per key per window, summed across tool rounds. **Enforced on tokens already spent**: the request that crosses the line finishes, the next one is refused. |
 | `QUERY_QUOTA_WINDOW` | `30d` | Window length. **Unit suffix required** — `s`/`m`/`h`/`d`/`w`. Windows are fixed and epoch-aligned, so `7d` rolls over on **Thursday** 00:00 UTC and a burst of `2 x limit` is reachable across a boundary. |
-| `QUERY_QUOTA_SCOPE` | `caller` | `caller` (sha256 of the bearer token → client IP → one shared `anonymous` bucket) or `global` (whole deployment). **`trust proxy` is not set**, so behind a proxy every anonymous caller shares one IP bucket; the bundled frontend sends a token only when an account is signed in. |
-
-> **Counters are in process memory.** They reset on every redeploy and crash, and each instance
-> enforces its own quota (`limit x instances`). Fine for deciding a policy; not a spend gate for a
-> paid tier — that needs a shared store behind the `QuotaStore` interface (`docs/SPECS.md` §4a).
+| `QUERY_QUOTA_SCOPE` | `caller` | `caller` or `global` (whole deployment). With `CER_RAG_SERVICE_KEY` set, `caller` keys on the user id the CER server sends; without it, on the sha256 of the bearer token → client IP → one shared `anonymous` bucket. **`trust proxy` is not set**, so behind a proxy every anonymous caller shares one IP bucket. |
+| `QUERY_QUOTA_STORE` | `memory` | Where counters live. `memory` resets on every redeploy and crash, and each instance enforces its own quota (`limit x instances`). `firestore` keeps one `gilligan_usage` document per user per UTC day, shared across instances, and requires `QUERY_QUOTA_WINDOW=1d`; the release uses it (`docs/SPECS.md` §4a). |
+| `QUERY_QUOTA_WARN_AT` | `0.2` | Fraction of a finite allowance at or below which `GET /api/v1/usage` reports `nearLimit`, so the dashboard warns before refusing. |
 
 ### Sensor tool ([§7](#7-sensor-querying))
 
@@ -363,7 +373,8 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `SENSOR_TOOL` | `false` | **The gate.** Enables `query_sensor_data`, `list_pods`, `get_pod_thresholds` and `get_turbidity_info`, the tool-round loop, and the prompt's tool block. Off ⇒ the bot cannot read sensors at all. |
 | `MAX_TOOL_ROUNDS` | `16` | Tool-enabled rounds before a forced text-only round. Legacy was 5, which cannot fit a six-parameter question. |
 | `RAW_LIMIT` | `200` | Rows an `aggregation: "raw"` call returns. A cap, not a page size — raw output goes into the next prompt. |
-| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/migration/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
+| `PREDECESSOR_PERIOD_HANDOFF` | `false` | Lets period reads include a merged pod's hidden predecessor history. Keep off until every period-route server in front of this service enforces the Q6 authorization check (`docs/SPECS.md`). |
+| `SENSOR_DEVICE_LABEL` | *(unset)* | Default pod when the model names none. **Leave unset unless the deployment truly has one pod** — the token sees a whole fleet (21 → 17 → **15** across three live counts; nothing may hard-code it — `docs/reference/BACKEND_FIELDS.md` §1) and the two cleared test pods are on opposite coasts. Unset means the tool asks. |
 
 ### Report tool ([§10](#10-endpoints))
 
@@ -372,6 +383,7 @@ and traps in `.env.example`; design notes in `docs/SPECS.md` §4a.
 | `REPORT_TOOL` | `false` | **The gate.** Enables `generate_report`, its entry in the tool registry, and the prompt's report-vs-stat routing rule. Separate from `SENSOR_TOOL` because `generate_report` calls `QuerySensorData.query()` directly rather than through the model's tool loop — but it needs `DEVICE_API_BASE_URL` all the same. Same pinned-prompt caveat as `SENSOR_TOOL`. |
 | `CATALOGUE_PROMPT` | `false` | Appends the approved-guidance block (`src/catalogue/`) to the system prompt. Same pinned-prompt caveat as `SENSOR_TOOL`. Reports use the catalogue regardless. |
 | `CATALOGUE_DRAFTS` | `false` | Also shows catalogue entries no supervisor has approved. For supervisor review only; never set it for customers. |
+| `CER_DESCRIPTION` | *(unset)* | The approved answer to "what does Clean Earth Rovers do". Unset, the question stays out of scope; the text lives in configuration so a placeholder cannot ship in code. |
 
 ### Device API ([§2c](#2c-clean-earth-device-api))
 
@@ -457,7 +469,7 @@ corpus change so documents that left the corpus are deleted too.
 <details>
 <summary><b><code>firestore-vector</code></b></summary>
 
-Requires `FIREWORKS_API_KEY` (it embeds the corpus's 446 chunks) and the **vector index** from
+Requires `FIREWORKS_API_KEY` (it embeds the corpus's 457 chunks) and the **vector index** from
 [§2b](#2b-google-cloud--firestore).
 
 ```bash
@@ -509,7 +521,7 @@ returning empty context still produces a clean-looking, completely meaningless d
 
 `query_sensor_data` reads the **real Clean Earth device API**. Implementation:
 [`docs/SPECS.md`](docs/SPECS.md) §10.3a; API contract and traps:
-[`docs/migration/DEVICE_API.md`](docs/migration/DEVICE_API.md).
+[`docs/reference/DEVICE_API.md`](docs/reference/DEVICE_API.md).
 
 ### 7a. Turn it on
 
@@ -647,7 +659,7 @@ reporting still answers "the last day" about its last day of data.
 |---|---|
 | `npm run dev` | live-reload dev server (`ts-node-dev`) |
 | `npm run build` / `npm start` | compile to `dist/` / run compiled |
-| `npm test` | full Jest suite (57 suites: 51 unit, 6 integration; none touching the network) |
+| `npm test` | full Jest suite (87 suites: 76 unit, 11 integration, counted 2026-10-14; none touching the network, and the Firestore emulator suite skips unless `FIRESTORE_EMULATOR_HOST` is set) |
 | `npm run test:coverage` / `test:watch` | coverage / watch mode |
 | `npm run lint` / `npm run typecheck` | ESLint (check-only) over `src` / `tsc --noEmit` |
 | `npm run lint:fix` | ESLint `--fix` over `src` `.ts` files, writes files |
@@ -660,7 +672,7 @@ reporting still answers "the last day" about its last day of data.
 | `npm run report:render` | render a report PDF offline — no server, no LLM (`--device=`, `--range=`, `--out=`); uses `DEVICE_API_TOKEN` like `verify:sensor` |
 | `npm run catalogue:review` | regenerate `docs/catalogue/review.html` from `src/catalogue/catalogue.json` (`docs/SPECS.md` §4b) |
 | `npm run explore:devices` | discover the fleet and record raw responses to `data/device-api/` |
-| `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/migration/BACKEND_FIELDS.md`) |
+| `npm run explore:fields` / `explore:surface` | read-only backend census: per-device field coverage / route surface (`docs/reference/BACKEND_FIELDS.md`) |
 | `npm run bakeoff -- --arm=<mode> --pass=<cold\|warm>` | capture a run; `--spot-check`, `--only`, `--dry-run` |
 | `npm run cost` | price the arms at `gpt-oss-120b` rates and compute break-even |
 | `npm run judge` | the paid Tier 2 LLM judge over captured transcripts; `--dry-run` first, `--calibrate` for judge-vs-human agreement |
@@ -688,17 +700,20 @@ src/
     lexical/            #   Bm25Index
     sources/            #   ArtifactCorpusSource | FirestoreCorpusSource
   devices/              # DeviceApiClient (read-only), metrics.ts (codes, flags, decoding),
-                        #   plausibility.ts (per-metric rails), mergeChains.ts
+                        #   plausibility.ts (per-metric rails), readingQc.ts (per-reading QC),
+                        #   mergeChains.ts
   tools/                # the model-facing tools — SPECS.md §10.3a
     querySensorData.ts  #   the sensor tool + typed query(); timeRange.ts; aggregate.ts
     listPods.ts         #   the caller's own fleet
     getPodThresholds.ts #   the pod's registry alert limits; getTurbidityInfo.ts
     generateReport.ts   #   the report tool, gated on REPORT_TOOL
+                        #   helpers: currentSite, siteSnapshot, dataCoverage, dailyCycle,
+                        #   metricVerdict, readingAge
   catalogue/            # catalogue.json (approved guidance) + validator, selection,
                         #   prompt block, review page - SPECS.md §4b
   report/               # the deterministic report pipeline: buildReportInput, events,
-                        #   patterns, referenceRanges, operatorThresholds, narrative,
-                        #   renderPdf, produceReport - SPECS.md §10.7
+                        #   patterns, referenceRanges, operatorThresholds, flagRules,
+                        #   narrative, omit, renderPdf, produceReport, delivery - SPECS.md §10.7
   quota/                # QuotaService + QuotaStore seam — SPECS.md §4a
   services/             # LlmService, ChatOrchestrator (tool loop), EmbeddingService, auditLog
   prompt/               # systemPrompt.ts (base prompt + TOOL_BLOCK / REPORT_TOOL_BLOCK),
@@ -710,11 +725,15 @@ scripts/                # ingest, seed*, embed cache, bakeoff, gateCheck, judge,
                         #   gradePacket, retrievalEval, resolveRetrievalLabels,
                         #   compareVectorArms, renderReport, exploreDeviceApi,
                         #   verifySensorTool, exploreDeviceFields.sh, exploreBackendSurface.sh
+                        #   folders: e2e/ (browser checks), mirror/, skepticism/ (replays),
+                        #   security/ (hidden-payload scan)
 test/
-  integration/          # health, chat, sensorChat, devices, quotaChat, reports
+  integration/          # health, chat, chatBodyLimit, sensorChat, devices, quotaChat, reports,
+                        #   reportClaim, provenance, q3Corrections, firestoreQuotaStore.emulator
   unit/                 # per-module suites
   fixtures/device-api/  # recorded production bodies + provenance README
   fixtures/pod-scope/   # synthetic fleet for pod-authorization work
+  fixtures/skepticism/  # fabricated fleet for the data-skepticism suite and replay
 frontend/               # chat UI (manual test surface, not the product). Served, not file://
   index.html            #   markup + mount points; app.css; js/ modules; vendor/ for third-party
 data/                   # corpus artifact + device recordings (git-ignored)
@@ -727,8 +746,9 @@ eval/                   # fixtures-wave1/ (committed questions), claims/, retrie
 archive/                # retired code kept for the record, at its original paths.
   pgvector-rag/         #   the archived bake-off arm (§6) — not built, not tested, not imported
 docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_REBUILD.md,
-                        #   ARCHIVED.md, eval and corpus notes; migration/ (Gilligan
-                        #   release, device API, upstream); catalogue/ (generated review page)
+                        #   ARCHIVED.md, the eval docs; reference/, runbooks/,
+                        #   plans/, people/, records/, captures/;
+                        #   catalogue/ (generated review page)
 ```
 
 ---
@@ -739,10 +759,10 @@ docs/                   # STATUS.md (start here), SPECS.md, timeline.md, EVAL_RE
 |---|---|---|
 | `GET` | `/` | service banner |
 | `GET` | `/health` | liveness + config-presence checks (no external I/O) |
-| `GET` | `/api/v1` | API v1 banner |
+| `GET` | `/api/v1` | API v1 banner. **Every `/api/v1` route requires the `x-cer-rag-service-key` header when `CER_RAG_SERVICE_KEY` is set** ([§5](#core)); `/` and `/health` stay open for probes. |
 | `GET` | `/api/v1/devices` | pod list for the UI selector (read-only, forwards the caller's token). **Requires `Authorization: Bearer`** |
 | `GET` | `/api/v1/usage` | the caller's quota standing (questions, tokens, reports, window reset). Read-only and outside the quota gate (SPECS.md §4a). |
-| `POST` | `/api/v1/reports` | body `{ time_range, device? }` (a `generate_report` result's `report_request`); returns the report PDF as a download and stores nothing. **Requires `Authorization: Bearer`**; 404 while `REPORT_TOOL` is off; counted against `QUERY_QUOTA_REPORTS` (SPECS.md §10.7). |
+| `POST` | `/api/v1/reports` | body `{ time_range, device?, omit? }` (a `generate_report` result's `report_request`; `omit` names notes to leave out of a copy for sharing, `src/report/omit.ts`); returns the report PDF as a download and stores nothing. **Requires `Authorization: Bearer`**; 404 while `REPORT_TOOL` is off; counted against `QUERY_QUOTA_REPORTS` (SPECS.md §10.7). |
 | `POST` | `/api/v1/chat` | JSON, or SSE when `"stream": true`. Not itself gated, but the sensor and report tools require the caller's token |
 
 **Request:** `{ query, retrieval?, stream?, history?, device? }`. `query` required; `retrieval`

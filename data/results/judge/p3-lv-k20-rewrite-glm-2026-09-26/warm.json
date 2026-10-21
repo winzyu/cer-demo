@@ -1,0 +1,158 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-27T01:52:35.785Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1283816,
+    "cachedPromptTokens": 156582,
+    "completionTokens": 91487
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.1875,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 0.875,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 1.0666666666666667,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates a must-not item by declaring the standard 4/7/10 buffers appropriate at pH 3.2 and it misses the 1.68/2-buffer requirement the 1.68–10 accuracy range the bracketing failure at pH 3.2 and the ±10 °C buffer-temperature point. Unmet: States the usual 4/7/10 buffer set is not sufficient for acidic water and a pH 1.68 (or 2) buffer is needed when acidic waters are measured; States the standard pH procedure is expected to be accurate over roughly pH 1.68 to 10; States the sample pH must fall inside the calibrated range so a 4/7/10 set does not bracket pH 3.2; States the calibration buffers must be within about 10 C of the sample temperature"
+        },
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a discrepancy and declares the multiparameter chapter's turbidity criterion 'stricter' than the general rule resolving the imagined conflict by picking a document which violates the must-not items. Unmet: States plainly that the two tables give the same stabilisation criteria and do not conflict; States the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind; States the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer which is a separate matter; For persistent variability extends equilibration and records additional measurements then reports the median of the final five or more readings or selects a representative final reading documenting the decision"
+        },
+        {
+          "fixtureId": "crossdoc-sonde-sensor-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer declines the core question saying the documents give no rule about the order of calibrating sensors against each other so it makes none of the required ordering points and effectively tells the tech sequence across parameters does not matter. Unmet: states the order does matter and gives temperature first; gives specific conductance next before pH; gives the general remaining order as pH DO ORP turbidity then ion-selective and fluorescence sensors with the A6.2 two-point DO exception; explains the rationale as working from low to high ionic strength; states conductivity must be calibrated before pH because pH buffers and filling solutions are high in ionic strength; states the sensors are rinsed three times with deionized water between standards; states the sonde is calibrated or checked before each field use"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the A6.8 field-form criteria the rubric asks for (no ±0.1 unit figure no ±0.3 unit below 75 µS/cm) so it cannot make the required distinction even though it correctly reports A6.4's 0.05 pH unit final-buffer check. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check requiring agreement within 0.05 pH unit of the certified value at calibration temperature"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal that withholds every figure and comparison the rubric asks for making none of the must-contain points though it violates no must-not item. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure not as universally insignificant; notes the USGS values are generated from the Benson and Krause equations; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently rather than mixing them"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the multiplication method and cites table 6.2-4 but withholds the required 0.8235 factor for 20.0 °C at 50 000 µS/cm saying it lacks the information which is a refusal of a figure the rubric asks for. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the question outright stating it lacks information about preparing or diluting turbidity calibration standards so none of the four required must-contain points (no dilution of commercial standards the 4 000-unit formazin exception the non-linear suspension-matrix effect and buying pre-made solutions) are made. Unmet: states that commercial calibration solutions must not be diluted; gives 4 000-unit formazin as the one exception that may be diluted; explains that diluting changes the suspension matrix so the dilutions are no longer linear; recommends buying commercially prepared solutions at the values needed rather than preparing them by dilution"
+        },
+        {
+          "fixtureId": "deepmanual-do-air-calibration",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the USGS 0.2 mg/L zero-check criterion and manufacturer-contact/rinse steps but never states the 0.5 mg/L acceptance value the clean-probe/change-membrane-and-electrolyte action or the accuracy dependence of the 0.5 mg/L figure so no must-contain point is met. Unmet: States the instrument should read less than 0.5 mg/L in a 0.0 mg/L DO solution; States a reading above 0.5 mg/L or any negative reading calls for cleaning the probe and changing the membrane and electrolyte; Notes the 0.5 mg/L value assumes an instrument accuracy of about ±0.2 mg/L and may be adjusted to the project's or instrument's accuracy requirements"
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer misreads the solubility table presenting 8.64 and 7.56 mg/L as the 760 mmHg values (they are actually 600-695 mmHg column entries) which invents unsupported solubility values for the stated condition and it also misses the pressure-dependence and cannot-be-established points. Unmet: Gives freshwater oxygen solubility at ~15 C from the USGS table (roughly 10.0-10.1 mg/L near 760 mmHg); Gives freshwater oxygen solubility at ~20 C from the same table (roughly 9.0-9.1 mg/L near 760 mmHg); States freshwater equilibrium solubility at 760 mmHg falls by 0.99 mg/L from 15 C to 20 C as a conditional benchmark; States equilibrium saturation also depends on barometric pressure so the site's actual pressure changes the benchmark; States the actual warming contribution and remaining site-specific drop cannot be established from these readings alone (pressure salinity initial saturation not given)"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses outright claiming no sequencing guidance exists and so withholds the ordering the rubric requires and makes none of the must-contain points. Unmet: States order matters and gives recommended sequence; Places temperature first; Places specific conductance before pH; Places DO then ORP after pH; Explains lower-to-higher ionic strength rationale; Notes pH buffers/filling solutions are high ionic strength and contaminate conductivity calibration"
+        },
+        {
+          "fixtureId": "refusal-turbidity-sensor-hardware",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer resolves the unit by prevalence of infrared instruments (\"FNU is the most likely unit for your display\") violating the must-not against picking the most-used unit and it misses most must-contain points (NTU/white-light example calibration-vs-environmental equivalence corpus lacking make/model spreadsheet not in corpus and the decline-to-infer point). Unmet: Gives NTU and FNU as white-light and near-infrared nephelometric examples; Distinguishes equivalent results on calibration standards from environmental-sample results that need not be interchangeable across optical designs; States that the corpus does not identify the make or model of turbidity instrument in this fleet; States that the service treats turbidity as a relative uncalibrated index; this does not establish the unidentified hardware's optical-standard unit or calibration; Notes that the mapping from instrument model to unit lives in a USGS spreadsheet that is not part of the corpus; Declines to infer this fleet's optical design or physical reporting unit from the prevalence of infrared instruments in general guidance"
+        }
+      ]
+    }
+  ]
+}

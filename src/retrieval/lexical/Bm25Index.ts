@@ -4,7 +4,7 @@ import { readCorpus } from "../../ingestion/ingest";
  * An in-process Okapi BM25 index over the corpus chunks.
  *
  * **Why lexical retrieval exists again.** The legacy FastAPI service fused dense vectors with
- * Postgres full-text search via RRF (`docs/migration/MIGRATION_SPEC.md` §7). The migration dropped
+ * Postgres full-text search via RRF (`docs/reference/MIGRATION_SPEC.md` §7). The migration dropped
  * the lexical half because Firestore has no full-text search, and that was recorded as a known
  * regression (`docs/RETRIEVAL_BAKEOFF.md` §4b, the "dead lexical branch" finding).
  *

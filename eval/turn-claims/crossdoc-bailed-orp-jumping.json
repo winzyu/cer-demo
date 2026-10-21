@@ -1,0 +1,125 @@
+{
+  "fixtureId": "crossdoc-bailed-orp-jumping",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "a60-xcut-bailer-no-do-eh-temp-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Explains why decanting invalidates unqualified Eh, DO and temperature readings."
+        },
+        {
+          "claimId": "a60-xcut-subsample-valid-params-01",
+          "rubric": [
+            1,
+            3,
+            4
+          ],
+          "why": "Distinguishes parameters suitable for subsampling from those requiring in-situ measurement."
+        },
+        {
+          "claimId": "fm-subsample-forbidden-params-01",
+          "rubric": [
+            1,
+            3
+          ],
+          "why": "Requires estimated-value qualifiers for subsampled Eh, DO and temperature."
+        },
+        {
+          "claimId": "a60-anoxic-insitu-required-01",
+          "rubric": [
+            5
+          ],
+          "why": "Requires in-situ measurement in anoxic water; the inert-gas exception needs the companion claim."
+        },
+        {
+          "claimId": "fm-subsample-anoxic-forbidden-01",
+          "rubric": [
+            5
+          ],
+          "why": "States the reducing-water restriction and inert-gas exception."
+        },
+        {
+          "claimId": "a60-xcut-insitu-required-01",
+          "rubric": [
+            4
+          ],
+          "why": "Separates required in-situ parameters from recommended ones."
+        },
+        {
+          "claimId": "a60-xcut-peristaltic-no-do-eh-01",
+          "rubric": [
+            6
+          ],
+          "why": "Forbids suction-lift pumps for Eh and DO because negative pressure releases gases."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "orp-in-situ-or-airtight-01",
+          "rubric": [
+            1
+          ],
+          "why": "Requires in-situ or airtight flowthrough measurement without aeration."
+        },
+        {
+          "claimId": "orp-purge-oxygen-01",
+          "rubric": [
+            2
+          ],
+          "why": "Specifies oxygen-resistant tubing, airtight fittings and oxygen purging."
+        },
+        {
+          "claimId": "orp-thermal-equilibrium-30min-01",
+          "rubric": [
+            3
+          ],
+          "why": "Explains thermal drift and equilibration lasting over 30 minutes."
+        },
+        {
+          "claimId": "orp-reading-cadence-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the initial and later reading cadence and constant-potential endpoint."
+        },
+        {
+          "claimId": "orp-slow-asymmetric-01",
+          "rubric": [
+            5
+          ],
+          "why": "States the slower, asymmetric response relative to pH."
+        },
+        {
+          "claimId": "orp-report-nearest-10mv-01",
+          "rubric": [
+            6,
+            7
+          ],
+          "why": "Gives 10 mV reporting precision and the accompanying temperature, electrode and pH records."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "a60-gw-recommended-pump-cell-01",
+      "why": "Recommends a pump and cell but does not establish the required airtight, aeration-free Eh setup."
+    },
+    {
+      "claimId": "a60-bailer-turbidity-bias-01",
+      "why": "Concerns bias during bailer deployment, not the requested atmospheric exposure during decanting."
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "fixtureId": "precedence-turbidity-groundwater-background-not-pod-limit",
+  "fixtureClass": "precedence",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "tby-groundwater-lt5-19-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Gives the observed groundwater turbidity ranges without establishing a pass/fail criterion."
+        }
+      ],
+      "uncovered": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "tby-groundwater-lt5-19-01",
+          "rubric": [
+            1,
+            2,
+            5
+          ],
+          "why": "Describes observed values and contaminated-water differences, supporting refusal to derive a cutoff."
+        }
+      ],
+      "uncovered": [
+        3,
+        4
+      ]
+    }
+  ],
+  "neither": []
+}

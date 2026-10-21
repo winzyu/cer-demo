@@ -1,0 +1,146 @@
+{
+  "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "do-one-point-goal-01",
+          "rubric": [
+            1
+          ],
+          "why": "Defines the saturated-oxygen calibration goal and equal sensor temperatures."
+        },
+        {
+          "claimId": "do-proc1-read-precision-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Gives calibration-time pressure and temperature reading precision."
+        },
+        {
+          "claimId": "do-water-droplets-01",
+          "rubric": [
+            6
+          ],
+          "why": "Requires checking optical sensors for droplets and recalibrating if found."
+        },
+        {
+          "claimId": "do-calibration-corrections-01",
+          "rubric": [
+            5
+          ],
+          "why": "Identifies conductivity as the routine estimate of ionic strength."
+        },
+        {
+          "claimId": "do-auto-salinity-correction-01",
+          "rubric": [
+            5,
+            7
+          ],
+          "why": "Distinguishes automatic conductivity-based salinity compensation from manual correction."
+        },
+        {
+          "claimId": "do-auto-salinity-multiparameter-01",
+          "rubric": [
+            7
+          ],
+          "why": "Identifies automatic salinity correction and its user-controlled exception."
+        },
+        {
+          "claimId": "do-salinity-correction-after-01",
+          "rubric": [
+            7
+          ],
+          "why": "States the preferred timing of manual salinity correction."
+        },
+        {
+          "claimId": "do-manual-salinity-recalibration-01",
+          "rubric": [
+            8
+          ],
+          "why": "Requires recalibration for each salinity change when correction is entered manually at calibration."
+        }
+      ],
+      "uncovered": [
+        4
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "epa-cal-frequency-daily-01",
+          "rubric": [
+            1
+          ],
+          "why": "Requires calibration before use on the measurement day."
+        },
+        {
+          "claimId": "epa-post-cal-end-of-day-01",
+          "rubric": [
+            2
+          ],
+          "why": "States the normal end-of-day calibration check; the exemption needs other support."
+        },
+        {
+          "claimId": "epa-midday-check-qualify-01",
+          "rubric": [
+            3
+          ],
+          "why": "Limits qualification to earlier data after a successful midday recalibration."
+        },
+        {
+          "claimId": "epa-sonde-deploy-cal-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives predeployment calibration and recovery-check requirements."
+        },
+        {
+          "claimId": "epa-postcal-do-steps-01",
+          "rubric": [
+            5
+          ],
+          "why": "Specifies measurement mode and DO, temperature and pressure records for chart comparison."
+        },
+        {
+          "claimId": "epa-postcal-defaults-apply-when-01",
+          "rubric": [
+            6
+          ],
+          "why": "Applies SOP defaults only when the project plan supplies no drift criteria."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "do-wet-towel-bag-shade-01",
+      "why": "Gives a wet-towel shading method; neither rubric asks for that calibration setup."
+    },
+    {
+      "claimId": "do-temp-controls-solubility-01",
+      "why": "Explains oxygen solubility, but neither rubric asks for this reason for temperature stability."
+    },
+    {
+      "claimId": "mp-form-do-columns-05",
+      "why": "Lists USGS form fields, not concentration computation or the EPA post-check procedure."
+    },
+    {
+      "claimId": "mp-t4-nist-thermometer-02",
+      "why": "Requires certified or traceable equipment, not the requested current calibration check or reading precision."
+    },
+    {
+      "claimId": "epa-do-solubility-20c-01",
+      "why": "Gives chart values at 20 C; neither rubric asks for numerical saturation values."
+    },
+    {
+      "claimId": "epa-do-dry-sensor-01",
+      "why": "Describes drying a membrane sensor under EPA, not the conditional USGS optical-sensor check."
+    }
+  ]
+}

@@ -156,6 +156,31 @@ describe("POST /api/v1/reports", () => {
     expect(fetchCalls).toHaveLength(0);
   }, RELOAD_TIMEOUT_MS);
 
+  it("rejects an omit value outside the list without reading any device", async () => {
+    const app = loadAppWith({});
+
+    const response = await request(app)
+      .post(REPORTS)
+      .set("Authorization", CALLER)
+      .send({ time_range: "last day", device: "Algalita", omit: ["recommendations"] })
+      .expect(400);
+    expect(JSON.stringify(response.body)).toContain("turbidity_notes");
+    expect(fetchCalls).toHaveLength(0);
+  }, RELOAD_TIMEOUT_MS);
+
+  it("renders a copy with the requested notes left out", async () => {
+    const app = loadAppWith({});
+
+    const response = await request(app)
+      .post(REPORTS)
+      .set("Authorization", CALLER)
+      .send({ time_range: "last day", device: "Algalita", omit: ["turbidity_notes", "data_quality"] })
+      .buffer(true)
+      .parse(binary)
+      .expect(200);
+    expect((response.body as Buffer).subarray(0, 5).toString("latin1")).toBe("%PDF-");
+  }, RELOAD_TIMEOUT_MS);
+
   it("answers 422 with the pipeline's own reason for a range it cannot read, and counts nothing", async () => {
     const app = loadAppWith({ QUERY_QUOTA: "true", QUERY_QUOTA_REPORTS: "1", QUERY_QUOTA_WINDOW: "1d" });
 
@@ -167,7 +192,9 @@ describe("POST /api/v1/reports", () => {
     expect(failed.body.error).toBeTruthy();
 
     const usage = await request(app).get("/api/v1/usage").set("Authorization", CALLER).expect(200);
-    expect(usage.body.reports).toEqual({ used: 0, limit: 1, remaining: 1 });
+    expect(usage.body.reports).toEqual({
+      used: 0, limit: 1, remaining: 1, nearLimit: true,
+    });
   }, RELOAD_TIMEOUT_MS);
 
   it("counts a rendered report and refuses the next one with quota_reports_exceeded", async () => {
@@ -196,8 +223,12 @@ describe("POST /api/v1/reports", () => {
 
     // A report is not a question: the chat allowance is untouched.
     const usage = await request(app).get("/api/v1/usage").set("Authorization", CALLER).expect(200);
-    expect(usage.body.reports).toEqual({ used: 1, limit: 1, remaining: 0 });
-    expect(usage.body.questions).toEqual({ used: 0, limit: 5, remaining: 5 });
+    expect(usage.body.reports).toEqual({
+      used: 1, limit: 1, remaining: 0, nearLimit: false,
+    });
+    expect(usage.body.questions).toEqual({
+      used: 0, limit: 5, remaining: 5, nearLimit: false,
+    });
   }, RELOAD_TIMEOUT_MS);
 
   it("no longer serves GET /api/v1/reports/:filename", async () => {

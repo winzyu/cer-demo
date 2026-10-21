@@ -1,5 +1,5 @@
 import {
-  GOLD_CONTEXT_ARM, SPOT_CHECK_QUERIES, parseArgs, spotCheckQueriesFor,
+  GOLD_CONTEXT_ARM, SPOT_CHECK_QUERIES, parseArgs, parseRunId, spotCheckQueriesFor,
 } from "../../src/eval/cli";
 import type { LabelledQuery } from "../../src/eval/retrieval/types";
 import {
@@ -256,6 +256,20 @@ describe("parseArgs", () => {
 
   it("defaults to the streaming transport so TTFT is captured", () => {
     expect(parseArgs(["--arm=stub", "--pass=cold"]).transport).toBe("sse");
+  });
+
+  it("puts a named run under its own transcript root", () => {
+    const args = parseArgs(["--arm=gold-context", "--pass=warm", "--run=p3-2026-09-23"]);
+    expect(args.run).toBe("p3-2026-09-23");
+    expect(args.outDir).toBe("eval/transcripts/p3-2026-09-23");
+    expect(parseArgs(["--arm=stub", "--pass=warm"]).outDir).toBe("eval/transcripts");
+  });
+
+  it("rejects a run id that is not a single path segment, and --run with --out", () => {
+    expect(() => parseArgs(["--arm=stub", "--pass=warm", "--run=../warm"])).toThrow(/--run must be/);
+    expect(() => parseArgs(["--arm=stub", "--pass=warm", "--run=a", "--out=b"])).toThrow(/exclusive/);
+    expect(() => parseRunId("a/b")).toThrow(/--run must be/);
+    expect(parseRunId(undefined)).toBeUndefined();
   });
 
   it("lets a spot check run without a pass", () => {

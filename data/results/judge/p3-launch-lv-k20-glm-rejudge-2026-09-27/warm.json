@@ -1,0 +1,140 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-27T20:03:21.935Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1331025,
+    "cachedPromptTokens": 259144,
+    "completionTokens": 93436
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.8333333333333334,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.45,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.1875,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 0.75,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 1.1333333333333333,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer invents a discrepancy between the two tables treats one as possibly stricter and resolves the imagined conflict by telling the user to apply whichever set is stricter violating the must-not items. Unmet: states plainly that the two tables give the same stabilisation criteria and do not conflict; states the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind; states the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer; For persistent variability extends equilibration and records additional measurements then reports the median of the final five or more readings or selects a representative final reading with documented judgment"
+        },
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the qualifier points for turbidity/temperature/DO/Eh but refuses the flow-cell-discharge sampling question withholding the prohibition the rubric expects and omits the storage limits and time-sensitivity points. Unmet: States plainly that a discrete turbidity sample must not be collected from the discharge passing through the flow-through chamber holding the other sensors; Gives storage limits: clean amber bottle out of sunlight chilled at or below 4 C held no longer than 24 hours; Notes turbidity is time sensitive and should be measured on site preferably in situ"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the A6.8 field-form criteria the rubric asks for (no ±0.1 or ±0.3 below 75 µS/cm stated) and so cannot make the required distinction giving only A6.4's 0.05 check; no 'must not' item is violated but the requested facts are withheld. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check (within 0.05 pH unit of certified value at calibration temperature)"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses and withholds every figure the rubric asks for making none of the must-contain points though it violates no must-not item. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure; notes the USGS values are generated from the Benson and Krause equations; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the multiplication method and cites table 6.2–4 but withholds the required factor 0.8235 saying it is not available which is a refusal of a figure the rubric expects. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer places pH before specific conductance violating a must-not item and misses the temperature-first ordering the ionic-strength rationale and the pH-buffer contamination note. Unmet: Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then oxidation-reduction potential after pH; Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next; Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that makes none of the rubric's must-contain points and withholds the supported explanations the rubric expected. Unmet: Corpus gives no rule for deciding which part of a long record may be kept; No source gives an allowable rate of drift (per-day/per-week); No procedure for correcting or adjusting a record after retrieval; Turbidity chapter offers a fouling check comparing calibrant reading before/after cleaning with percent difference; Fouling check quantifies one sensor's condition not an acceptance rule for the record; EPA SOP: calibrate before deployment check on recovery defers drift criteria to QA plan default post-calibration criteria only if plan silent; Declines to convert EPA post-calibration criteria into a keep-or-discard threshold for a month of record; EPA default post-calibration criteria are a pass-or-fail check at recovery not a record-retention rule; failing data are qualified not discarded"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is essentially a refusal that withholds the substantive facts the rubric asks for (the turbidity cleaning cadence the deferral to manufacturer/continuous-monitor guidance and the temperature/sonde/turbidity maintenance context) making only the 'no source gives a maximum time' point and it substitutes an outside vendor reference not in the corpus. Unmet: Acknowledges the corpus includes deployed-temperature verification continuous-sonde calibration checks and turbidity maintenance without treating them as a universal deployment lifetime; Attributes the deferral of full long-term deployment guidance to the turbidity section which points to manufacturer instructions and external continuous-monitor references; Gives the turbidity chapter's approximate two-to-four-week deployed optical-sensor cleaning cadence more often with apparent biofouling; States that this is a maintenance cadence for one sensor and not a limit on how long the instrument may stay deployed; Says plainly that the deployment limit has to come from outside these sources such as the manufacturer or the project's own plan"
+        }
+      ]
+    }
+  ]
+}

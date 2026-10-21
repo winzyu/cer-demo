@@ -1,0 +1,3646 @@
+### EC_K_1.0_probe.pdf (chunk EC_K_1.0_probe.pdf)
+
+Range 	5 − 200,000 μS/cm
+90% in 1s	Response time
+3,447 kPa (500 PSI)	Max pressure
+1 meter	Cable length
+No	Internal temperature sensor
+~10 years	Time before recalibration
+Graphite
+Reads 	Conductivity
+1 − 110 °C	Temperature range °C
+352m (1,157 ft)	Max depth
++/ – 2%	Accuracy
+Male SMA / Male BNC	Connector
+~10 years	Life expectancy
+Conductivity
+Gen 3
+Probe K 1.0
+(Optional)
+Revised 10/25
+V 4.2
+
+-- 1 of 9 --
+
+Operating principle
+An E.C. (electrical conductivity) probe measures the electrical conductivity in a solution.
+It is commonly used in hydroponics, aquaculture and freshwater systems to monitor the
+amount of nutrients, salts or impurities in the water.
+Inside the conductivity probe, two electrodes are positioned opposite from each other,
+an AC voltage is applied to the electrodes causing cations to move to the negatively
+charged electrode, while the anions move to the positively electrode. The more free
+electrolyte the liquid contains, the higher the electrical conductivity.
+AC voltage
+Epoxy body
+Graphite
+Epoxy body
+Graphite
+Epoxy body
+Glass stem
+Platinum
+ody
+e
+Epoxy body
+Graphite
+The entire conducting area must be
+submerged in order to get accurate
+readings.
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 9 --
+
+112.7mm
+(4.4”)
+150.3mm
+(5.9”)
+37.6mm
+(1.4”)
+12mm (0.5”)
+Cable Length
+1m (3.2’)
+29mm
+(1.1”)
+Ø 8mm
+Ø 2.6mm
+Optional
+Sensing area
+15.5mm
+(0.6”)
+16mm
+(0.6”)
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 9 --
+
+PVC
+ABS 	Polyethylene
+Titanium Nitride
+ABS
+Graphite
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Graphite
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Conductivity Probe K 1.0
+Part # ENV-40-EC-K1.0
+Complies with NSF/ANSI Standard 51
+Food Safe
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 9 --
+
+Specifications
+• 	Standard Lab use
+• 	Field use
+• 	Aquarium
+• 	Hydroponics
+• 	Fish keeping
+• 	Mixed aqueous/organic
+• 	Samples containing Heavy metals
+• 	Soil Samples
+• 	Strong reducing agents
+Typical applications
+This Conductivity probe can be 	fully
+submerged 	in fresh or salt water, up
+to the SMA connector indefinitely.
+Materials
+PVC
+ABS
+Polyethylene
+ABS 	Graphite
+Titanium Nitride
+K 1.0
+Max depth
+Cable length
+Weight
+Speed of response
+Measuring Surface
+Dimensions
+SMA connector
+Sterilization
+Food safe
+5 μS/cm – 200,000 μS/cm
+352m (1,157 ft)
+1 meter
+43 grams
+90% in 1 second
+Graphite
+12mm x 145.5mm (0.47" x 5.7")
+Male
+Chemical only
+Yes
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 9 --
+
+A conductivity probe is a very simple device. It is just two conductors with a fixed surface
+area at a fixed distance from each other. This distance and surface area is known as the
+conductivity cell. The cells distance and surface area is quantified as the conductivity cells
+K constant.
+How often do you need to
+recalibrate a conductivity probe?
+Conductivity probes work by measuring the electrical current of the water between two
+graphite plates. The plates do not go bad, or change, so recalibration is not necessary. After
+the first calibration your conductivity probe is good to go.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 9 --
+
+Extending the probe cable length
+You can extend the cable to greater than 100 meters with no loss of signal. Atlas Scientific
+has tested up to 300 meters without a problem, however you run the risk of turning your
+E.C. probe into an antenna, picking up noise along the length of your cable.
+If you want to extend your cable, we recommend that you use proper isolation, such as
+the Basic EZO TM Inline Voltage Isolator, or an i2 InterLink. Be sure to calibrate your
+probe with the extended cable.
+Extending a probe cable can be easily done with our SMA Extension Cables. Simply
+connect the SMA end of the probe to the Extension cable, and you are all set.
+If you need to water proof a SMA connection, we highly recommend using a product like
+Coax-Seal to safely cover and prevent any water damage that may occur.
+Water proof
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 9 --
+
+Helpful operating tips
+Be sure to watch out for air bubbles, as they can get caught between the two
+graphite plates and throw off your results. Lightly tap your conductivity probe to
+knock out any bubbles caught in the probe.
+Bubbles
+Over time conductivity probes can become dirty and covered in deposits, which can
+change the basic electrical properties of the probe and cause inaccurate readings.
+Soft coatings can be removed by lightly brushing around the conducting area.
+Probe cleaning
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 9 --
+
+Hard coatings should be chemically removed. We highly recommend you use the
+Atlas Scientific conductivity probe cleaner.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 9 --
+
+
+
+---
+
+### IORP_probe.pdf (chunk IORP_probe.pdf)
+
+Range 	-2000mV – 2000mV
+95% in 1s	Response time
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+No	Internal temperature sensor
+~1 Year	Time before recalibration
+Reads 	ORP
+Platinum	Sensing element
+1 − 99 °C	Temperature range °C
+70m (230’)	Max depth
+SMA or Tinned leads	Connector
++/– 1mV	Accuracy
+~4 Years +	Life expectancy
+or
+ORP Probe
+Industrial
+Gen 3
+with Platinum sensing element
+Revised 8/25
+V 3.2
+
+-- 1 of 11 --
+
+Operating principle
+ORP stands for oxidation/reduction potential. Oxidation is the loss of electrons and
+reduction is the gain of electrons. The output of the probe is represented in millivolts and
+can be positive or negative.
+Just like a pH probe measures hydrogen ion activity in a liquid; an ORP probe measures
+electron activity in a liquid. The ORP readings represents how strongly electrons are
+transferred to or from substances in a liquid. Keeping in mind that the readings do not
+indicate the amount of electrons available for transfer.
+pH Probe 	ORP Probe
+2 	Copyright © Atlas Scientific LLC
+
+-- 2 of 11 --
+
+Add just a drop of bleach
+(which is an oxidizing agent)
+606.9
+Reading A
+605.3
+Reading B
+-234.6
+Reading A
+24.2
+Reading B
+A	
+A
+B	
+B
+Tap water 	Tap water
+The water is unreactive and has only trace amounts of electron movement. These
+readings are equivalent to the readings you see with an unconnected multimeter.
+An ORP probe has a platinum tip that is connected to a silver wire, surrounded by
+silver chloride. That silver wire is then connected to a KCL reference solution. Because
+platinum is an unreactive metal it can “silently observe” the electron activity of the
+liquid without becoming apart of whatever reaction is occurring in the liquid.
+When reading the ORP of a liquid that has very few electrons available for
+transfer, ORP readings can appear to be inconsistent.
+(Theoretical value)
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 3 of 11 --
+
+46.6mm
+(1.8”)
+Soaker bottle
++ 	–
+10ml
+Ø 8mm
+197mm
+(7.7”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Ø 2.8mm
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+Measurements
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 11 --
+
+Platinum
+Teflon
+PVC
+EPDM
+Delrin ®
+(body)
+Polyethylene
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Platinum
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Grade ORP Probe
+Part # ENV-50-ORP
+Complies with NSF/ANSI Standard 51
+Food Safe
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 11 --
+
+Body material
+Max depth
+Cable length
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+70m (230 ft)
+3m (9.8 feet)
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This ORP probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Platinum
+Teflon
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 11 --
+
+An ORP probe is a passive device that detects a current generated from the oxidation or
+reduction chemical substances in water. This current (which can be positive or negative)
+is very weak and cannot be detected with a multimeter, or an analog to digital converter.
+How often do you need
+to recalibrate an ORP probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that has
+generally weak levels of chemical reactions you will only need to recalibrate your probe
+once per year for the first 2 years. After that every ~6 months.
+If you are using the ORP probe in batch chemical manufacturing, industrial process, or
+in a solution that is known to have strong chemical reactions, then calibration should be
+done monthly or in extreme cases after each batch.
+V
+V
+0000
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 11 --
+
+AtlasScientific
+PWR
+RX
+TX
+225 	B	A
+ORP
+How to connect the
+industrial ORP probe
+The Atlas Scientific ™ Industrial ORP probe can be connected in several different ways.
+The following show two examples:
+Using our EZO Complete-ORP ™ you can easily connect the
+Gen 3 Industrial ORP probe, via the probes SMA connector.
+Gen 3 Industrial ORP probe
+with the SMA connector option.
+Gen 3 Industrial ORP probe
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial ORP probe, can
+be easily connected to our Industrial ORP Transmitter via
+the probes tinned leads.
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 11 --
+
+Remove the Industrial ORP probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the ORP probe must stay wet and cannot be
+allowed to dry out, this is why every Industrial ORP probe is shipped with a plastic cap
+containing ORP probe storage solution. The cap should remain on the probe until it is used.
+fi
+Long term storage
+When you are finished using the Industrial ORP probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has ORP probe storage
+solution within it. If not, just add some from the ORP probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+9 	Copyright © Atlas Scientific LLC
+
+-- 9 of 11 --
+
+Probe cleaning
+Coating of the platinum tip can lead to erroneous readings including shortened span
+(slope). The type of coating will determine the cleaning technique. Soft coatings can
+be removed by vigorous stirring or by the use of a squirt bottle. Organic chemical, or
+hard coatings, should be chemically removed. A light bleach solution or even a 5 – 10%
+hydrochloric acid (HCl) soak for a few minutes, often removes many coatings. Do not use
+abrasive materials on the ORP probe.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 11 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 11 --
+
+
+
+---
+
+### Industrial-DO-probe.pdf (chunk Industrial-DO-probe.pdf)
+
+Range 	0 − 100 mg/L
+~0.1 mg/L/per sec	Response time
+300 PSI	Max pressure
+3 Meters	Cable length
+Yes (PT-1000)	Internal temperature sensor
+~1 Year	Time before recalibration
+~ 4 Years	Life expectancy
+~18 Months	Maintenance
+Reads 	Dissolved Oxygen
+1 − 99 °C	Temperature range °C
+212m (694 ft)	Max depth
++/– 0.05 mg/L	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+D.O. Probe
+or
+Revised 4/26
+V 2.4
+
+-- 1 of 13 --
+
+Wastewater
+Treatment
+Food
+Production
+Chemical
+Production
+Envriomental
+Monitoring
+(No Organic Solvents)
+This Probe can be used for:
+2	Copyright © Atlas Scientific LLC
+
+-- 2 of 13 --
+
+Operating principle
+This galvanic dissolved oxygen probe consists of a HDPE membrane, an anode bathed
+in an electrolyte and a cathode. Oxygen molecules defuse through the probes membrane
+at a constant rate (without the membrane the reaction happens too quickly). Once the
+oxygen molecules have crossed the membrane they are reduced at the cathode and
+a small voltage is produced. If no oxygen molecules are present, the probe will output
+0 mV. As the oxygen increases so does the mV output from the probe. Each probe will
+output a different voltage in the presence of oxygen. The only thing that is constant is that
+0mV = 0 Oxygen.
+Electrolyte
+Cathode (Pure silver rod)
+Membrane
+Anode (Zinc)
+Time (sec)
+90%
+60%
+5 	10 	15 	20 	25 	30	0
+Dissolved Oxygen
+Stagnant water
+Oxygen being
+consumed by probe
+20%
+One of the drawbacks from using a galvanic
+probe is that it consumes a VERY small amount
+of the oxygen it reads. Therefore, a small amount
+of water movement is necessary to take accurate
+readings. Approximately 60 ml/min.
+3	Copyright © Atlas Scientific LLC
+
+-- 3 of 13 --
+
+Ø 4.4mm
+Ø 5.3mm
+D.O.
+D.O.
+PT-1000(There is no polarity)
+PT-1000
+175.5mm
+(6.9”)
+99.2mm
+(3.9”)
+Unique
+12-digit
+serial #
+47.9mm
+(1.8”)
+19.7mm (.7”)
+Cable Length
+3m (10’)
+3/4 NPT
+28.4mm
+(1.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+Measurements
+4	Copyright © Atlas Scientific LLC
+
+-- 4 of 13 --
+
+PVC
+PVCDelrin ®
+(body)
+Polyethylene
+HDPE
+Titanium
+Nitride
+Polyethylene
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+HDPE
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+ABS
+NSF-51 Compliant
+Titanium Nitride
+NSF-51 Compliant
+ABS
+NSF/ANSI 51 Compliant
+Atlas Scientific LLC, hereby certifies that,
+Industrial Dissolved Oxygen Probe
+Part # ENV-50-DO
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+Food Safe
+5	Copyright © Atlas Scientific LLC
+
+-- 5 of 13 --
+
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Temp. probe type
+Temp. accuracy
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Delrin® thermoplastic
+212m (694 ft)
+3m (10 feet)
+Yes
+Class A platinum, RTD
++/- (0.15 + (0.002*t))
+SMA or Tinned Leads
+195 grams
+(3/4") NPT
+Chemical only
+Yes
+Materials
+Polyethylene
+Delrin® thermoplastic
+ABS
+HDPE
+PVC 	PVC
+PVC
+PVC
+Polyethylene
+Polyethylene Titanium Nitride
+Titanium Nitride
+This Dissolved Oxygen probe can be
+fully submerged in fresh or salt water,
+up to the SMA connector or Tinned
+leads indefinitely.
+6	Copyright © Atlas Scientific LLC
+
+-- 6 of 13 --
+
+This galvanic dissolved oxygen probe is a passive device that generates a small voltage
+from 0mv – 60+ mv depending on the oxygen saturation of the sensing membrane. This
+voltage can easily be read by a multimeter or an analog to digital converter.
+Because every use case is different, there is no set schedule for recalibration.
+The dissolved oxygen probe reacts with oxygen in the water, the more oxygen it reacts
+with the more the probe is depleted of its electrolyte solution. Typically an industrial
+dissolved oxygen probe will last 2 years before the electrolyte is depleted (results will
+vary). When the electrolyte is depleted, the probe will read very low numbers. Best practice is
+to replace the electrolyte solution and membrane every 1 – 2 years.
+How often do you need to
+recalibrate a dissolved oxygen probe?
+V
+V
+0000
+7	Copyright © Atlas Scientific LLC
+
+-- 7 of 13 --
+
+9 - 36VDC
+	L H
+DO
+A 	Low 	High
+AtlasScientific
+PWR
+RX
+TX
+AtlasScientific
+PWR
+RX
+TX
+How to connect the industrial
+Dissolved Oxygen probe
+The Atlas Scientific ™ Gen 3 Industrial Dissolved Oxygen probe can be connected in
+several different ways. The following show two examples:
+For industrial purposes, the Gen 3 Industrial DO probe,
+can be easily connected to our Industrial DO Transmitter
+via the probes tinned leads.
+Using 	our 	EZO 	Complete-DO™ and
+EZO 	Complete-TMP™ you can easily
+connect the Gen 3 Industrial DO probe,
+via the probes SMA connectors.
+8	Copyright © Atlas Scientific LLC
+
+-- 8 of 13 --
+
+How to add more electrolyte solution
+During usage, a small amount of electrolyte solution within the dissolved oxygen probe
+will deplete. In this case, you will need to add more solution into the probe.
+To add more electrolyte solution: Carefully unscrew the probes membrane cap, and
+drain any remaining electrolyte solution. Using the supplied syringe, inject solution into
+the membrane cap until it's filled half way. Screw the membrane cap back onto probe.
+Once the probe is reassembled, rinse of the probe.
+1 	Rinse
+probe
+Fill half way
+2 	3 	4 	5 	6 	7
+RIGHT SIDE UP 	UPSIDE DOWN
+9	Copyright © Atlas Scientific LLC
+
+-- 9 of 13 --
+
+How to recondition the industrial
+Dissolved Oxygen probe
+During usage, a small amount of corrosion (zinc oxide) may build up around the anode of
+the probe, this will cause irregular readings. In this case, you will need to recondition the
+probe.
+To recondition the probe: Carefully unscrew the probes membrane cap, and drain any
+remaining electrolyte solution. Using a small file, carefully file off the corrsion buildup
+around the anode of the probe. Do not file the cathode, as this will damage the probe.
+Once the corrosion has been removed, rinse the off the anode.
+Using the supplied syringe, inject solution into the membrane cap until it's filled half
+way. Screw the membrane cap back onto probe. Once the probe is reassembled, rinse
+of the probe.
+1 	2
+anode
+cathode
+3 	4
+RIGHT SIDE UP 	UPSIDE DOWN
+10	Copyright © Atlas Scientific LLC
+
+-- 10 of 13 --
+
+Over time, the membrane can wear out, this will lead to irregular readings from
+the probe. To correct this issue, the probes membrane cap must be replaced.
+To replace membrane cap: Carefully unscrew the probes membrane cap, drain
+any remaining electrolyte solution; Then discard the damaged membrane cap.
+With a new membrane cap ready, fill the new membrane cap half way with electrolyte
+solution and screw back on to probe body.
+How to replace the membrane cap
+1 	2 	3
+RIGHT SIDE UP 	UPSIDE DOWN
+Fill half way
+5	4 	6
+OLD &
+DAMAGED
+NEW
+11	Copyright © Atlas Scientific LLC
+
+-- 11 of 13 --
+
+Over time dissolved oxygen probes can become dirty and covered in chemical deposits.
+Soft coatings can be removed by lightly brushing around the sides of the probe and
+membrane cap. If the probes membrane is in need of cleaning, use a mild bleach mixture
+to gently wash away any deposits.
+DO NOT USE A BRUSH TO CLEAN THE MEMBRANE
+If the probes membrane is ripped it must be replaced, as it will cause irregular readings.
+Probe cleaning
+12	Copyright © Atlas Scientific LLC
+
+-- 12 of 13 --
+
+Dried KCl residue
+from Electrolyte
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+13	Copyright © Atlas Scientific LLC
+
+-- 13 of 13 --
+
+
+
+---
+
+### IpH_probe.pdf (chunk IpH_probe.pdf)
+
+pH Probe
+Range 	0 − 14
+95% in 1s	Response time
++/- 0.001	Resolution
+100 PSI	Max pressure
+3 meters (9.8’)	Cable length
+Double junction silver / silver chloride
+No Temp
+Reads 	pH
+-5 − 99 °C	Temperature range °C
+70m (230’)	Max depth
++/– 0.002	Accuracy
+SMA or Tinned leads	Connector
+Industrial
+Gen 3
+~1 Year	Time before recalibration
+~4 Years +	Life expectancy
+or
+Revised 11/25
+V 5.3
+
+-- 1 of 12 --
+
+Operating principle
+A pH (potential of Hydrogen) probe measures the hydrogen ion activity in a liquid.
+At the tip of a pH probe is a glass membrane. This glass membrane permits hydrogen
+ions from the liquid being measured to defuse into the outer layer of the glass, while
+larger ions remain in the solution. The difference in the concentration of hydrogen ions
+(outside the probe vs. inside the probe) creates a VERY small current. This current
+is proportional to the concentration of hydrogen ions in the liquid being measured.
+Base: pH > 7	Neutral: pH = 7	Acid: pH < 7
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+•
+•
+
+
+
+
+
+
+
+
+
+-- 2 of 12 --
+
+46.6mm
+(1.8”)
+Soaker cap
+~3 – 4 pH
+pH
+197mm
+(7.7”)
+99.2mm
+(3.9”)
+25mm
+(1”)
+17.6mm (.7”)
+3/4 NPT
+53.30mm
+(2.1”)
+Storage Life 	~5 Years
+Working Life 	~4+ Years
+10ml
+Ø 2.8mm
+Ø 8mm
+Minimum
+Immersion
+Unique
+12-digit
+serial #
+Measurements
+3 	Copyright © Atlas Scientific LLC
+
+-- 3 of 12 --
+
+Glass
+Teflon
+PVC
+EPDM
+Delrin ®
+(body) Polyethylene
+Titanium
+Nitride
+Titanium Nitride
+NSF-51 Compliant
+Polyethylene
+NSF-51 Compliant
+Teflon
+NSF-51 Compliant
+Delrin ®
+NSF-51 Compliant
+EPDM
+NSF-51 Compliant
+Glass
+NSF-51 Compliant
+PVC
+NSF-51 Compliant
+NSF/ANSI 51 Compliant
+Food Safe
+Atlas Scientific LLC, hereby certifies that,
+Gen 3 Industrial pH Probe – No Temp
+Part # ENV-50-pH-NT
+meets the NSF/ANSI Std. 51,
+Whether or not they bear the NSF Mark.
+4 	Copyright © Atlas Scientific LLC
+
+-- 4 of 12 --
+
+Reference electrode
+Body material
+Max depth
+Cable length
+Internal temp. probe
+Connector
+Weight
+Threading
+Sterilization
+Food safe
+Specifications
+Silver / Silver Chloride
+Delrin® thermoplastic
+70m (230 feet)
+3m (9.8 feet)
+No
+SMA or Tinned Leads
+155 grams
+(3/4") NPT
+Chemical only
+Yes
+This pH probe can be fully submerged
+in fresh or salt water, up to the SMA
+connector or tinned leads indefinitely.
+Materials
+EPDM 	Delrin ®
+thermoplastic
+PVC 	Titanium Nitride	Polyethylene
+PVC 	PVC
+Glass
+Teflon
+5 	Copyright © Atlas Scientific LLC
+
+-- 5 of 12 --
+
+A pH electrode is a passive device that detects a current generated from hydrogen ion
+activity. This current (which can be positive or negative) is very weak and cannot be
+detected with a multimeter, or an analog to digital converter. This weak electrical signal
+can easily be disrupted and care should be taken to only use proper connectors and cables.
+The current that is generated from the hydrogen ion activity is the reciprocal of that
+activity and can be predicted using this equation:
+Because a pH probe is a passive device it can pick up voltages that are transmitted
+through the solution being measured. This will result in incorrect readings and will
+slowly damage the pH probe over time. In this instance, proper isolation is required.
+Where R is the ideal gas constant.
+T is the temperature in Kelvin.
+F is the Faraday constant.
+V
+V
+0000
+6 	Copyright © Atlas Scientific LLC
+
+-- 6 of 12 --
+
+AtlasScientific
+PWR
+RX
+TX
+9 - 36VDC
+pH
+How to connect the
+industrial pH probe
+The Atlas Scientific ™ Gen 3 Industrial pH probe - No Temp, can be connected in several
+different ways. The following show two examples:
+Using our EZO Complete-pH ™ you can easily connect the
+Gen 3 Industrial pH probe - No Temp, via the probes SMA
+connector.
+Gen 3 Industrial pH probe - No Temp
+with the SMA connector option.
+Gen 3 Industrial pH probe - No Temp
+with the tinned leads connector option.
+For industrial purposes, the Gen 3 Industrial pH probe -
+No Temp, can be easily connected 	to our Industrial pH
+Transmitter via the probes tinned leads.
+7 	Copyright © Atlas Scientific LLC
+
+-- 7 of 12 --
+
+Remove the Industrial pH probe cap by turning it clockwise, and pulling the probe out.
+Once installed into your machine, the pH probe can be left dry for up to 3 weeks
+without damaging the probe, this is why every Industrial pH probe is shipped with a
+plastic cap containing pH probe storage solution. The cap should remain on the probe
+until it is used.
+Long term storage
+When you are finished using the Industrial pH probe, you can prepare the probe to be
+used again for a later date. First, make sure the probe cap still has pH probe storage
+solution within it. If not, just add some from the pH probe storage solution bottle. Tighten
+the cap back onto the probe by turning it counterclockwise.
+Ready to use
+8 	Copyright © Atlas Scientific LLC
+
+-- 8 of 12 --
+
+Unlike most pH probes, this probe can dry out. It can be left dry for up to 3 weeks without
+damaging the probe. However, repeated wetting and drying cycles will eventually damage
+the probe. For best results, keep the probe wet at all times. But if the probe is left out to
+dry, it should not be considered damaged. It just needs to be rehydrated.
+If a pH probe is kept in a hot environment during shipping, KCl creep may cause the soaker
+bottle to dry out. KCl will form a salt channel that wicks the water out of the probe's soaker
+bottle.
+Follow these instructions to rehydrate your industrial pH probe:
+1. Place the probe into a beaker of tap water.
+2. Let the probe sit in the water for 3 – 5 mins.
+3. Add a scoop of KCL (best) or NaCl (good) to the beaker.
+(a scoop = so much salt that no human could drink the water)
+4. Let the probe sit in the salt water for 15 – 20 mins.
+5. Done.
+The probe is now ready to use.
+Probe can dry out
+
+-- 9 of 12 --
+
+Probe cleaning
+Coating of the pH bulb can lead to erroneous readings including shortened span (slope).
+The type of coating will determine the cleaning technique. Soft coatings can be removed
+by vigorous stirring or by the use of a squirt bottle. Organic chemical, or hard coatings,
+should be chemically removed using a light bleach solution. If cleaning does not restore
+performance, reconditioning may be tried. Do not use a brush or abrasive materials
+on the pH probe.
+How often do you need
+to recalibrate a pH probe?
+Because every use case is different, there is no set schedule for recalibration.
+If you are using your probe in a fish tank, a hydroponic system or any environment that
+has generally weak levels of acids and bases you will only need to recalibrate your probe
+once per year for the first two years. After that every ~six months.
+If you are using the pH probe in batch chemical manufacturing, industrial process,
+or in a solution that is known to have strong acids and bases, then calibration should be
+done monthly or in extreme cases after each batch.
+10 Copyright © Atlas Scientific LLC
+
+-- 10 of 12 --
+
+Probe reconditioning
+When reconditioning your pH probe is required due to aging, we recommend you use
+the Atlas Scientific pH probe reconditioning kit.
+11 Copyright © Atlas Scientific LLC
+
+-- 11 of 12 --
+
+Dried KCl residue
+from pH storage
+solution
+Decades later...
+KCl continues to behave the same way.
+If you encounter the “KCl CREEP” or, if your probe dried out during
+shipping; Simply rinse off your probe with water, and carry on.
+Your probe is not damaged.
+12 Copyright © Atlas Scientific LLC
+
+-- 12 of 12 --
+
+
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__af19876f2172, score 0.8081148294793402)
+
+ than 2,000 μS/cm) varies with instru-
+ment type, calibration method, and the salts in solution. The
+correction based on specific conductance (table 6.2–4, at end
+of chapter) is useful because accurate conductivity can be
+determined easily from a field measurement.
+Example salinity correction:
+Consider a DO measurement made in water with a
+temp-erature of 20.0 °C, an atmospheric pressure of 750 mmof mercury, and a specific conductance of 8,000 μS/cm. The
+freshwater oxygen solubility from table 6.2–2 (at end of chap-
+ter) is 8.97 mg/L for that temperature and pressure; the salinity
+correction factor from table 6.2–4 (at end of chapter) is 0.9733
+for that temperature and specific conductance. The solubility
+of oxygen under these conditions then is
+8.97 mg/L x 0.9733 = 8.73 mg/L 	(1)
+The presence of dissolved ions in the water decreases the
+oxygen solubility.
+If calibrating an instrument that lacks an internal salinity-
+compensation algorithm, the user could elect to adjust the
+DO instrument to read 8.73 mg/L for a 100-percent saturation
+condition.
+If the DO measurement made with a sensor under the
+above conditions was 7.50 mg/L and the DO instrument did
+not have an internal salinity-compensation algorithm, then
+the actual DO concentration should be reported as 7.50 mg/L
+multiplied by 0.9733, or 7.30 mg/L.
+Example percent-saturation calculation:
+To express results as percent saturation, use the following
+equation:
+( 	)
+( 	/ 	) 100
+( 	/ 	)
+DO 	percent saturation
+measured DO mg L
+DO mg L at 	percent saturation
+=
+×
+100 -
+(2)
+For a salinity-corrected DO measurement of 7.30 mg/L
+for a sample in which the oxygen solubility (salinity corrected)
+is 8.73 mg/L as in the above example, the percent DO
+saturation would be the dividend of 7.30 divided by 8.73,
+multiplied by 100, which equals 83.6 percent. Note that for
+measurements made with the spectrophotometric method,
+salinity-correction factors are not applied to the measured
+concentration because salinity does not interfere with spectro-
+photometric DO analyses.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__0ddfd02c5ab4, score 0.7778148511702164)
+
+ 
+0.8597
+Table 6.2–4.
+ 
+Salinity correction factors for dissolved oxygen in water (based on specific conductance).
+—Continued
+[Factors are dimensionless; values are based on equations published by Benson and Krause (1984); Temp. (°C), temperature in degrees Celsius]-- 38 of 44 --
+
+References Cited 	31
+Temp.	
+(deg C)
+Specific conductance, in microsiemens per centimeter at 25 degrees Celsius
+45,000
+ 
+46,000
+ 
+47,000
+ 
+48,000
+ 
+49,000
+ 
+50,000
+ 
+51,000
+ 
+52,000
+ 
+53,000
+ 
+54,000
+ 
+55,000
+ 
+56,000
+ 
+57,000
+ 
+58,000
+ 
+59,000
+30.0
+ 
+0.8520
+ 
+0.8485
+ 
+0.8450
+ 
+0.8416
+ 
+0.8381
+ 
+0.8346
+ 
+0.8311
+ 
+0.8276
+ 
+0.8241
+ 
+0.8207
+ 
+0.8172
+ 
+0.8137
+ 
+0.8102
+ 
+0.8066
+ 
+0.8031
+31.0
+ 
+0.8529
+ 
+0.8494
+ 
+0.8460
+ 
+0.8425
+ 
+0.8391
+ 
+0.8356
+ 
+0.8321
+ 
+0.8287
+ 
+0.8252
+ 
+0.8217
+ 
+0.8182
+ 
+0.8148
+ 
+0.8113
+ 
+0.8078
+ 
+0.8043
+32.0
+ 
+0.8537
+ 
+0.8503
+ 
+0.8469
+ 
+0.8435
+ 
+0.8400
+ 
+0.8366
+ 
+0.8331
+ 
+0.8297
+ 
+0.8262
+ 
+0.8228
+ 
+0.8193
+ 
+0.8159
+ 
+0.8124
+ 
+0.8089
+ 
+0.8054
+33.0
+ 
+0.8546
+ 
+0.8512
+ 
+0.8478
+ 
+0.8444
+ 
+0.8410
+ 
+0.8375
+ 
+0.8341
+ 
+0.8307
+ 
+0.8272
+ 
+0.8238
+ 
+0.8204
+ 
+0.8169
+ 
+0.8135
+ 
+0.8100
+ 
+0.8066
+34.0
+ 
+0.8555
+ 
+0.8521
+ 
+0.8487
+ 
+0.8453
+ 
+0.8419
+ 
+0.8385
+ 
+0.8351
+ 
+0.8317
+ 
+0.8282
+ 
+0.8248
+ 
+0.8214
+ 
+0.8180
+ 
+0.8145
+ 
+0.8111
+ 
+0.8077
+35.0
+ 
+0.8563
+ 
+0.8529
+ 
+0.8496
+ 
+0.8462
+ 
+0.8428
+ 
+0.8394
+ 
+0.8360
+ 
+0.8326
+ 
+0.8292
+ 
+0.8258
+ 
+0.8224
+ 
+0.8190
+ 
+0.8156
+ 
+0.8122
+ 
+0.8087
+Table 6.2–4.
+ 
+Salinity correction factors for dissolved oxygen in water (based on specific conductance).
+—Continued
+[Factors are dimensionless; values are based on equations published by Benson and Krause (1984); Temp. (°C), temperature in degrees Celsius]
+
+-- 39 of 44 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__99e7bbab1267, score 0.7604460395727475)
+
+36
+29.0
+ 
+0.9026
+ 
+0.8992
+ 
+0.8958
+ 
+0.8924
+ 
+0.8890
+ 
+0.8856
+ 
+0.8821
+ 
+0.8787
+ 
+0.8753
+ 
+0.8718
+ 
+0.8684
+ 
+0.8649
+ 
+0.8615
+ 
+0.8580
+ 
+0.8545
+Table 6.2–4.
+ 
+Salinity correction factors for dissolved oxygen in water (based on specific conductance).
+—Continued
+[Factors are dimensionless; values are based on equations published by Benson and Krause (1984); Temp. (°C), temperature in degrees Celsius]-- 36 of 44 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__71e88151ebfe, score 0.7575901011409338)
+
+07
+29.0
+ 
+0.8510
+ 
+0.8476
+ 
+0.8441
+ 
+0.8406
+ 
+0.8371
+ 
+0.8336
+ 
+0.8301
+ 
+0.8266
+ 
+0.8231
+ 
+0.8196
+ 
+0.8160
+ 
+0.8125
+ 
+0.8090
+ 
+0.8055
+ 
+0.8019
+Table 6.2–4.
+ 
+Salinity correction factors for dissolved oxygen in water (based on specific conductance).
+—Continued
+[Factors are dimensionless; values are based on equations published by Benson and Krause (1984); Temp. (°C), temperature in degrees Celsius]-- 37 of 44 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__ddc94df81b4f, score 0.7573434685386321)
+
+-- 21 of 24 --14 	Chapter A6.3. Specific Conductance
+in microsiemens per centimeter (μS/cm) where the ratio is
+expected to be between 0.5 and 0.9 (Hem, 1985).
+TD 	mg/L
+specific conductance in μS/cm
+S in  0.5 to 0.9 	(3)
+Measurements of specific conductance are commonly used
+to estimate the salinity of water.
+Acknowledgments
+The information included in the U.S. Geological Survey
+(USGS) National Field Manual (NFM) is based on existing
+manuals, various reference documents, and a broad spectrum
+of expertise provided by USGS colleagues. Authors of previ-
+ous versions of NFM chapter A6.3 were D.B. Radtke, J.V.
+Davis, and F.D. Wilde, whose expertise and integrity provided
+the groundwork for this and future versions of this chapter.
+The persistence and spirit that all of our USGS colleagues
+brought to the development of a national field manual were
+invaluable.
+The following USGS colleagues provided detailed techni-
+cal content and reviews that improved the quality of this report:
+R. Blaine McCleskey, Gerolamo Casile, Joseph Domagalski,
+Michael Manning, Cherie Miller, Michael Rosen, Stanley
+Skrobialowski, and Teri Snazell. Editorial and production
+assistance from Marilyn Billone, Sandy Cooper, Elizabeth
+Good, Cathy Knutson, Katharine Schindler, and Dale Simmons
+is greatly appreciated. These individuals contributed to the
+accuracy, quality, and usability of the NFM, and demonstrated
+much patience as we traversed the difficult task of developing
+the new format.
+Special thanks are extended to Franceska Wilde (USGS),
+who led the effort for the NFM from its inception until her
+retirement in 2014; the USGS NFM Steering Committee
+(Gerolamo Casile, Michael Manning, Cherie Miller, Callie
+Oblinger (retired), Timothy Oden, Lisa Olsen, Michael Rosen,
+and Stanley Skrobialowski); Cherie Miller, who led the effort
+from 2016 to 2018; and Gerolamo Casile, who assumed
+responsibility for the NFM in 2018.
+References Cited
+Ball, J.W., and Nordstrom, D.K., 1991, User’s manual for
+WATEQ4F, with revised thermodynamic data base and
+test cases for calculating speciation of major, trace, and
+redox elements in natural waters (ver. 2.0): U.S. Geological
+Survey Open-File Report 91–183, 189 p., accessed
+September 11, 2017, at https://pubs.er.usgs.gov/publication/
+ofr91183.
+Hem, J.D., 1982, Conductance—A collective measure of
+dissolved ions, in Minear, R.A., and Keith, L.H., eds., Water
+analysis—v. 1 Inorganic species, part 1: Orlando, Fla., Aca-
+demic Press, Inc., p. 137–161.
+Hem, J.D., 1985, Study and interpretation of the chemical
+characteristics of natural water (3d ed.): U.S. Geological
+Survey Water-Supply Paper 2254, 264 p., accessed
+September 11, 2017, at https://pubs.usgs.gov/wsp/wsp2254/.
+International Organization for Standardization, 1985,
+International Standard ISO–7888, Water quality—
+Determination of electrical conductivity: Geneva,
+Switzerland, International Organization for Standardization,
+6 p.
+Lewis, E.L., 1980, The practical salinity scale 1978 and its
+antecedents: IEEE Journal of Oceanic Engineering, v. 5,
+no. 1, p. 3–8. [Also available at https://doi.org/10.1109/
+JOE.1980.1145448.]
+Lind, C.J., 1970, Specific conductance as a means of esti-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__2d5d863cf1da, score 0.7543188652357118)
+
+-- 24 of 44 --5.0 Correction Factors for Oxygen Solubility and Salinity 	17
+accuracy of the DO concentration to be reported. Repeat
+steps 9 and 10 twice in rapid succession to document
+measurement precision. Make a total of three measure-
+ments to document the precision of the method.
+12. 	To document the variability of DO concentrations within
+the water system being measured, repeat the measure-
+ment on three sequentially collected samples.
+Do not exceed time interval specified by manufacturer
+for completion of DO measurement when using Rhoda-
+zine D or Indigo Carmine reagents.
+4.0 	Reporting
+USGS personnel are instructed to enter the DO value on
+field forms or into electronic records indicating the method
+code (optical, spectrophotometric, other) appropriate for the
+method used for DO measurement.
+DO concentrations for the optical-sensor method are
+reported to the nearest 0.1 mg/L and stored to the nearest
+0.01 mg/L.
+DO concentrations for the spectrophotometric/Rhodazine
+D and Indigo Carmine methods are reported and stored to the
+nearest 0.01 mg/L.
+Note that the percentage of DO saturation in water can
+be greater than 100 as a result of nonequilibrium conditions
+induced by photosynthesis and oxygen exchange with the
+atmosphere. When the concentration exceeds 20 mg/L, check
+the sensor manufacturer’s specifications and:
+• Report “> the listed numerical limit” if the concentra-
+tion exceeds the manufacturer’s specified sensor range.
+5.0 	Correction Factors for Oxygen
+Solubility and Salinity
+Solubility concentrations of oxygen in freshwater at
+various temperatures and pressures (table 6.2–2, at end of
+chapter) and correction factors for salinity based on specific
+conductance (table 6.2–4, at end of chapter) were generated
+from the equations of Benson and Krause (1980, 1984) and
+can be customized to cover the range and number of decimal
+places needed; see U.S. Geological Survey Office of Water
+Quality Technical Memorandum 2011.03 (U.S. Geological
+Survey, 2011). By accessing “DOTABLES” at https://water.
+usgs.gov/software/DOTABLES/, the interactive software that
+generated tables 6.2–2 and 6.2–4 (at end of chapter) the user
+can self-generate individual values or tables of a specific range
+of oxygen-solubility and salinity correction factors.
+To adjust freshwater oxygen-solubility values for the
+effects of salinity, use correction factors based on specific
+conductance. Report the corrected values. Refer to the manu-
+facturer’s instructions for the DO instrument before applying
+a salinity correction. Most multiparameter instruments that
+include DO and specific-conductance sensors automatically
+correct the DO reading for salinity if needed, unless the fea-
+ture is turned off by the user.
+Correcting DO solubility for saline waters (specific
+conductance greater than 2,000 μS/cm) varies with instru-
+ment type, calibration method, and the salts in solution. The
+correction based on specific conductance (table 6.2–4, at end
+of chapter) is useful because accurate conductivity can be
+determined easily from a field measurement.
+Example salinity correction:
+Consider a DO measurement made in water with a
+temp-erature of 20.0 °C, an atmospheric pressure of 750 mm
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__e7c93d2b2493, score 0.7523916081103929)
+
+-- 19 of 24 --12 	Chapter A6.3. Specific Conductance
+TECHNICAL NOTES:
+• 	If the measurement is made on a sample in an open
+container and readings do not stabilize within several
+minutes, the cause may be CO2 degassing. Use a closed
+system to make the measurement.
+• 	Filter a sample to measure specific conductance if clay
+or other suspended particles interfere with the stability
+of the readings.
+4.3 Measurement of Specific Conductance of a
+Water Sample with Low or High pH
+Specific conductance (and electrical conductivity) data
+are reported at 25 °C. Most modern specific conductance
+meters have the capability to compensate for temperature auto-
+matically. Equation 2 is used most commonly to determine the
+specific conductance at 25 °C and commercially available field
+specific conductance meters typically use either a constant α
+(typically 0.019–0.020 per °C) or a nonlinear α (International
+Organization for Standardization, 1985). Whereas these com-
+monly used temperature-compensation factors work well for
+waters having a pH between 4 and 11, they can be the source
+of errors as large as 50 percent for low-pH samples.
+4.3.1 Measurement of Specific Conductance of
+a Water Sample with Low pH (<4)
+The specific conductance measurement error for low-pH
+(<4) waters can be large if the commonly used temperature-
+compensation factors are used. To determine whether an alter-
+native temperature-compensation method should be used for
+samples with pH <4, the in situ specific conductance should
+be compared to the specific conductance of a sample equili-
+brated to 25 °C. If the measurements are comparable (within
+±5 μS/cm for specific conductance ≤100 μS/cm or ±3 percent
+for specific conductance >100 μS/cm), then the temperature
+algorithm used is likely sufficient. If a temperature-compen-
+sation factor is required for a water sample with pH <4, the
+method described by McCleskey (2013) is recommended.
+4.3.2 Measurement of Specific Conductance of
+a Water Sample with High pH (>11)
+No temperature-compensation method is available for
+waters with high pH (>11); therefore, the specific conduc-
+tance should be checked by making a measurement at ambient
+temperature and at 25 °C for waters with pH >11. At high pH,
+hydroxide becomes a major ion in the solution and its mobility
+is different than that of most other ions. However, the hydrox-
+ide-equivalent conductivity is much lower than the hydrogen-
+equivalent conductivity and, unlike in low-pH waters, the stan-
+dard temperature-compensation approaches may be adequate.
+Furthermore, relatively few natural waters have a pH >11, so
+this situation is fairly rare.
+5.0 Troubleshooting
+Contact the instrument manufacturer if the actions sug-
+gested in table 6.3–3 fail to resolve the problem. One of the
+first things to check is the battery voltage. Always have fresh
+batteries in meters and carry spares when taking meters out
+into the field.
+Check the voltage of batteries. Always have fresh batteries
+in field meters and carry spares.
+6.0 	Reporting Specific Conductance in
+Natural Waters
+• Follow USGS standard protocols for reporting spe-
+cific conductance in the National Water Information
+System (NWIS) database—
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__2b95a05c9d32, score 0.7506214249840588)
+
+050
+ 
+0.9017
+ 
+0.8984
+ 
+0.8950
+ 
+0.8917
+ 
+0.8884
+ 
+0.8850
+ 
+0.8817
+ 
+0.8783
+ 
+0.8749
+ 
+0.8716
+ 
+0.8682
+ 
+0.8648
+ 
+0.8614
+ 
+0.8580
+34.0
+ 
+0.9056
+ 
+0.9023
+ 
+0.8990
+ 
+0.8957
+ 
+0.8923
+ 
+0.8890
+ 
+0.8857
+ 
+0.8824
+ 
+0.8790
+ 
+0.8757
+ 
+0.8723
+ 
+0.8690
+ 
+0.8656
+ 
+0.8622
+ 
+0.8588
+35.0
+ 
+0.9061
+ 
+0.9028
+ 
+0.8996
+ 
+0.8963
+ 
+0.8930
+ 
+0.8897
+ 
+0.8864
+ 
+0.8830
+ 
+0.8797
+ 
+0.8764
+ 
+0.8731
+ 
+0.8697
+ 
+0.8664
+ 
+0.8630 
+0.8597
+Table 6.2–4.
+ 
+Salinity correction factors for dissolved oxygen in water (based on specific conductance).
+—Continued
+[Factors are dimensionless; values are based on equations published by Benson and Krause (1984); Temp. (°C), temperature in degrees Celsius]
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__b5488a5db6ff, score 0.7456167825528027)
+
+-- 20 of 24 --7.0 Applications of Specific Conductance in Surface Water and Groundwater 	13
+Table 6.3–3. 	Troubleshooting guide for measurements of specific conductance.
+[>, Greater than; ≤, less than or equal to; HCl, hydrochloric acid; μS/cm, microsiemens per centimeter; °C, degrees Celsius]
+Symptom 	Possible cause and corrective action
+Meter will not calibrate to standards
+or will not accurately read
+standards
+• Standards may be old or contaminated—use fresh standards.
+• Electrodes dirty—first clean with a detergent solution, then if necessary with 5-percent HCl.
+Before using any acid solution to remove resistant residues, check manufacturer’s guidelines.
+• Air trapped in conductivity sensor—gently move sensor up and down to expel trapped air.
+• Weak or corroded batteries—replace.
+• Temperature compensation incorrect—ensure that thermistor is operating properly.
+• Multiparameter sonde inadequately rinsed—repeat rinsing.
+Erratic readings 	• Loose or defective connections—tighten or replace.
+• Broken cables—repair or replace.
+• Air trapped in conductivity probes—gently move sensor up and down to expel trapped air.
+• Rapid changes in water temperature of subsample—measure in situ.
+• Degassing of groundwater sample—measure the specific conductance downhole, or use a
+sealed flow-cell chamber.
+• Broken conductivity probe—replace.
+Specific conductance meter requires
+frequent recalibration
+• Temperature compensation may not be working—measure specific conductance of a solution.
+Place solution in a water bath and raise solution temperature to about 25 ºC. Measure specific
+conductance again, allowing sufficient time for the probe to equilibrate to temperature of solu-
+tion. If the two values differ by ±5 μS/cm for specific conductance ≤100 μS/cm or ±3 percent
+for specific conductance >100 μS/cm, check the temperature-compensation settings on the
+meter, check the thermistor, and consider replacing the conductivity probe.
+Specific conductance reading is
+drifting or variable
+• Insufficient equilibration—allow conductivity cell to thermally equilibrate with water samples
+and repeat measurements.
+• Probe dirty or malfunctioning—clean or replace conductivity probe.
+are required to participate in the National Field Quality
+Assurance project (NFQA), whereby samples of known values
+of specific conductance are distributed annually to test the
+proficiency of the analysts and accuracy of the equipment.
+The primary sources of uncertainty for specific
+conductance measurements are quality of calibration
+standards, temperature compensation, quality of the
+specific conductance meter and probe, and contamination
+of the sample during measurement.
+7.0 Applications of Specific
+Conductance in Surface Water and
+Groundwater
+Measurements of specific conductance have been used to
+estimate the salinity of (Lewis, 1980), ionic strength of (Lind,
+1970), and concentrations of major solutes (McCleskey and
+others, 2012a) and TDS (Hem, 1985) in natural waters. In
+addition, the specific conductance and the relative contribu-
+tion of a given ion to the overall specific conductance (known
+as the transport number) can be calculated from chemical
+analyses (McCleskey and others, 2012b). The USGS geo-
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__0ea3a40e6484, score 0.7415898824761381)
+
+ractical salinity units calculated from specific electrical conductance at 25 degrees
+Celsius]
+Parameter 	USGS reporting convention for NWIS1 	Unit
+Temperature 	Nearest 0.01 depending on instrument precision 	°C
+SC 	Three significant figures for SC ≥100, two significant figures for SC <100 	μS/cm at 25 °C
+DO 	Nearest 0.01 	mg/L
+pH 	Nearest 0.01, depending on instrument precision 	pH standard unitsORP 	Two significant figures, calculated relative to the SHE (do not report raw data). Record the
+temperature of the sample at the time of measurement.
+mV
+Turbidity 	0 to <1, nearest 0.05
+1 to <10, nearest 0.1
+10 to <100, nearest 1
+100 to <1,000, nearest 10
+≥1,000, nearest 50
+FNU2
+Salinity 	<1 to <10, nearest 0.1
+≥10, nearest 1
+ppt or psu
+1It is USGS practice to enter values into NWIS that have more significant figures than are standard for reporting. The NWIS database has rounding built in for
+reporting. This practice eliminates user errors when reporting rounded values.
+2Most multiparameter instruments used for USGS turbidity measurement contain single-beam infrared wavelength turbidity sensors and are reported in FNU.
+Check the Excel spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls to determine the appropriate turbidity unit of measure and NFM A6.7 for detailed
+information on turbidity measurement and instrumentation.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__361ef9509206, score 0.7396127507543145)
+
+he following equation:
+ = K 	G	cell 	(1)
+where 𝐾cell is the cell constant (in units of cm-1). The cell con-
+stant is the ratio of the distance between two electrode plates
+(d) and their area (A). The units of electrical conductivity are
+siemens per centimeter (S/cm), which is the equivalent of
+mhos per centimeter (mhos/cm). Most values reported prior to
+1971 were in units of mhos per centimeter.Electrical conductivity increases by 0.5 to 3 percent per
+degree Celsius and varies depending on the ionic species
+present (Robinson and Stokes, 1970; McCleskey, 2013). For
+natural waters, conductometric measurements are typically
+used to estimate the concentrations of total dissolved solids
+(TDS); therefore, the electrical conductivity is reported at
+25 °C (κ25 °C, which is equivalent to specific conductance), to
+facilitate this estimation of TDS by removing the effects of
+temperature. The value of κ25 °C is typically calculated by using
+the following equation:
+κ
+κ
+α
+25 1 	25
+° 	= + 	− 	°
+C t 	C	( 	) (2)
+where α is the temperature-compensation factor and t is the
+measured temperature in degrees Celsius. Modern specific
+conductance field meters typically have preprogrammed
+temperature-compensation factors (α) and report specific
+conductance (or electrical conductivity) at 25 °C (κ25 °C).
+Most specific conductance meters utilize either linear
+(0.019–0.020 per °C) or nonlinear (International Organiza-
+tion for Standardization, 1985) temperature-compensation
+algorithms that are applicable for most natural waters. The
+temperature compensation used is likely described in the
+meter’s manual or can be determined by using standard
+solutions and the method described by McCleskey (2013).
+Conductance and temperature can be measured accurately
+with modern instrumentation, and temperature compensation
+is typically accurate to ±5 percent for water in the range from
+5 to 35 ºC and whose pH is between 4 and 11. For low-pH
+(pH <4) waters, using the standard temperature-compensation
+factors can result in κ25 °C errors as large as 50 percent, because
+the transport properties of the hydrogen ion are different from
+those of most other ions, and the hydrogen ion contributes sub-
+stantially to the electrical conductance at low pH (McCleskey,
+2013). For low-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__d06365e8c6fd, score 0.7346184694541614)
+
+-- 10 of 24 --2.0 Equipment and Supplies 	3
+then again at 25 °C. Additional sources of uncertainty when
+measuring specific conductance include calibration, prepara-
+tion of standard solutions, fouling or contamination of the
+conductivity cell, and improper maintenance of the specific
+conductance meter and probe. The method described here is
+intended to produce accurate and precise specific conductance
+measurements over a wide range of solution composition,
+pH, and temperature. The USGS typically reports the electri-
+cal conductivity of water as specific conductance in units of
+microsiemens per centimeter (μS/cm) at 25 °C.
+The USGS typically reports the electrical conductivity of
+water as specific conductance in units of microsiemens per
+centimeter (μS/cm) at 25 °C.
+2.0 	Equipment and Supplies
+High-quality specific conductance meters, including
+multiparameter sondes, are available commercially. Most
+modern specific conductance meters have built-in temperature
+compensation and are accurate (typically within ±5 percent)
+for waters with a pH between 4 and 11 and in the temperature
+range from 5 to 35 °C.
+This section provides detailed information on the mea-
+surement of specific conductance that is applicable to most
+meters. Users must be familiar with the instructions provided
+by the manufacturer to develop a standard operating proce-
+dure (SOP) for calibration and measurement for each meter.
+The SOP should combine the requirements of this chapter of
+the NFM with the recommendations of the manufacturer to
+standardize instrument operations for users. Every specific
+conductance meter should be accompanied by a log for record-
+ing calibrations, cell constants, and repairs. Typical supplies
+used for field measurement of specific conductance are listed
+in table 6.3–1.
+Most modern specific conductance meters have built-in
+temperature compensation and are accurate (typically
+within ±5 percent) for waters with a pH between 4 and 11
+and in the temperature range from 5 to 35 °C.
+2.1 Electrical Conductivity Cells and Specific
+Conductance Meters
+There are several types of conductivity cells. A dip-
+style conductivity cell is integrated into a probe, is adaptable
+to many measurement situations, and is commonly used in
+modern field specific conductance meters and multiparameter
+Table 6.3–1. 	Equipment and supplies used to measure specific
+conductance in the field.
+[Modify this list to meet the specific needs of the field effort]
+Equipment and supplies
+• Specific conductance meter with probe, thermistor, and built-
+in temperature compensation
+• Instruction manual
+• Log book (physical or electronic) for recording cell constant,
+calibrations, maintenance, and repairs
+• Specific conductance standards
+• Deionized water for rinsing
+• Flow-through cell
+• Paper tissue for cleaning and drying
+• Disposable laboratory gloves and glasses
+• Flasks or beakers
+• Waste-disposal container
+• Multiparameter sonde sensor guard and calibration cup
+• Spare electrical conductivity probe
+• Spare batteries
+sondes. Probes containing dip conductivity cells are straight-
+forward to use as they are immersed in the water during
+measurement, can be used in flowing or static waters, and are
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__940ba0bb0a8a, score 0.7341737963454833)
+
+ result of a DO instrument performance check
+should be within +/- 0.2 mg/L of the 100-percent
+saturated concentration determined from the DO
+solubility tables found at https://water.usgs.gov/
+software/DOTABLES or, if checking at the zero
+point, the sensor should read within 0.2 mg/L of zero.
+Project objectives may dictate a deviation of less than
+0.2 mg/L from the calculated 100-percent saturationvalue or zero. Recalibration and additional trouble-
+shooting are warranted if instruments fail the DO
+performance checks.
+Do not use an instrument that fails to calibrate properly
+or fails performance checks.
+2.2.1 Correction for Atmospheric Pressure and
+Salinity
+DO calibration procedures include corrections for
+atmospheric pressure and ionic strength. (Ionic strength is
+estimated from the conductivity measurement for routine field
+applications.) Atmospheric pressure, the temperature of the
+water or water vapor, and the ionic strength of the water must
+be known to determine the theoretical amount of oxygen that
+will be dissolved in water.
+Record all calibration information in instrument log
+books and copy calibration data onto field forms at the time of
+calibration.
+TECHNICAL NOTE 2.
+DO sensors do not directly measure oxygen in milligrams
+per liter or parts per million. Expressed concentrations are
+based on calculations that relate instrument sensor data with
+the temperature and ionic strength of the sample water. The
+sensor signal is proportional to the ambient partial pressure of
+oxygen, which can be displayed either as percent saturation or
+in milligrams per liter, depending on user specification.
+Ambient atmospheric pressure is true atmospheric
+pressure at the measurement site, not the pressure that has
+been adjusted to sea level. Atmospheric pressure (also known
+as barometric pressure) reported by the National Weather
+Service (NWS) generally is not the absolute (ambient) value.
+NWS atmospheric pressure readings typically are adjusted to
+sea level for comparison among weather stations and must be
+adjusted back to the altitude of the weather station in order to
+obtain ambient barometric pressure values. Previous versions
+of this chapter described a procedure for correcting NWS
+barometric pressure readings for use during DO calibrations.
+With the advent of inexpensive, National Institute of Standards
+and Technology- (NIST) traceable barometers, correction of a
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__4c8cc53480b4, score 0.7316205243142262)
+
+ow-pH waters, temperature corrections may
+represent the largest source of error. A temperature-compen-
+sation method applicable to low-pH waters is described in
+section 4.3 below and by McCleskey (2013). No temperature-
+compensation method is available for waters with pH greater
+than 11; therefore, the specific conductance in high-pH waters
+should be checked by measuring at ambient temperature and-- 10 of 24 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__830344222be3, score 0.7311441437534152)
+
+-- 34 of 44 --References Cited 	27
+Table 6.2–4.
+ 
+Salinity correction factors for dissolved oxygen in water (based on specific conductance).
+—Continued
+[Factors are dimensionless; values are based on equations published by Benson and Krause (1984); Temp. (°C), temperature in degrees Celsius]
+Temp.	
+(deg C)
+Specific conductance, in microsiemens per centimeter at 25 degrees Celsius
+15,000
+ 
+16,000
+ 
+17,000
+ 
+18,000
+ 
+19,000
+ 
+20,000
+ 
+21,000
+ 
+22,000
+ 
+23,000
+ 
+24,000
+ 
+25,000
+ 
+26,000
+ 
+27,000
+ 
+28,000
+ 
+29,000
+0.0
+ 
+0.9402
+ 
+0.9361
+ 
+0.9321
+ 
+0.9280
+ 
+0.9239
+ 
+0.9198
+ 
+0.9157
+ 
+0.9116
+ 
+0.9074
+ 
+0.9033
+ 
+0.8992
+ 
+0.8950
+ 
+0.8909
+ 
+0.8867
+ 
+0.8826
+1.0
+ 
+0.9408
+ 
+0.9367
+ 
+0.9327
+ 
+0.9286
+ 
+0.9246
+ 
+0.9205
+ 
+0.9164
+ 
+0.9124
+ 
+0.9083
+ 
+0.9042
+ 
+0.9001
+ 
+0.8960
+ 
+0.8918
+ 
+0.8877
+ 
+0.8836
+2.0
+ 
+0.9413
+ 
+0.9373
+ 
+0.9333
+ 
+0.9293
+ 
+0.9252
+ 
+0.9212
+ 
+0.9172
+ 
+0.9131
+ 
+0.9091
+ 
+0.9050
+ 
+0.9009
+ 
+0.8969
+ 
+0.8928
+ 
+0.8887
+ 
+0.8846
+3.0
+ 
+0.9418
+ 
+0.9378
+ 
+0.9339
+ 
+0.9299
+ 
+0.9259
+ 
+0.9219
+ 
+0.9179
+ 
+0.9139
+ 
+0.9099
+ 
+0.9058
+ 
+0.9018
+ 
+0.8978
+ 
+0.8937
+ 
+0.8897
+ 
+0.8856
+4.0
+ 
+0.9423
+ 
+0.9384
+ 
+0.9345
+ 
+0.9305
+ 
+0.9266
+ 
+0.9226
+ 
+0.9186
+ 
+0.9146
+ 
+0.9107
+ 
+0.9067
+ 
+0.9027
+ 
+0.8986
+ 
+0.8946
+ 
+0.8906
+ 
+0.8866
+5.0
+ 
+0.9428
+ 
+0.9389
+ 
+0.9350
+ 
+0.9311
+ 
+0.9272
+ 
+0.9233
+ 
+0.9193
+ 
+0.9154
+ 
+0.9114
+ 
+0.9075
+ 
+0.9035
+ 
+0.8995
+ 
+0.8955
+ 
+0.8915
+ 
+0.8875
+6.0
+ 
+0.9433
+ 
+0.9395
+ 
+0.9356
+ 
+0.9317
+ 
+0.9278
+ 
+0.9239
+ 
+0.9200
+ 
+0.9161
+ 
+0.9122
+ 
+0.9082
+ 
+0.9043
+ 
+0.9004
+ 
+0.8964
+ 
+0.8924
+ 
+0.8885
+7.0
+ 
+0.9438
+ 
+0.9400
+ 
+0.9361
+ 
+0.9323
+ 
+0.9284
+ 
+0.9246
+ 
+0.9207
+ 
+0.9168
+ 
+0.9129
+ 
+0.9090
+ 
+0.9051
+ 
+0.9012
+ 
+0.8973
+ 
+0.8933
+ 
+0.8894
+8.0
+ 
+0.9443
+ 
+0.9405
+ 
+0.9367
+ 
+0.9329
+ 
+0.9290
+ 
+0.9252
+ 
+0.9213
+ 
+0.9175
+ 
+0.9136
+ 
+0.9098
+ 
+0.9059
+ 
+0.9020
+ 
+0.8981
+ 
+0.8942
+ 
+0.8903
+9.0
+ 
+0.9447
+ 
+0.9410
+ 
+0.9372
+ 
+0.9334
+ 
+0.9296
+ 
+0.9258
+ 
+0.9220
+ 
+0.9182
+ 
+0.9143
+ 
+0.9105
+ 
+0.9067
+ 
+0.9028
+ 
+0.8989
+ 
+0.8951
+ 
+0.8912
+10.0
+ 
+0.9452
+ 
+0.9415
+ 
+0.9377
+ 
+0.9340
+ 
+0.9302
+ 
+0.9264
+ 
+0.9226
+ 
+0.9188
+ 
+0.9150
+ 
+0.9112
+ 
+0.9074
+ 
+0.9036
+ 
+0.8998
+ 
+0.8959
+ 
+0.8921
+11.0
+ 
+0.9457
+ 
+0.9419
+ 
+0.9382
+ 
+0.9345
+ 
+0.9308
+ 
+0.9270
+ 
+0.9233
+ 
+0.9195
+ 
+0.9157
+ 
+0.9119
+ 
+0.9082
+ 
+0.9044
+ 
+0.9006
+ 
+0.8968
+ 
+0.8929
+12.0
+ 
+0.9461
+ 
+0.9424
+ 
+0.9387
+ 
+0.9350
+ 
+0.9313
+ 
+0.9276
+ 
+0.9239
+ 
+0.9201
+ 
+0.9164
+ 
+0.9126
+ 
+0.9089
+ 
+0.9051
+ 
+0.9014
+ 
+0.8976
+ 
+0.8938
+13.0
+ 
+0.9465
+ 
+0.9429
+ 
+0.9392
+ 
+0.9355
+ 
+0.9319
+ 
+0.9282
+ 
+0.9245
+ 
+0.9208
+ 
+0.9171
+ 
+0.9133
+ 
+0.9096
+ 
+0.9059
+ 
+0.9021
+ 
+0.8984
+ 
+0.8946
+14.0
+ 
+0.9470
+ 
+0.9433
+ 
+0.9397
+ 
+0.9361
+ 
+0.9324
+ 
+0.9287
+ 
+0.9251
+ 
+0.9214
+ 
+0.9177
+ 
+0.9140
+ 
+0.9103
+ 
+0.9066
+ 
+0.9029
+ 
+0.8992
+ 
+0.8954
+15.0
+ 
+0.9474
+ 
+0.9438
+ 
+0.9402
+ 
+0.9366
+ 
+0.9329
+ 
+0.9293
+ 
+0.9257
+ 
+0.9220
+ 
+0.9183
+ 
+0.9147
+ 
+0.9110
+ 
+0.9073
+ 
+0.9036
+ 
+0.8999
+ 
+0.8962
+16.0
+ 
+0.9478
+ 
+0.9442
+ 
+0.9406
+ 
+0.9370
+ 
+0.9334
+ 
+0.9298
+ 
+0.9262
+ 
+0.9226
+ 
+0.9190
+ 
+0.9153
+ 
+0.9117
+ 
+0.9080
+ 
+0.9044
+ 
+0.9007
+ 
+0.8970
+17.0
+ 
+0.9482
+ 
+0.9446
+ 
+0.9411
+ 
+0.9375
+ 
+0.9340
+ 
+0.9304
+ 
+0.9268
+ 
+0.9232
+ 
+0.9196
+ 
+0.9160
+ 
+0.9123
+ 
+0.9087
+ 
+0.9051
+ 
+0.9014
+ 
+0.8978
+18.0
+ 
+0.9486
+ 
+0.9451
+ 
+0.9415
+ 
+0.9380
+ 
+0.9345
+ 
+0.9309
+ 
+0.9273
+ 
+0.9238
+ 
+0.9202
+ 
+0.9166
+ 
+0.9130
+ 
+0.9094
+ 
+0.9058
+ 
+0.9022
+ 
+0.8985
+19.0
+ 
+0.9490
+ 
+0.9455
+ 
+0.9420
+ 
+0.9385
+ 
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__fc9b0488e3d3, score 0.7310583459693457)
+
+-- 9 of 24 --2 	Chapter A6.3. Specific Conductance
+Before 2017, the USGS NFM chapters were released
+in the USGS Techniques of Water-Resources Investigations
+series. Effective in 2018, new and revised NFM chapters
+are being released in the USGS Techniques and Methods
+series; this series change does not affect the content and
+format of the NFM. More information is in the general
+introduction to the NFM (USGS Techniques and Methods,
+book 9, chapter A0—U.S. Geological Survey, 2018) at
+https://doi.org/10.3133/tm9A0. The authoritative current
+versions of NFM chapters are available in the USGS
+Publications Warehouse at https://pubs.er.usgs.gov.
+Comments, questions, and suggestions related to the NFM can
+be addressed to nfm@usgs.gov.
+1.1 Overview of Specific Conductance
+Specific conductance is an indirect measure of the collec-
+tive concentration of dissolved ions in solution, and is defined
+as the electrical conductance of 1 cubic centimeter (cm³) of a
+solution at 25 degrees Celsius (°C) (Hem, 1982). The terms
+“specific conductance,” “specific electrical conductance,” and
+“electrical conductivity” have been used interchangeably in
+the literature to report the same measurement. Because the
+term “electrical conductivity” is not always referenced to a
+standard temperature, the measurement or reference tempera-
+ture must be reported with this parameter. The USGS National
+Water Information System (NWIS) reports the measurement
+of electrical conductance as specific conductance at 25 °C,
+meaning that at any temperature for which the measurement
+is made, the value is corrected to what it would be at 25 ºC.
+The term “specific conductance” is correctly defined as the
+electrical conductance of 1 cm³ of a solution at 25 °C. If the
+electrical conductance is measured at another temperature, the
+value is corrected to what it would be at 25 °C and reported as
+specific conductance at 25 °C. Most modern specific con-
+ductance meters are temperature compensated and report the
+corrected value automatically.
+The term “specific conductance” is correctly defined as the
+electrical conductance of 1 cubic centimeter of a solution at
+25 °C. If the electrical conductance is measured at another
+temperature, the value is corrected to what it would be at
+25 °C and reported as specific conductance at 25 °C.
+In aqueous solutions, electrical conductance (G, measured
+in siemens [S]) is the inverse of electrical resistance (R,
+measured in ohms [Ω]), and is the capacity of water to conduct
+an electric current as a result of the movement of ions through
+the solution. Electrical conductivity (κ) is a measure of the
+electrical conductance (G) of a substance normalized to a unit
+length and cross-sectional area.
+The electrical conductivity of a solution can be deter-
+mined by using the following equation:
+ = K 	G	cell 	(1)
+where 𝐾cell is the cell constant (in units of cm-1). The cell con-
+stant is the ratio of the distance between two electrode plates
+(d) and their area (A). The units of electrical conductivity are
+siemens per centimeter (S/cm), which is the equivalent of
+mhos per centimeter (mhos/cm). Most values reported prior to
+1971 were in units of mhos per centimeter.
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__dcddd06f1651, score 0.7290375205390233)
+
+-- 33 of 44 --26 	Chapter A6.2. Dissolved Oxygen
+Table 6.2–4.
+ 
+Salinity correction factors for dissolved oxygen in water (based on specific conductance).
+[Factors are dimensionless; values are based on equations published by Benson and Krause (1984); Temp. (°C), temperature in degrees Celsius]
+Temp.	
+(deg C)
+Specific conductance, in microsiemens per centimeter at 25 degrees Celsius
+0 
+1,000
+ 
+2,000
+ 
+3,000
+ 
+4,000
+ 
+5,000
+ 
+6,000
+ 
+7,000
+ 
+8,000
+ 
+9,000
+ 
+10,000
+ 
+11,000
+ 
+12,000
+ 
+13,000
+ 
+14,000
+0.0
+ 
+1.0000
+ 
+0.9961
+ 
+0.9922
+ 
+0.9882
+ 
+0.9843
+ 
+0.9804
+ 
+0.9764
+ 
+0.9724
+ 
+0.9684
+ 
+0.9644
+ 
+0.9604
+ 
+0.9564
+ 
+0.9524
+ 
+0.9483
+ 
+0.9443
+1.0
+ 
+1.0000
+ 
+0.9961
+ 
+0.9923
+ 
+0.9884
+ 
+0.9845
+ 
+0.9805
+ 
+0.9766
+ 
+0.9727
+ 
+0.9687
+ 
+0.9648
+ 
+0.9608
+ 
+0.9568
+ 
+0.9528
+ 
+0.9488
+ 
+0.9448
+2.0
+ 
+1.0000
+ 
+0.9962
+ 
+0.9923
+ 
+0.9885
+ 
+0.9846
+ 
+0.9807
+ 
+0.9768
+ 
+0.9729
+ 
+0.9690
+ 
+0.9651
+ 
+0.9611
+ 
+0.9572
+ 
+0.9532
+ 
+0.9493
+ 
+0.9453
+3.0
+ 
+1.0000
+ 
+0.9962
+ 
+0.9924
+ 
+0.9886
+ 
+0.9847
+ 
+0.9809
+ 
+0.9770
+ 
+0.9732
+ 
+0.9693
+ 
+0.9654
+ 
+0.9615
+ 
+0.9576
+ 
+0.9536
+ 
+0.9497
+ 
+0.9458
+4.0
+ 
+1.0000
+ 
+0.9962
+ 
+0.9925
+ 
+0.9887
+ 
+0.9849
+ 
+0.9811
+ 
+0.9772
+ 
+0.9734
+ 
+0.9696
+ 
+0.9657
+ 
+0.9618
+ 
+0.9579
+ 
+0.9541
+ 
+0.9502
+ 
+0.9462
+5.0
+ 
+1.0000
+ 
+0.9963
+ 
+0.9925
+ 
+0.9888
+ 
+0.9850
+ 
+0.9812
+ 
+0.9774
+ 
+0.9736
+ 
+0.9698
+ 
+0.9660
+ 
+0.9622
+ 
+0.9583
+ 
+0.9545
+ 
+0.9506
+ 
+0.9467
+6.0
+ 
+1.0000
+ 
+0.9963
+ 
+0.9926
+ 
+0.9889
+ 
+0.9851
+ 
+0.9814
+ 
+0.9776
+ 
+0.9739
+ 
+0.9701
+ 
+0.9663
+ 
+0.9625
+ 
+0.9587
+ 
+0.9549
+ 
+0.9510
+ 
+0.9472
+7.0
+ 
+1.0000
+ 
+0.9963
+ 
+0.9927
+ 
+0.9890
+ 
+0.9853
+ 
+0.9816
+ 
+0.9778
+ 
+0.9741
+ 
+0.9703
+ 
+0.9666
+ 
+0.9628
+ 
+0.9590
+ 
+0.9552
+ 
+0.9514
+ 
+0.9476
+8.0
+ 
+1.0000
+ 
+0.9964
+ 
+0.9927
+ 
+0.9891
+ 
+0.9854
+ 
+0.9817
+ 
+0.9780
+ 
+0.9743
+ 
+0.9706
+ 
+0.9669
+ 
+0.9631
+ 
+0.9594
+ 
+0.9556
+ 
+0.9519
+ 
+0.9481
+9.0
+ 
+1.0000
+ 
+0.9964
+ 
+0.9928
+ 
+0.9892
+ 
+0.9855
+ 
+0.9819
+ 
+0.9782
+ 
+0.9745
+ 
+0.9708
+ 
+0.9672
+ 
+0.9634
+ 
+0.9597
+ 
+0.9560
+ 
+0.9523
+ 
+0.9485
+10.0
+ 
+1.0000
+ 
+0.9964
+ 
+0.9928
+ 
+0.9893
+ 
+0.9856
+ 
+0.9820
+ 
+0.9784
+ 
+0.9747
+ 
+0.9711
+ 
+0.9674
+ 
+0.9637
+ 
+0.9601
+ 
+0.9564
+ 
+0.9527
+ 
+0.9489
+11.0
+ 
+1.0000
+ 
+0.9965
+ 
+0.9929
+ 
+0.9893
+ 
+0.9858
+ 
+0.9822
+ 
+0.9786
+ 
+0.9750
+ 
+0.9713
+ 
+0.9677
+ 
+0.9640
+ 
+0.9604
+ 
+0.9567
+ 
+0.9530
+ 
+0.9494
+12.0
+ 
+1.0000
+ 
+0.9965
+ 
+0.9930
+ 
+0.9894
+ 
+0.9859
+ 
+0.9823
+ 
+0.9787
+ 
+0.9752
+ 
+0.9716
+ 
+0.9680
+ 
+0.9643
+ 
+0.9607
+ 
+0.9571
+ 
+0.9534
+ 
+0.9498
+13.0
+ 
+1.0000
+ 
+0.9965
+ 
+0.9930
+ 
+0.9895
+ 
+0.9860
+ 
+0.9825
+ 
+0.9789
+ 
+0.9754
+ 
+0.9718
+ 
+0.9682
+ 
+0.9646
+ 
+0.9610
+ 
+0.9574
+ 
+0.9538
+ 
+0.9502
+14.0
+ 
+1.0000
+ 
+0.9965
+ 
+0.9931
+ 
+0.9896
+ 
+0.9861
+ 
+0.9826
+ 
+0.9791
+ 
+0.9756
+ 
+0.9720
+ 
+0.9685
+ 
+0.9649
+ 
+0.9613
+ 
+0.9578
+ 
+0.9542
+ 
+0.9506
+15.0
+ 
+1.0000
+ 
+0.9966
+ 
+0.9931
+ 
+0.9897
+ 
+0.9862
+ 
+0.9827
+ 
+0.9793
+ 
+0.9758
+ 
+0.9723
+ 
+0.9687
+ 
+0.9652
+ 
+0.9617
+ 
+0.9581
+ 
+0.9545
+ 
+0.9510
+16.0
+ 
+1.0000
+ 
+0.9966
+ 
+0.9932
+ 
+0.9898
+ 
+0.9863
+ 
+0.9829
+ 
+0.9794
+ 
+0.9760
+ 
+0.9725
+ 
+0.9690
+ 
+0.9655
+ 
+0.9620
+ 
+0.9584
+ 
+0.9549
+ 
+0.9513
+17.0
+ 
+1.0000
+ 
+0.9966
+ 
+0.9932
+ 
+0.9898
+ 
+0.9864
+ 
+0.9830
+ 
+0.9796
+ 
+0.9761
+ 
+0.9727
+ 
+0.9692
+ 
+0.9657
+ 
+0.9622
+ 
+0.9587
+ 
+0.9552
+ 
+0.9517
+18.0
+ 
+1.0000
+ 
+0.9967
+ 
+0.9933
+ 
+0.9899
+ 
+0.9865
+ 
+0.9831
+ 
+0.9797
+ 
+0.9763
+ 
+0.9729
+ 
+0.9695
+ 
+0.9660
+ 
+0.9625
+ 
+0.9591
+ 
+0.9556
+ 
+0.9521
+19.0
+ 
+1.0000
+ 
+0.9967
+ 
+0.9933
+ 
+0.9900
+ 
+0.9866
+ 
+0.9833
+ 
+
+---
+
+### https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf (chunk epa-sop-field-instrument-calibration-2010.pdf__591e8ba6ee04, score 0.7246523314049494)
+
+bel before use) to water. This solution is prepared prior to the sampling
+event. ‘Note: this solution can be made without cobalt chloride, but the probe will take
+
+_ longer to respond to the low DO concentration.
+
+SPECIFIC CONDUCTANCE
+
+Conductivity is used to measure the ability of an aqueous solution to carry an electrical current.
+Specific conductance is the conductivity value corrected to 25°C.Most instruments are calibrated against a single standard which is near the specific conductance
+of the environmental samples. The standard can be either below or above the specific
+conductance of the environmental samples. A second standard is used to check the linearity of
+the instrument in the range of measurements.
+
+When performing specific conductance measurement on groundwater or surface water and the
+measurement is outside the initial calibration range defined by the two standards, the instrument
+will need to be re-calibrated using the appropriate standards. .
+
+Specific Conductance Calibration Procedure
+1. Allow the calibration standards to equilibrate to the ambient temperature.
+2. Fill calibration containers with the standards so each standard will cover the probe and
+
+temperature sensor. Remove probe from its storage container, rinse the probe with
+deionized water or a small amount of the standard (discard the rinsate), and place the
+EQASOP-FieldCalibrat
+Region 1 Calibration of
+Field Instruments
+Revision Number: 2
+Date: June 3, 1998
+Revised January 19, 2010
+Page 11 of 18
+
+probe into the standard.
+3. Select measurement mode. Wait until the probe temperature has stabilized.
+
+4. Select calibration mode, then specific conductance. Enter the specific conductance
+standard value. Make sure that the units on the standard are the same as the units used
+
+by the instrument. If not, convert the units on the standard to the units used by the
+instrument. -
+
+5. Select measurement mode. The reading should remain within manufacturer’s
+specifications. If it does not, re-calibrate, If readings continue to change after re-
+calibration, consult manufacturer or replace calibration solution. ,
+
+6. Remove probe from the standard, rinse the probe with deionized water or a small
+amount of the second standard (discard the rinsate), and place the probe into the
+second standard. The second standard will serve to verify the linearity of the
+instrument. Read the specific conductance value from the instrument and compare the
+value to the specific conductance on the standard. The two values should agree within
+the specifications of the instrument. If they do not agree, re-calibrate. If readings do
+not compare, then the second standard may be outside the linear range of the
+
+" instrument. Use a standard that is closer to the first standard and repeat the
+
+verification. If values still do not compare, try cleaning the probe or consult the
+manufacturer.
+
+7. After the calibration has been completed, rinse the probe with deionized water and
+store the probe according to manufacturer’s instructions. .
+
+8. Record the calibration information on Table 1.
+
+Note: for projects where specific conductance is not a critical measurement it may be possible to
+calibrate with one standard in the range of the expected measurement.
+
+5.5 | OXIDATION/REDUCTION POTENTIAL (ORP)
+The oxidation/reduction potential is the electrometric difference measured in a solution between
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.3/tm9-a6_3.pdf (chunk usgs-nfm-a6.3-specific-conductance.pdf__35d2e3ff4963, score 0.7245799333127109)
+
+ndard ISO–7888, Water quality—
+Determination of electrical conductivity: Geneva,
+Switzerland, International Organization for Standardization,
+6 p.
+Lewis, E.L., 1980, The practical salinity scale 1978 and its
+antecedents: IEEE Journal of Oceanic Engineering, v. 5,
+no. 1, p. 3–8. [Also available at https://doi.org/10.1109/
+JOE.1980.1145448.]
+Lind, C.J., 1970, Specific conductance as a means of esti-mating ionic strength, in Geological Survey Research
+1970: U.S. Geological Survey Professional Paper
+700–D, p. D272–D280, accessed September 11, 2017, at
+https://pubs.er.usgs.gov/publication/pp700D.
+McCleskey, R.B., 2013, New method for electrical
+conductivity temperature compensation: Environmental
+Science and Technology, v. 47, no. 17, p. 9874–9881. [Also
+available at https://doi.org/10.1021/es4021888r.]
+McCleskey, R.B., Clor, L.E., Lowenstern, J.B., Evans,
+W.C., Nordstrom, D.K., Heasler, Henry, and Huebner,
+M.A., 2012a, Solute and geothermal flux monitoring
+using electrical conductivity in the Madison, Firehole,
+and Gibbon Rivers, Yellowstone National Park: Applied
+Geochemistry, v. 27, no. 12, p. 2370–2381. [Also available
+at https://doi.org/10.1016/j.apgeochem.2012.07.019.]
+McCleskey, R.B., Nordstrom, D.K., Ryan, J.N., and Ball, J.W.,
+2012b, A new method of calculating electrical conductivity
+with applications to natural waters: Geochimica et
+Cosmochimica Acta, v. 77, p. 369–382. [Also available at
+https://doi.org/10.1016/j.gca.2011.10.031.]
+Parkhurst, D.L., and Appelo, C.A.J., 1999, User’s guide to
+PHREEQC (ver. 2)—A computer program for speciation,
+batch-reaction, one-dimensional transport, and inverse
+geochemical calculations: U.S. Geological Survey Water-
+Resources Investigations Report 99–4259, 312 p., accessed
+September 11, 2017, at https://pubs.er.usgs.gov/publication/
+wri994259.
+Pratt, K.W., Koch, W.F., Wu, Y.C., and Berezansky, P.A.,
+2001, Molality-based primary standards of electrolytic
+conductivity: Pure and Applied Chemistry, v. 73, no. 11,
+p. 1783–1793. [Also available at http://users.unimi.it/
+ECEA/IUPAC.pdf.]
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.2/tm9a6.2.pdf (chunk usgs-nfm-a6.2-dissolved-oxygen.pdf__f3c3c9519851, score 0.7230837825764771)
+
+m that generates tables of DO solubility values and
+(or) salinity correction factors over a range of user-specified
+temperature, atmospheric pressure, and salinity or specific
+conductance (https://water.usgs.gov/software/DOTABLES/).
+2.3.1 Surface Water
+Standard determinations of DO in riverine surface water
+represent the cross-sectional median or mean DO concentra-
+tion at the time of observation.Multiparameter instruments (sondes) are in common use
+by the USGS for measurement of DO and other field param-
+eters, both for in situ discrete measurements in surface water
+and for short- or long-term deployment in streams, lakes and
+reservoirs, and other surface-water bodies. Refer to NFM
+6.8, Wagner and others (2006), and manufacturer guidance
+for additional information regarding the siting and use of
+multiparameter instruments.
+Measuring the DO concentration at one distinct point in
+a cross section is valid only for flowing water with a cross-
+sectional DO variation less than 0.5 mg/L. Discerning such
+variation requires a reconnaissance cross-section measure-
+ment. Measurements made at multiple locations in the cross
+section are recommended when possible. Determining DO
+concentration for a single channel at the centroid of flow at the
+midpoint of the vertical represents the cross section only under
+ideal mixing conditions.
+Do not measure DO in or directly below sections with
+turbulent flow, in still water, or from the bank unless these
+conditions represent most of the stream reach or are required
+to fulfill project objectives.
+Verify whether or not the instrument in use applies salin-
+ity corrections automatically. If not, apply a salinity correction
+to the saturation values after making the DO measurement,
+referring to section 5.0 and table 6.2–4 (at end of chapter).
+If the anticipated DO concentration is less than 1.0 mg/L,
+use of spectrophotometric methods (section 3.0) is required
+to develop an instrument-specific rating before measure-
+ments made with a field instrument can be reported. Optical
+DO instrument readings are required to be verified through
+the development of an instrument-specific comparison with
+spectrophotometric methods. The instrument-specific rating
+should consist of at least five measurements made as nearly
+simultaneously as possible with the optical instrument and
+the spectrophotometric method. When compared, the median
+of these measurements should agree within 0.03 mg/L. If the
+measurements do not agree within 0.03 mg/L, the optical
+instrument should be checked and, if necessary, calibrated to

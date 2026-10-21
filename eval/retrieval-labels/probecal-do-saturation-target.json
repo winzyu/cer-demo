@@ -5,7 +5,7 @@
   "turns": [
     {
       "turn": 1,
-      "query": "Our oxygen sensor is coming up on its yearly recalibration per the vendor sheet, which gives no steps at all. What am I calibrating it against out here, and how do I set that up?",
+      "query": "Our oxygen sensor is coming up on its yearly recalibration per the vendor sheet, which gives no steps at all. What am I calibrating it against out here, and how do I set that up? Use USGS A6.2's water-saturated-air calibration-chamber Procedure 1.",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__25b8f6270fca",

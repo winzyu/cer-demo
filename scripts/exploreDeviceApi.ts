@@ -6,7 +6,7 @@
  * raw response to disk** so the rest of Phase N3 can be built and tested without re-hitting
  * someone else's production API.
  *
- * The recording is the point. `docs/migration/DEVICE_API.md` documents the contract as read from
+ * The recording is the point. `docs/reference/DEVICE_API.md` documents the contract as read from
  * the backend's source; this proves what the deployment actually returns, and the captured
  * fixtures become the offline test data for `query_sensor_data`.
  *
@@ -130,7 +130,7 @@ const main = async (): Promise<void> => {
 
   if (!config.deviceApi.baseUrl) {
     throw new Error(
-      "DEVICE_API_BASE_URL is not set. Add it to .env — see docs/migration/DEVICE_API.md §5.",
+      "DEVICE_API_BASE_URL is not set. Add it to .env — see docs/reference/DEVICE_API.md §5.",
     );
   }
 

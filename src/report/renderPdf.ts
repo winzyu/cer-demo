@@ -20,6 +20,8 @@ import {
   clarityBandFor, isAllZeroTurbidity, isOffScaleTurbidity, TURBIDITY_NO_BASELINE_TEXT,
 } from "./referenceRanges";
 import type { NarrativeSections } from "./narrative";
+import { omittedNotice, type ReportOmitGroup } from "./omit";
+import { readingAge } from "../tools/readingAge";
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
   Normal: "#1a7f37",
@@ -55,15 +57,21 @@ const FLAG_COLORS: Record<Flag, string> = {
  * from the period mean -- the same value the row's Mean column prints, so a reader can see where
  * the band came from without a second lookup. Exported for `reportRenderPdf.test.ts`, since the
  * rendered PDF's text cannot be extracted under Jest (see the test file's docstring).
+ * `sensor_fault_notes` in `omit` leaves the "(all zero)" and "(off-scale)" suffixes off.
  */
 export const flagCellText = (
   p: ParameterStats,
-  probeAccuracy: (key: string, reading: number) => number,
+  noiseFloor: (key: string, reading: number) => number,
+  omit: readonly ReportOmitGroup[] = [],
 ): string => {
   if (!isRelativeIndex(p.baseline)) {
-    return flagFor(p, probeAccuracy);
+    const flag = flagFor(p, noiseFloor);
+    return flag === "N/A" ? "Not assessed" : flag;
   }
   const band = clarityBandFor(p.mean);
+  if (omit.includes("sensor_fault_notes")) {
+    return band;
+  }
   // The band alone reads as a clarity claim; "(off-scale)" tells the reader this particular
   // reading is also a data-quality signal -- the input voltage went below 0 V relative to the
   // conversion's assumptions -- without inventing a fourth band for it (see OFF_SCALE_INDEX).
@@ -335,6 +343,33 @@ export const drawSparkline = (
   return true;
 };
 
+/**
+ * The turbidity half of Section 2's footnote: what the clarity band is (`turbidity_notes`) and
+ * what the Flag column's "(all zero)" and "(off-scale)" mean (`sensor_fault_notes`), the latter
+ * only when a Flag cell carries one of them. Each half goes with its group. Exported for
+ * `reportRenderPdf.test.ts`, which cannot read PDF text.
+ */
+export const clarityFootnoteText = (
+  omit: readonly ReportOmitGroup[] = [],
+  flagSuffixShown = true,
+): string => {
+  const parts = [
+    omit.includes("turbidity_notes")
+      ? null
+      : "Turbidity is reported as a water-clarity band (Clear / Moderate / Turbid), operator-"
+        + "authoritative as of 2026-09-10, from an uncalibrated relative index derived from a raw "
+        + "sensor voltage. No operator turbidity range exists on any device, so it is never "
+        + "flagged in or out of range; its Min/Max/Mean/Median are shown for period-to-period "
+        + "comparison only.",
+    omit.includes("sensor_fault_notes") || !flagSuffixShown
+      ? null
+      : "A Flag reading '(all zero)' means every reading in the period was 0, which the backend "
+        + "also reports for a missing or offline sensor, so it is not confirmed clear water; "
+        + "'(off-scale)' means the reading is at or beyond the top of the conversion's scale.",
+  ].filter((part): part is string => part !== null);
+  return parts.length > 0 ? `  ${parts.join(" ")}` : "";
+};
+
 const formatTs = (ms: number): string => new Date(ms).toISOString().slice(0, 16).replace("T", " ");
 
 /**
@@ -354,6 +389,7 @@ export interface SectionNumbers {
 
 export const resolveSectionNumbers = (
   report: Pick<ReportInput, "events" | "dataQuality">,
+  omit: readonly ReportOmitGroup[] = [],
 ): SectionNumbers => {
   let sectionNum = 4;
   const result: SectionNumbers = { recommendations: 4 };
@@ -361,7 +397,7 @@ export const resolveSectionNumbers = (
     result.eventDetection = sectionNum;
     sectionNum += 1;
   }
-  if (report.dataQuality) {
+  if (report.dataQuality && !omit.includes("data_quality")) {
     result.dataQuality = sectionNum;
     sectionNum += 1;
   }
@@ -403,15 +439,50 @@ const drawFooters = (doc: PDFKit.PDFDocument, report: ReportInput): void => {
   doc.x = MARGIN;
 };
 
+/**
+ * The "Last Reading" row: the device's newest reading and how old it was when the PDF was built.
+ *
+ * Without it, a pod silent for two weeks printed a two-week-old period beside today's Report
+ * Date and a "Normal — no action required" status, and nothing on the page said the pod had
+ * stopped reporting (REPORT_AUDIT_2026-09-25.md finding 3). The age uses `readingAge`, the same
+ * rule and six-hour stale line `generate_report` and `list_pods` state in their tool results.
+ * `warning` is set only when stale, and the PDF prints it under the metadata table.
+ */
+export const lastReadingText = (
+  lastReadingAt: string | undefined,
+  nowMs: number,
+): { value: string; warning?: string } => {
+  const age = readingAge(lastReadingAt, nowMs);
+  if (!lastReadingAt || !age) {
+    return { value: "Not available" };
+  }
+  const value = `${formatTs(Date.parse(lastReadingAt))} UTC (${age.age} before this report)`;
+  if (!age.stale) {
+    return { value };
+  }
+  return {
+    value,
+    warning: `This pod has not reported for ${age.age}. This report describes the water during `
+      + "the reporting period, not current conditions.",
+  };
+};
+
 export interface RenderPdfOptions {
-  probeAccuracy: (key: string, reading: number) => number;
+  noiseFloor: (key: string, reading: number) => number;
   status: ReportStatus;
+  /** Override the report's generation time when measuring the last reading's age. */
+  nowMs?: number;
+  /** Notes and sections the requester asked to leave out (`omit.ts`); default none. */
+  omit?: readonly ReportOmitGroup[];
 }
 
 export const buildReportPdf = (
   report: ReportInput,
   narrative: NarrativeSections,
-  { probeAccuracy, status }: RenderPdfOptions,
+  {
+    noiseFloor, status, nowMs = Date.parse(report.generatedAt ?? report.site.reportDate),
+    omit = [],
+  }: RenderPdfOptions,
 ): PDFKit.PDFDocument => {
   const doc = new PDFDocument({
     size: "LETTER",
@@ -441,6 +512,9 @@ export const buildReportPdf = (
   doc.x = MARGIN;
   doc.y = HEADER_HEIGHT + 16;
 
+  const lastReading = lastReadingText(report.site.lastReadingAt, nowMs);
+  // A copy with notes left out says so, so a shared PDF is not taken for the full assessment.
+  const omitted = omittedNotice(omit);
   drawKeyValueTable(doc, [
     { label: "Coordinates", value: coordinatesStr(report.site) },
     // The provenance travels with the value: this one field selects the whole baseline table
@@ -454,8 +528,17 @@ export const buildReportPdf = (
     },
     { label: "Client / Contract", value: report.site.clientName },
     { label: "Report Date", value: report.site.reportDate },
+    { label: "Last Reading", value: lastReading.value },
     { label: "Prepared By", value: "Clean Earth Rovers" },
+    ...(omitted ? [{ label: "Omitted", value: omitted }] : []),
   ]);
+
+  if (lastReading.warning) {
+    doc.moveDown(0.3);
+    doc.font("Helvetica-Bold").fontSize(10).fillColor(STATUS_COLORS.Watch)
+      .text(lastReading.warning, MARGIN, doc.y, { width: CONTENT_WIDTH });
+    doc.fillColor("#000000");
+  }
 
   doc.moveDown(0.4);
 
@@ -467,6 +550,10 @@ export const buildReportPdf = (
     bulletRadius: 2,
     textIndent: 10,
   });
+  if (report.site.periodNote) {
+    doc.moveDown(0.3);
+    doc.text(report.site.periodNote, MARGIN, doc.y, { width: CONTENT_WIDTH });
+  }
   doc.moveDown(0.4);
 
   // 2. Parameter Data
@@ -485,8 +572,8 @@ export const buildReportPdf = (
     // thing the eye caught in a table whose whole job is to be scanned.
     { header: "Flag", width: 72, align: "center" },
   ];
-  const paramFlags = report.parameters.map((p) => flagFor(p, probeAccuracy));
-  const paramCells = report.parameters.map((p) => flagCellText(p, probeAccuracy));
+  const paramFlags = report.parameters.map((p) => flagFor(p, noiseFloor));
+  const paramCells = report.parameters.map((p) => flagCellText(p, noiseFloor, omit));
   const paramRows = report.parameters.map((p, i) => {
     const b = p.baseline;
     const baselineText = (() => {
@@ -497,7 +584,10 @@ export const buildReportPdf = (
       // a deployment has one. Turbidity's is different and must not borrow that wording: there
       // is no operator turbidity range on any device, and the value is not on a calibrated
       // scale, so no site-specific range would help.
-      return isRelativeIndex(b) ? TURBIDITY_NO_BASELINE_TEXT : "Not established (site-specific)";
+      if (isRelativeIndex(b)) {
+        return omit.includes("turbidity_notes") ? "—" : TURBIDITY_NO_BASELINE_TEXT;
+      }
+      return "Not established (site-specific)";
     })();
     // A flag says only "this left the range at some point in 30 days". One bad reading in 1,382
     // and a month-long offset produce the same word. The share says which.
@@ -520,18 +610,14 @@ export const buildReportPdf = (
   });
   doc.moveDown(0.15);
   const hasRelativeIndex = report.parameters.some((p) => isRelativeIndex(p.baseline));
-  const clarityFootnote = hasRelativeIndex
-    ? "  Turbidity is reported as a water-clarity band (Clear / Moderate / Turbid), operator-"
-      + "authoritative as of 2026-09-10, from an uncalibrated relative index derived from a raw "
-      + "sensor voltage. No operator turbidity range exists on any device, so it is never "
-      + "flagged in or out of range; its Min/Max/Mean/Median are shown for period-to-period "
-      + "comparison only. A Flag reading '(all zero)' means every reading in the period was "
-      + "0, which the backend also reports for a missing or offline sensor, so it is not "
-      + "confirmed clear water; '(off-scale)' means the reading is at or beyond the top of the "
-      + "conversion's scale."
-    : "";
+  const flagSuffixShown = report.parameters.some((p, i) => (
+    isRelativeIndex(p.baseline) && paramCells[i] !== clarityBandFor(p.mean)
+  ));
+  const clarityFootnote = hasRelativeIndex ? clarityFootnoteText(omit, flagSuffixShown) : "";
   doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
-    "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline. Out of "
+    "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline. A flag "
+    + "needs at least three readings in a row beyond the baseline by more than the sensor's "
+    + "minimum detectable change; a single reading never sets one. Out of "
     + "range is the share of the period's series buckets whose average sat outside that "
     + "baseline — approximate, at bucket resolution, and shown because a flag alone cannot "
     + `separate a single stray reading from a sustained offset.${clarityFootnote}`,
@@ -544,12 +630,35 @@ export const buildReportPdf = (
   const operatorSourced = report.parameters
     .filter((p) => p.baseline.baselineSource === "operator-threshold")
     .map((p) => p.baseline.label);
-  if (operatorSourced.length > 0) {
+  // `threshold_notes` leaves out every provenance footnote below; the metadata table says so, and
+  // each parameter's prose still names a fallback as generic (narrative.ts).
+  const thresholdNotes = !omit.includes("threshold_notes");
+  if (thresholdNotes && operatorSourced.length > 0) {
     doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
       `Site Baseline for ${operatorSourced.join(", ")} is this device's operator-configured `
       + "threshold from the device registry — an alert limit the operator set, not a "
-      + "scientifically reviewed range. A parameter with no usable registry threshold shows no "
-      + "baseline at all (\"Not established\") rather than falling back to a fixed table.",
+      + "scientifically reviewed range.",
+      { width: CONTENT_WIDTH },
+    );
+  }
+  // A fallback is a generic range, and the reader must be able to tell it from a limit set for
+  // this site (docs/timeline.md, 2026-10-10).
+  const fallbackSourced = report.parameters
+    .filter((p) => p.baseline.baselineSource === "v2-fallback")
+    .map((p) => p.baseline.label);
+  if (thresholdNotes && fallbackSourced.length > 0) {
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
+      `Site Baseline for ${fallbackSourced.join(", ")} is a generic fallback: the source-of-truth `
+      + "document's general range for this water type, used because this device has no usable "
+      + "threshold of its own for that parameter. It is not a limit set for this site.",
+      { width: CONTENT_WIDTH },
+    );
+  }
+  if (!thresholdNotes) {
+    // Left out at the requester's request.
+  } else if (operatorSourced.length > 0 || fallbackSourced.length > 0) {
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
+      "A parameter with neither shows no baseline at all (\"Not established\").",
       { width: CONTENT_WIDTH },
     );
   } else if (status === "Not assessed") {
@@ -597,10 +706,10 @@ export const buildReportPdf = (
       doc.font("Helvetica-Bold").fontSize(10).fillColor(INK)
         .text(label, MARGIN, top, { width: CONTENT_WIDTH - 130 });
       if (p) {
-        drawPill(doc, flagCellText(p, probeAccuracy), {
+        drawPill(doc, flagCellText(p, noiseFloor, omit), {
           right: MARGIN + CONTENT_WIDTH,
           top: top - 2,
-          color: FLAG_COLORS[flagFor(p, probeAccuracy)],
+          color: FLAG_COLORS[flagFor(p, noiseFloor)],
           size: 7,
         });
       }
@@ -623,7 +732,7 @@ export const buildReportPdf = (
   }
 
   // Sections 4-6 are numbered dynamically -- see resolveSectionNumbers above.
-  const sectionNumbers = resolveSectionNumbers(report);
+  const sectionNumbers = resolveSectionNumbers(report, omit);
 
   // 4. Event Detection (conditional)
   if (report.events.length > 0) {
@@ -665,8 +774,8 @@ export const buildReportPdf = (
     });
   }
 
-  // 5. Data Quality (conditional)
-  if (report.dataQuality) {
+  // 5. Data Quality (conditional, and left out on request)
+  if (report.dataQuality && sectionNumbers.dataQuality !== undefined) {
     const dq = report.dataQuality;
     sectionHeader(doc, `${sectionNumbers.dataQuality}. Data Quality`);
     drawGridTable(

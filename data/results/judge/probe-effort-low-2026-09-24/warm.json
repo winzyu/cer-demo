@@ -1,0 +1,68 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4-flash-0731",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-24T07:54:28.076Z",
+  "budget": {
+    "calls": 4,
+    "promptTokens": 36296,
+    "cachedPromptTokens": 25284,
+    "completionTokens": 10144,
+    "usd": 0.009294667999999999
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 2,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 2,
+            "mean": 0.5,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 0.5,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 2,
+        "turns": 2,
+        "rate": 1,
+        "totalClaims": 7,
+        "met": false
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer violates a must-not by giving a thermal-equilibration time of 15–30 min without stating it is a minimum (the manual says it can take longer than 30 minutes) and it misses most must-contain points (in situ/airtight requirement tubing/fittings/purging longer-than-30-min drift reading schedule slower/asymmetric response and reporting to nearest 10 mV) though it does list temperature pH and electrode system."
+        },
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 2,
+          "dimension": "ungrounded",
+          "detail": "3: Date and time of the reading. — I searched the supplied material for any instruction to record the date and time of an ORP measurement and found none; the context only specifies recording pH temperature the electrode system and the potential.; Any field notes about the flow‑cell condition (e.g. any air bubbles removed flow rate whether the cell was airtight). — I searched the supplied material for a requirement to log field notes about flow-cell condition and found no such instruction; the context mentions adjusting flow and expelling air bubbles but does not say to record them.; Collecting these data ensures the ORP value is traceable and meets the USGS reporting requirements for Eh measurements. — I searched the supplied material for a statement that collecting these data ensures traceability or meets USGS reporting requirements and found only the reporting requirements themselves (temperature electrode system pH potential) not a claim about ensuring traceability."
+        },
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 1,
+          "dimension": "ungrounded",
+          "detail": "4: The large swings you’re seeing are most likely caused by the sampling method not necessarily a faulty probe. — I searched the supplied material for a statement attributing the variability in ORP readings to the sampling method rather than a faulty probe and found only that subsamples from bailers are vulnerable to bias and may not be used for Eh but no explicit causal attribution.; So the variability is most likely a result of the bailer‑based subsampling method rather than a defective probe. — I searched the supplied material for a statement that the variability is most likely due to the bailer method rather than a defective probe and found only that subsamples are vulnerable to bias and may not be used for Eh but no explicit causal attribution.; ORP (Eh) is highly sensitive to dissolved gases — I searched the supplied material for a statement that Eh is highly sensitive to dissolved gases and found only that chemical reactions can cause Eh to change significantly and that aeration should be eliminated but no explicit claim of high sensitivity to dissolved gases.; any aeration or gas exchange that occurs when the bailer‑collected water is tipped into a beaker can introduce or remove oxidants/reductants producing the erratic readings you observe — I searched the supplied material for a statement that aeration introduces or removes oxidants/reductants and that this produces erratic readings and found only that subsamples are vulnerable to bias from changes in concentrations of DO and other gases but no mention of oxidants/reductants or a direct causal link to erratic readings."
+        }
+      ]
+    }
+  ]
+}

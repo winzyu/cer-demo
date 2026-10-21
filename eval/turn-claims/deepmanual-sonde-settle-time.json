@@ -1,0 +1,67 @@
+{
+  "fixtureId": "deepmanual-sonde-settle-time",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "mp-60s-surface-water-06",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Gives the per-location surface-water minimum and thermal-equilibrium purpose."
+        },
+        {
+          "claimId": "mp-60s-groundwater-03",
+          "rubric": [
+            3
+          ],
+          "why": "Supports the manufacturer-dependent longer wait, without transferring groundwater procedure to the creek."
+        },
+        {
+          "claimId": "mp-60s-longer-manufacturer-07",
+          "rubric": [
+            3
+          ],
+          "why": "Explicitly makes 60 seconds a minimum subject to manufacturer guidance."
+        },
+        {
+          "claimId": "mp-equilibrium-range-04",
+          "rubric": [
+            2,
+            4
+          ],
+          "why": "Explains thermal equilibration and its dependence on the temperature step."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "mp-t5-temperature-03",
+          "rubric": [
+            1
+          ],
+          "why": "Gives the temperature stabilization tolerance; matches explicit evidence."
+        }
+      ],
+      "uncovered": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "mp-stabilize-to-table-01",
+      "why": "Points to the stabilization table but supplies none of turn 2's numeric tolerances or reading count."
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "fixtureId": "deepmanual-do-air-calibration",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "epa-do-water-saturated-air-01",
+          "rubric": [
+            1
+          ],
+          "why": "Specifies water-saturated air created with a wet sponge or paper towel."
+        },
+        {
+          "claimId": "epa-do-probe-loose-fit-01",
+          "rubric": [
+            2
+          ],
+          "why": "Prohibits contact between either sensor and the wet material."
+        },
+        {
+          "claimId": "epa-do-saturation-time-01",
+          "rubric": [
+            3
+          ],
+          "why": "Gives the 10-15 minute saturation and warm-up period."
+        },
+        {
+          "claimId": "epa-do-baro-onsite-01",
+          "rubric": [
+            4
+          ],
+          "why": "Requires on-site pressure or elevation-corrected weather-service pressure."
+        },
+        {
+          "claimId": "epa-do-compare-chart-02-01",
+          "rubric": [
+            5
+          ],
+          "why": "Gives chart comparison and the usual 0.2 mg/L repeat-calibration tolerance."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "epa-do-zero-check-05-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives the zero-solution limit, maintenance response and assumed instrument accuracy."
+        },
+        {
+          "claimId": "epa-do-zero-project-adjust-01",
+          "rubric": [
+            3
+          ],
+          "why": "Makes the zero-solution limit conditional on project or instrument accuracy."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

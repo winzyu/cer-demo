@@ -1,0 +1,86 @@
+{
+  "fixtureId": "refusal-turbidity-sensor-hardware",
+  "fixtureClass": "refusal",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-25T10:15:17.980Z",
+    "gitSha": "309da6c1d3140279251b0203dab019ab8c917e72",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8010/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "I have depth ratings written down for four of our sensors but nothing for the one that reads clarity. How deep can we hang that one?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water‑quality documents, and I don't have enough information to answer that.  \nThe depth rating for the turbidity (clarity) sensor is not provided in the available excerpts.  \nI could instead explain how turbidity measurements are typically performed and what factors affect them.",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__2db3b29c7433",
+          "text": "rophotometer:\n— \tBailers are not recommended for collecting turbidity\nsamples, as bailer deployment can increase turbidity.\n— \tDo not collect the discharge passing through the\nflowthrough chamber in which pH, conductivity, or other\nfield-measurement sensors are installed.\n5Diluted samples must be qualified with a “d” in the “Value Qualifier Code” field when entering\ndata into NWIS.\n\n-- 41 of 55 --Turbidity, Version 2.1 (9/2005) \tU.S. Geological Survey TWRI Book 9\n42—TBY\n— \tPump the ground-water sample directly from the sample\ndischarge line into a precleaned glass or polyethylene\nsample-collection bottle.\n— \tSubsample into a cuvette and measure turbidity according to\ninstructions for static determination (steps 3 through 5\nabove).\nMultiparameter instruments can be used with a flowthrough chamber\n(instead of being deployed in situ) for monitoring ground-water field\nmeasurements. See the section below on dynamic determination of\nturbidity.\n6.7.3.B \tDYNAMIC (SUBMERSIBLE-SENSOR)\nDETERMINATION\nDetermination of turbidity using a submersible sensor or sensor in a\nmultiparameter sonde is useful for site-specific water-quality studies.\nSuch turbidity data can be used for watershed investigations; for\nexample, for determination of visual impairment (Davies-Colley and\nSmith, 2001), for correlation with concentrations of suspended\nsediment, total phosphorus, or other chemical constituents, and\nindicator bacteria (Christensen and others, 2000; Uhrich and Bragg,\n2003), and for long-term monitoring. Turbidity sensors for these\napplications utilize a variety of different light sources and other\noptions to compensate for interferences (fig. 6.7–2, table 6.7–3).\nMultiparameter instruments with internal batteries and memory can\nbe used in surface-water studies that require long-term deployment.\nGuidelines for long-term instrument deployment fall under the topic\nof continuous monitors, and are beyond the scope of this section—\nrefer to the manufacturer’s instructions and recommendations, and to\nguidance documents such as Wagner and others (2000).\nSome submersible turbidity sensors can be adjusted to operate within\ndiffering turbidity ranges. For example, although the maximum\nturbidity based on factory settings is just over 1,000 FNU, the YSI\n6026 can be factory adjusted to read turbidities up to 4,000 FNU,\nallowing readings to be obtained that would otherwise be off scale.\nThe adjustment, however, is specific to the individual instrument, with\ncalibration being non-linear between 1,000 and 4,000 FNU; hence,\n\n-- 42 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "I can only answer questions grounded in this sensor's readings or the loaded water‑quality documents, and I don't have enough information to answer that.  \nThe depth rating for the turbidity (clarity) sensor is not provided in the available excerpts.  \nI could instead explain how turbidity measurements are typically performed and what factors affect them.",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 1904,
+        "completionTokens": 251,
+        "totalTokens": 2155,
+        "cachedPromptTokens": 1268
+      },
+      "timing": {
+        "ttftMs": 851,
+        "wallMs": 1093
+      }
+    },
+    {
+      "index": 1,
+      "question": "Then what unit is that reading even in? The display just hands me a number with nothing next to it.",
+      "answer": "The turbidity value is reported in the unit that corresponds to the instrument’s design and light source. USGS documents note that “the designations NTU, NTRU, BU, AU, and NTMU signify the use of a broad spectrum incident light” and that “the designations FNU, FNRU, FBU, FAU, and FNMU generally signify an incident light in the range between 780‑900 nm”【1†\"the designations NTU, NTRU, BU, AU, and NTMU signify the use of a broad spectrum incident light\"】.  \n\nThus, the numeric display you see is expressed in whatever turbidity unit (e.g., NTU or FNU) is assigned to that particular sensor’s method code; the exact unit isn’t shown on the display itself.",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__f9ac2c6ac6c1",
+          "text": " ratio of the light received by the different detectors.\nFurthermore, because turbidity is an optical measurement, the\nabsorption of light by colored particles or by a colored matrix can\ncause a reduction in the apparent turbidity. The negative effect\nfrom color is minimized by using near-infrared light frequencies\nas the light source (tables 6.7-1, 6.7-3) or ratiometric techniques.\n\n-- 8 of 55 --Chapter A6. Field Measurements \tTurbidity, Version 2.1 (9/2005)\nTBY—9\nDATA STORAGE \t6.7.1.B\nTo ensure that USGS turbidity data can be understood and interpreted\nproperly within the context of the instrument used and site conditions\nencountered, data from each instrument type will be stored and\nreported in the National Water Information System (NWIS) using\nparameter codes and measurement reporting units that are specific to\nthe instrument type, with specific instruments designated by the\nmethod code. The respective measurement units, most of which also\nare in use internationally, are listed and defined in table 6.7-4.\nX \tThe designations NTU, NTRU, BU, AU, and NTMU signify the\nuse of a broad spectrum incident light in the wavelength range\n400-680 nanometers (nm).\nX \tThe designations FNU, FNRU, FBU, FAU, and FNMU\ngenerally signify an incident light in the range between 780-\n900 nm.2\nThese reporting units are equivalent when measuring a calibration\nsolution (for example, formazin or polymer beads—see section\n6.7.2), but their respective instruments may not produce equivalent\nresults for environmental samples. Information for specific\ninstruments is maintained at:\nhttp://water.usgs.gov/owq/turbidity_codes.xls\nThe term “turbidity unit,” as used in this manual, refers generically to\nturbidity measured by instruments of undefined design. Note that\nmanufacturers might, for the foreseeable future, retain the general use\nof the measurement unit “NTU” when referring to calibrants and\nequipment.\nTECHNICAL NOTE (2): Historically, reporting units included\nJackson Turbidity Units (JTU) and Formazin Turbidity Units\n(FTU). Neither unit is still in common use, due to lack of\nprecision (JTU) and lack of specificity about instrumentation\ntype (FTU).\n2ISO 7027 specifically defines the light source for FNU measurements as having a wavelength\nof 860 nm, with a bandwidth of 60 nm. The angle of the detector must be 90 degrees from\nincident light, plus or minus 2.5 degrees.\n\n-- 9 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        },
+        {
+          "id": "usgs-nfm-a6.7-turbidity.pdf__d154f3467ba4",
+          "text": " from inconsistencies in methods among different\noperators. Split one water sample into two or more subsamples\nusing a churn splitter. Have different operators prepare cuvettes\nand measure turbidity on the subsamples. Consider submitting\nsamples to a laboratory for analysis. Calculate bias as the\npercent difference between the turbidity readings obtained by\nthe different operators.\n\n-- 49 of 55 --Turbidity, Version 2.1 (9/2005) \tU.S. Geological Survey TWRI Book 9\n50—TBY\n6.7.5 \tDATA REPORTING AND\nINTERPRETATION\nTo minimize comparison of data derived from substantially different\ninstrument designs, USGS turbidity data are stored according to the\ninstrument designs and reporting units indicated in table 6.7–4, with the\nmethod codes describing the specific instrument used. Parameter codes\nassociated with instrument design and reporting units, and method codes\nassociated with individual instruments are detailed in the Excel\nspreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls (accessed\n6/15/2012). Method codes are used with these data to provide information that\ncan be used to understand potential differences in turbidity data.\nIn some cases, instruments are designed to operate in different modes (for\nexample ratiometric or non-ratiometric). Such instruments are listed multiple\ntimes in the spreadsheet at http://water.usgs.gov/owq/turbidity_codes.xls\n(accessed 9/30/2005), corresponding to different parameter codes to\ndistinguish their different settings. Be careful to document all instrument\nsettings and dilution factors, and use parameter codes and method codes\nappropriate for instrument settings. For data storage in NWIS, samples with\nnoticeable sand or coarse materials that were measured by static techniques\nmust be qualified as Estimates with an “E” in the Remark code, and diluted\nsamples must be entered with a “d” in the Value Qualifier Code field.\nX \tUSGS personnel: Do not use parameter codes P00076 and P61028.\nThese codes are reserved for historical turbidity data for which an\nequipment method cannot be assigned.\nGuidelines for reporting turbidity measurements to the nearest acceptable\ndigit according to EPA Method 180.1, GLI Method 2, ASTM, and ISO 7027\nmethods are listed in table 6.7–6. The indicated values represent the least\nsignificant digit in the measurement. Reported turbidity values should be\nrounded to this level of precision. For example, a value of 43.12 units\ndisplayed by an instrument would be reported as 45 under USEPA guidelines,\nbut as 43 under ASTM guidelines. In contrast, a value of 13.42 units displayed\nby an instrument would be reported as 13 under all the guidelines. For most\napplications, the USGS will conform to ASTM guidelines unless data were\nspecifically collected for drinking-water compliance (using either EPA\nMethod 180.1, GLI Method 2, or ISO 7027).\n\n-- 50 of 55 --",
+          "source": "https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "The turbidity value is reported in the unit that corresponds to the instrument’s design and light source. USGS documents note that “the designations NTU, NTRU, BU, AU, and NTMU signify the use of a broad spectrum incident light” and that “the designations FNU, FNRU, FBU, FAU, and FNMU generally signify an incident light in the range between 780‑900 nm”【1†\"the designations NTU, NTRU, BU, AU, and NTMU signify the use of a broad spectrum incident light\"】.  \n\nThus, the numeric display you see is expressed in whatever turbidity unit (e.g., NTU or FNU) is assigned to that particular sensor’s method code; the exact unit isn’t shown on the display itself.",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 2677,
+        "completionTokens": 424,
+        "totalTokens": 3101,
+        "cachedPromptTokens": 1268
+      },
+      "timing": {
+        "ttftMs": 1163,
+        "wallMs": 1837
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 4581,
+    "cachedPromptTokens": 2536,
+    "completionTokens": 675,
+    "wallMs": 2930
+  }
+}

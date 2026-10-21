@@ -68,7 +68,7 @@
     },
     {
       "turn": 2,
-      "query": "How long should that take, and what do we do if the reading just never settles?",
+      "query": "How long should that ZoBell check take? Separately, once the equipment passes, how long should a field-sample Eh reading take to settle, and what if it never does?",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.5-orp.pdf__9dfb772d652d",

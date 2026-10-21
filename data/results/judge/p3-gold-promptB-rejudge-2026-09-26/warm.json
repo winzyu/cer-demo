@@ -1,0 +1,122 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-26T21:39:11.567Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 581076,
+    "cachedPromptTokens": 569416,
+    "completionTokens": 87176
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.9166666666666666,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.3,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.0666666666666667,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that withholds the requested table values and comparison making none of the rubric's must-contain points though it violates no must-not item. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure not as universally insignificant; notes the USGS values are generated from the Benson and Krause equations; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently rather than mixing them"
+        },
+        {
+          "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the annual-verification and NIST-traceable-reference points but violates a must-not by telling the user to 'adjust or replace the sensor' to match the reference and it omits the ±0.2 C accuracy figure and the calibration-solution/evaporation point. Unmet: Gives required accuracy as about ±0.2 C where the sensor is bundled on a multiparameter instrument and used to correct another parameter; States calibration solution must cover probe and temperature sensor; identifies evaporation of moisture as a DO air-calibration concern"
+        },
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the two table solubilities but computes a 1.05 mg/L drop (not 0.99) omits any barometric-pressure dependence omits the brackish salinity correction and presents a definite residual drop rather than saying it cannot be established — and by applying freshwater solubility values unchanged to the brackish site it violates a must-not item. Unmet: States freshwater equilibrium solubility at 760 mmHg falls by 0.99 mg/L from 15 C to 20 C as a conditional benchmark not a ceiling on measured DO; States equilibrium saturation also depends on barometric pressure so the site's actual pressure changes the benchmark; States that in brackish water the freshwater value must be reduced by a salinity correction factor before comparison; States the actual warming contribution and remaining site-specific drop cannot be established from these readings alone (pressure salinity initial saturation not given); conditional estimate labelled with assumptions acceptable"
+        },
+        {
+          "fixtureId": "deepmanual-turbidity-rounding",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer claims the EPA 180.1 column has the same precision as the USGS column in every range and gives 1 NTU for the 40–<100 range under EPA which is an invented EPA resolution and asserts identical resolutions across ranges violating two must-not items. Unmet: States EPA Method 180.1 reports 63.7 as 65 to the nearest 5 units in the 40 to under 100 range"
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer asserts the probe's raw ORP millivolts are the same as Eh ('the only difference is the terminology') violating the must-not against treating them as interchangeable and it omits the reference-electrode correction points. Unmet: states that Eh is an equilibrium potential developed at the boundary between a noble-metal electrode and the water and reflects the redox-active species in solution; states that the millivolts the probe reads are not Eh on their own because that raw reading is against the probe's own reference electrode; states that getting Eh means adding the reference electrode's own potential to the measured reading"
+        }
+      ]
+    }
+  ]
+}

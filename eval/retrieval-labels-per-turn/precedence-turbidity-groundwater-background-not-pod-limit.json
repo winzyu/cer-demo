@@ -1,0 +1,41 @@
+{
+  "fixtureId": "precedence-turbidity-groundwater-background-not-pod-limit",
+  "set": "committed",
+  "fixtureClass": "precedence",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "Our groundwater well pod is showing turbidity of 12 NTU. Is that too high for our pod?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "natural turbidity in ground water\ngenerally is less than 5 turbidity units. Natural ground-water turbidity\nof up to 19 turbidity units has been reported for some environmental",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-groundwater-lt5-19-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "So can we just flag anything over 19 NTU as a problem at our well pods?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "natural turbidity in ground water\ngenerally is less than 5 turbidity units. Natural ground-water turbidity\nof up to 19 turbidity units has been reported for some environmental",
+          "locator": "§6.7.3.A step 6e and ground-water turbidity guidance — \"natural turbidity in ground water generally is less than 5 turbidity units\"",
+          "claimIds": [
+            "tby-groundwater-lt5-19-01"
+          ]
+        }
+      ]
+    }
+  ]
+}

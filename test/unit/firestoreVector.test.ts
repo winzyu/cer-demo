@@ -9,7 +9,7 @@ import {
   chunkDocumentId,
 } from "../../src/retrieval/adapters/FirestoreVectorAdapter";
 import { chunkIdOf, contentHashOf } from "../../src/ingestion/chunk";
-import { MAX_TOP_K } from "../../src/retrieval/options";
+import { DEFAULT_TOP_K, MAX_TOP_K } from "../../src/retrieval/options";
 import { EmbeddingService } from "../../src/services/EmbeddingService";
 
 /**
@@ -230,7 +230,7 @@ describe("FirestoreVectorAdapter", () => {
     await adapter.getContext("q");
 
     // No fusion here, so over-fetching would pay for reads the arm discards.
-    expect(calls[0].options.limit).toBe(5);
+    expect(calls[0].options.limit).toBe(DEFAULT_TOP_K);
   });
 
   it("honours an explicit topK", async () => {

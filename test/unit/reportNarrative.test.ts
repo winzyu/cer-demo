@@ -7,6 +7,7 @@ import type {
 import { catalogue, parseCatalogue, usableGuidance } from "../../src/catalogue";
 import type { UsableGuidance } from "../../src/catalogue";
 import { TURBIDITY_ALL_ZERO_CAVEAT } from "../../src/report/referenceRanges";
+import type { ReportOmitGroup } from "../../src/report/omit";
 
 /**
  * narrative.ts is the rule-based (zero-AI-call) prose writer. Covers the two user-requested
@@ -71,19 +72,34 @@ const turbidityParam = (
     median: sorted[Math.floor(sorted.length / 2)],
     pattern: "unknown",
     series,
+    readings: series,
     ...overrides,
   };
 };
 
-const param = (baseline: ParameterBaseline, overrides: Partial<ParameterStats> = {}): ParameterStats => ({
-  baseline,
-  min: (baseline.baselineMin + baseline.baselineMax) / 2 - 0.1,
-  max: (baseline.baselineMin + baseline.baselineMax) / 2 + 0.1,
-  mean: (baseline.baselineMin + baseline.baselineMax) / 2,
-  median: (baseline.baselineMin + baseline.baselineMax) / 2,
-  pattern: "unknown",
-  ...overrides,
-});
+/**
+ * The period's minimum and maximum, each held for three hourly readings in a row: the shape that
+ * sets a flag under the 3-in-a-row rule (flagRules.ts), so a test's min/max mean what they did.
+ */
+const held = (min: number, max: number): Array<[number, number]> => (
+  hourly([min, min, min, max, max, max])
+);
+
+const param = (baseline: ParameterBaseline, overrides: Partial<ParameterStats> = {}): ParameterStats => {
+  const mid = (baseline.baselineMin + baseline.baselineMax) / 2;
+  const min = overrides.min ?? mid - 0.1;
+  const max = overrides.max ?? mid + 0.1;
+  return {
+    baseline,
+    min,
+    max,
+    mean: mid,
+    median: mid,
+    pattern: "unknown",
+    readings: held(min, max),
+    ...overrides,
+  };
+};
 
 const report = (
   parameters: ParameterStats[],
@@ -185,7 +201,34 @@ describe("deterministicNarrative — parameter analysis", () => {
     const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { max: 9.0, pattern: "flat" });
     const { parameterAnalysis } = deterministicNarrative(report([ph]), noAccuracy, "Watch");
     expect(parameterAnalysis.has("pH")).toBe(true);
-    expect(parameterAnalysis.get("pH")).toContain("baseline");
+    expect(parameterAnalysis.get("pH")).toContain("for at least three readings in a row");
+  });
+
+  it("never describes a lone stray reading as the parameter's excursion", () => {
+    // Michael's over-flagging (POST_LAUNCH_BACKLOG.md §1): the 11.0 spike sets no flag.
+    const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), {
+      max: 11.0, pattern: "irregular", readings: hourly([7.5, 7.6, 11.0, 7.5, 7.4]),
+    });
+    const text = deterministicNarrative(report([ph]), noAccuracy, "Normal").parameterAnalysis.get("pH")!;
+    expect(text).not.toContain("11.00");
+    expect(text).toContain("remaining within");
+  });
+
+  it("states a persistent offset once, with its start, as a likely threshold or sensor issue", () => {
+    const ph = param(fixedBaseline("ph", "pH", "", 7.8, 8.3), {
+      min: 7.0, max: 7.1, pattern: "unknown", readings: hourly([7.0, 7.1, 7.0, 7.1, 7.0]),
+    });
+    const text = deterministicNarrative(report([ph]), noAccuracy, "Watch").parameterAnalysis.get("pH")!;
+    expect(text).toContain("for most of the period, from 2026-08-01 00:00");
+    expect(text).toContain("threshold that does not fit the site, sensor fouling or calibration");
+    expect(text.match(/most of the period/g)).toHaveLength(1);
+  });
+
+  it("labels a v2 fallback range as generic", () => {
+    const baseline = { ...fixedBaseline("ph", "pH", "", 7.8, 8.3), baselineSource: "v2-fallback" as const };
+    const text = deterministicNarrative(report([param(baseline, { pattern: "irregular" })]), noAccuracy, "Normal")
+      .parameterAnalysis.get("pH")!;
+    expect(text).toContain("general range for this water type (a generic fallback)");
   });
 
   it("names BOTH excursion directions when a parameter left the range at each end", () => {
@@ -212,7 +255,7 @@ describe("deterministicNarrative — parameter analysis", () => {
   it("prints no stray space around a value whose parameter has no unit", () => {
     const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { max: 9.0, pattern: "unknown" });
     const text = deterministicNarrative(report([ph]), noAccuracy, "Watch").parameterAnalysis.get("pH")!;
-    expect(text).toContain("above it to 9.00,");
+    expect(text).toContain("above it to 9.00 for");
     expect(text).not.toMatch(/ {2}/);
   });
 
@@ -261,9 +304,8 @@ describe("deterministicNarrative — parameter analysis", () => {
   });
 
   it("still calls a baseline with no operator-threshold source a site baseline", () => {
-    // baselineSource is only ever "operator-threshold" now (the reference-table source was
-    // vetoed in full, 2026-09-13) -- this pins the ternary's other branch, which stays reachable
-    // for any row that somehow carries no source at all.
+    // Production rows always carry a source ("operator-threshold" or "v2-fallback"); this pins
+    // the wording for a hand-built row that carries none.
     const baseline: ParameterBaseline = fixedBaseline("ph", "pH", "", 7.8, 8.3);
     const { parameterAnalysis } = deterministicNarrative(
       report([param(baseline, { pattern: "irregular" })]), noAccuracy, "Normal",
@@ -564,7 +606,7 @@ describe("deterministicNarrative — event wording", () => {
     const [named] = deterministicNarrative(
       report([flaggedPh()], [event({})], "Marine"), noAccuracy, "Watch", approvedOnly,
     ).events;
-    expect(named.heading).toBe("Sewage");
+    expect(named.heading).toBe("Consistent with Sewage");
     expect(named.causeNamed).toBe(true);
     expect(named.interpretation).toBe(
       "Consistent with sewage. Source unconfirmed. Bacteria are not measured. The change lasted 2.0 hours.",
@@ -591,12 +633,21 @@ describe("deterministicNarrative — event wording", () => {
     expect(sections.events[0].interpretation).not.toContain("Unreviewed");
   });
 
-  it("describes a persistent window as a threshold mismatch rather than a duration", () => {
+  it("points a persistent window at the parameter analysis instead of repeating its causes", () => {
     const [wording] = deterministicNarrative(
       report([flaggedPh()], [event({ persistent: true })], "Marine"), noAccuracy, "Watch", approvedOnly,
     ).events;
-    expect(wording.interpretation).toContain("do not fit this site");
+    expect(wording.interpretation).toContain("see the parameter analysis");
     expect(wording.interpretation).not.toContain("lasted");
+  });
+
+  it("heads an unexplained event with v2's \"Anomaly, cause unclear\" tier, never \"confirmed\"", () => {
+    expect(UNEXPLAINED_HEADING).toBe("Anomaly, cause unclear");
+    const [wording] = deterministicNarrative(
+      report([flaggedPh()], [event({ type: "Inconclusive" })]), noAccuracy, "Watch", approvedOnly,
+    ).events;
+    expect(wording.interpretation).toContain("the cause cannot be determined from sensor data");
+    expect(wording.interpretation).not.toMatch(/\bconfirmed\b/i);
   });
 });
 
@@ -609,9 +660,44 @@ describe("deterministicNarrative — shipped catalogue", () => {
 
   it("names marine sewage and recommends bacteria testing with drafts on", () => {
     const sections = deterministicNarrative(report([flaggedPh()], [event({})], "Marine"), noAccuracy, "Watch", drafts);
-    expect(sections.events[0].heading).toBe("Sewage");
+    expect(sections.events[0].heading).toBe("Consistent with Sewage");
     expect(sections.recommendationsInvestigative).toContain("Enterococcus");
     expect(sections.catalogueVersion).toBe(catalogue.version);
+  });
+
+  it("recommends inspecting the pod only for a likely data issue (v2 §9.2)", () => {
+    const crossing = deterministicNarrative(report([flaggedPh()]), noAccuracy, "Watch", drafts);
+    expect(crossing.guidanceIds).not.toContain("inspect-sensors");
+
+    const withIssue = report([flaggedPh()]);
+    withIssue.dataQuality = {
+      completenessPct: 100, completenessNotes: "", calibrationNotes: "", driftNotes: "",
+      biofoulingNotes: "", sensorAgreementNotes: "", likelyDataIssue: ["Dissolved Oxygen (mg/L)"],
+    };
+    const issue = deterministicNarrative(withIssue, noAccuracy, "Watch", drafts);
+    expect(issue.guidanceIds).toContain("inspect-sensors");
+    expect(issue.summaryBullets).toContain(
+      "Dissolved Oxygen (mg/L): This pattern most likely reflects a sensor or data issue. See Data Quality.",
+    );
+  });
+
+  it("recommends inspection on an otherwise Normal report with a likely data issue", () => {
+    const clean = report([param(fixedBaseline("ph", "pH", "", 6.5, 8.5))]);
+    clean.dataQuality = {
+      completenessPct: 100, completenessNotes: "", calibrationNotes: "", driftNotes: "",
+      biofoulingNotes: "", sensorAgreementNotes: "", likelyDataIssue: ["Turbidity (Relative)"],
+    };
+    const sections = deterministicNarrative(clean, noAccuracy, "Normal", drafts);
+    expect(sections.guidanceIds).toEqual(["fault-first", "inspect-sensors"]);
+    expect(sections.summaryBullets.join(" ")).toContain("inspect the sensors named above");
+  });
+
+  it("does not tell a reader to rule out the instrument for an exceedance the QC passed", () => {
+    // A real daily pH dip below the limit became "an instrument problem" in chat
+    // (GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §3 cause 2): fault-first rode on every crossing.
+    const sections = deterministicNarrative(report([flaggedPh()]), noAccuracy, "Watch", drafts);
+    expect(sections.guidanceIds).not.toContain("fault-first");
+    expect(sections.guidanceIds).not.toContain("inspect-sensors");
   });
 
   it("does not name an acidic input in marine water, where v2 says it is rarely detectable", () => {
@@ -671,5 +757,52 @@ describe("deterministicNarrative — shipped catalogue", () => {
     ].join(" \n ");
     // Treating the water is a separate, legally gated piece of work.
     expect(allText).not.toMatch(/\binstall\b|\bdose\b|\baerat|\bincrease flow\b|\bflush\b|\breduce\b|\badd\s+(chlorine|treatment|lime)/i);
+  });
+});
+
+describe("deterministicNarrative — notes left out on request", () => {
+  const omitting = (input: ReportInput, omit: ReportOmitGroup[]) => (
+    narrate(input, noAccuracy, "Normal", NO_GUIDANCE, omit)
+  );
+
+  it("keeps every turbidity note when nothing is omitted", () => {
+    const { parameterAnalysis, summaryBullets } = omitting(report([turbidityParam([0, 0, 0])]), []);
+    expect(parameterAnalysis.get("Turbidity (Relative)")).toContain("provisional, uncalibrated conversion");
+    expect(parameterAnalysis.get("Turbidity (Relative)")).toContain(TURBIDITY_ALL_ZERO_CAVEAT);
+    expect(summaryBullets.join(" ")).toContain("uncalibrated scale with no operator range");
+  });
+
+  it("drops the scale caveat under turbidity_notes but keeps the band, numbers and trend", () => {
+    const rising = report([turbidityParam([500, 550, 600, 700, 750, 800])]);
+    const { parameterAnalysis, summaryBullets } = omitting(rising, ["turbidity_notes"]);
+    const text = parameterAnalysis.get("Turbidity (Relative)")!;
+    expect(text).toBe("Water clarity read as Moderate for the period (relative index mean 650.0, "
+      + "range 500.0-800.0), rising across the period. The period spanned moderate to turbid "
+      + "conditions.");
+    const bullet = summaryBullets.find((b) => b.startsWith("Turbidity"))!;
+    expect(bullet).toBe("Turbidity (Relative): Moderate (relative index mean 650.0, rising across "
+      + "the period).");
+  });
+
+  it("drops the all-zero and off-scale sentences only under sensor_fault_notes", () => {
+    const zero = omitting(report([turbidityParam([0, 0, 0])]), ["sensor_fault_notes"]);
+    expect(zero.parameterAnalysis.get("Turbidity (Relative)")).not.toContain(TURBIDITY_ALL_ZERO_CAVEAT);
+    expect(zero.summaryBullets.join(" ")).not.toContain("possibly a missing sensor");
+    expect(zero.parameterAnalysis.get("Turbidity (Relative)")).toContain("provisional, uncalibrated conversion");
+
+    const offScale = omitting(report([turbidityParam([1_006, 1_006, 1_006])]), ["sensor_fault_notes"]);
+    expect(offScale.parameterAnalysis.get("Turbidity (Relative)")).not.toContain("turbVolt");
+    expect(offScale.summaryBullets.join(" ")).not.toContain("Off-scale");
+  });
+
+  it("drops a parameter's baseline note under threshold_notes, keeping its comparison", () => {
+    const baseline = {
+      ...noFixedBaseline("temperature", "Temperature (°F)", "°F"),
+      baselineNote: "No operator thresholds are configured for this device.",
+    };
+    const temp = param(baseline, { min: 60, max: 90, pattern: "unknown" });
+    const text = omitting(report([temp]), ["threshold_notes"]).parameterAnalysis.get("Temperature (°F)")!;
+    expect(text).not.toContain("No operator thresholds are configured");
+    expect(text).toContain("No baseline is established for this parameter");
   });
 });

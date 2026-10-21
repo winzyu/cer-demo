@@ -1,7 +1,15 @@
+import { config } from "../../src/config";
 import fs from "fs";
 import path from "path";
+import createError from "http-errors";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
-import { mergeByTimestamp, resolveChain } from "../../src/devices/mergeChains";
+import {
+  REFUSED_REASON,
+  isChainRefusal,
+  mergeByTimestamp,
+  resolveChain,
+  withholdRefused,
+} from "../../src/devices/mergeChains";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import type { DeviceSummary } from "../../src/types/device.types";
 
@@ -12,7 +20,7 @@ import type { DeviceSummary } from "../../src/types/device.types";
  * serves a stubbed `fetch` into the **real** `DeviceApiClient` and decoder, so it exercises the
  * actual fan-out rather than a mock of it. No network, no token, no cost.
  *
- * The shapes are the live ones (`docs/migration/BACKEND_FIELDS.md` §4): `labels[]` on the
+ * The shapes are the live ones (`docs/reference/BACKEND_FIELDS.md` §4): `labels[]` on the
  * survivor with self first, `mergedInto` on the retired device, `organization` as an opaque id.
  */
 
@@ -40,6 +48,31 @@ describe("resolveChain", () => {
   const predecessor = row(PRED, CWA, { mergedInto: SURVIVOR });
   const foreign = row(FOREIGN, NEWPORT, { mergedInto: SURVIVOR });
 
+  it.each([
+    ["fresh-water", "salt-water", false],
+    ["salt-water", "fresh-water", false],
+    ["fresh-water", "fresh-water", true],
+    ["salt-water", "salt-water", true],
+    [undefined, "fresh-water", true],
+    ["fresh-water", undefined, true],
+    [undefined, undefined, true],
+    ["", "fresh-water", true],
+    [" Fresh-Water ", "fresh-water", true],
+  ])("checks survivor %s and predecessor %s water types", (water, olderWater, kept) => {
+    const head = { ...row(SURVIVOR, CWA, { labels: [SURVIVOR, PRED] }), operatingEnvironment: water };
+    const older = { ...predecessor, operatingEnvironment: olderWater };
+    const chain = resolveChain(head, [head, older]);
+    expect(chain.labels).toEqual(kept ? [SURVIVOR, PRED] : [SURVIVOR]);
+    expect(chain.withheld).toEqual(kept ? [] : [
+      { label: PRED, reason: "different water type \u2014 history not transferred" },
+    ]);
+    if (!water || !olderWater) {
+      expect(chain).toHaveProperty("notes", [expect.stringContaining("could not be compared")]);
+    } else {
+      expect(chain.notes).toBeUndefined();
+    }
+  });
+
   it("reads a same-organization predecessor, survivor first", () => {
     const chain = resolveChain(survivor, [survivor, predecessor, foreign]);
     expect(chain.labels).toEqual([SURVIVOR, PRED]);
@@ -52,12 +85,23 @@ describe("resolveChain", () => {
     ]);
   });
 
-  it("withholds a predecessor the caller cannot see at all", () => {
-    // /devices is org-scoped, so a chain can name a label absent from the caller's own view.
-    // Reading it would work upstream — /water/period does not check the label — which is
-    // precisely why it must not be attempted (SECURITY_FINDINGS.md §1).
-    const chain = resolveChain(survivor, [survivor, predecessor]);
+  it("hands a hidden predecessor to the period route when the caller's view is org-scoped", () => {
+    // /devices hides every merged device, so CWA Old never appears in CWA's own view. The
+    // patched route grants it (null or dangling organization) or refuses it (another existing
+    // organization); the chain marks it so a refusal is withheld rather than fatal.
+    const chain = resolveChain(survivor, [survivor, predecessor], true);
+    expect(chain.labels).toEqual([SURVIVOR, PRED, FOREIGN]);
+    expect(chain.unconfirmed).toEqual([FOREIGN]);
+    expect(chain.withheld).toEqual([]);
+  });
+
+  it("withholds a hidden predecessor when the caller's view spans organizations", () => {
+    // A superadmin sees every organization and the route grants a superadmin every label, so
+    // nothing would check that the hidden predecessor belongs to the survivor's organization.
+    const other = row("dev:elsewhere", NEWPORT);
+    const chain = resolveChain(survivor, [survivor, predecessor, other]);
     expect(chain.labels).toEqual([SURVIVOR, PRED]);
+    expect(chain.unconfirmed).toEqual([]);
     expect(chain.withheld).toEqual([{ label: FOREIGN, reason: "not visible to this account" }]);
   });
 
@@ -99,6 +143,36 @@ describe("resolveChain", () => {
   });
 });
 
+describe("period-route refusals", () => {
+  const chain = resolveChain(
+    row(SURVIVOR, CWA, { labels: [SURVIVOR, PRED, FOREIGN] }),
+    [row(SURVIVOR, CWA, { labels: [SURVIVOR, PRED, FOREIGN] })],
+    true,
+  );
+
+  it("moves a refused label into withheld and keeps the rest", () => {
+    const refused = withholdRefused(chain, FOREIGN);
+    expect(refused.labels).toEqual([SURVIVOR, PRED]);
+    expect(refused.unconfirmed).toEqual([PRED]);
+    expect(refused.withheld).toEqual([{ label: FOREIGN, reason: REFUSED_REASON }]);
+  });
+
+  it("never withholds the survivor or a label the caller could see", () => {
+    expect(withholdRefused(chain, SURVIVOR)).toBe(chain);
+  });
+
+  it("recognises only the route's own refusal", () => {
+    // The client's shape for a non-5xx upstream answer (DeviceApiClient.request).
+    const refusal = createError(400, "Device API 400 on /water/period/5/fiveYears?device=x: "
+      + "{\"error\":\"Device not found\"}");
+    expect(isChainRefusal(refusal)).toBe(true);
+    expect(isChainRefusal(createError(400, "Device API 400 on /water/period: bad unit"))).toBe(false);
+    expect(isChainRefusal(createError(404, "Device not found"))).toBe(false);
+    expect(isChainRefusal(new Error("Device not found"))).toBe(false);
+    expect(isChainRefusal(undefined)).toBe(false);
+  });
+});
+
 describe("mergeByTimestamp", () => {
   it("drops what a later label repeats and keeps the first batch intact", () => {
     const merged = mergeByTimestamp([
@@ -128,6 +202,7 @@ describe("query_sensor_data over a merge chain", () => {
   const reading = (device: string, atMs: number, ph: number): Record<string, unknown> => ({
     device,
     timestamp: seconds(atMs),
+    best_lat: 41.38, best_lon: -82.51,
     date: new Date(NOW + atMs).toISOString(),
     water_data: { 99: ph, phError: 0 },
   });
@@ -163,13 +238,15 @@ describe("query_sensor_data over a merge chain", () => {
     [FOREIGN]: [reading(FOREIGN, -3 * DAY, 1)],
   };
 
-  const makeTool = (): { tool: QuerySensorData; urls: string[] } => {
+  const makeTool = (water?: string, olderWater?: string): { tool: QuerySensorData; urls: string[] } => {
     const urls: string[] = [];
     const fetchImpl = async (url: string): Promise<Response> => {
       urls.push(url);
       const body = ((): unknown => {
         if (url.includes("/devices")) {
-          return DEVICES;
+          return DEVICES.map((entry) => ({ ...entry, data: { ...entry.data,
+            operatingEnvironment: entry.data.label === SURVIVOR ? water : olderWater,
+          } }));
         }
         const label = Object.keys(PERIOD)
           .find((candidate) => url.includes(encodeURIComponent(candidate)));
@@ -196,6 +273,27 @@ describe("query_sensor_data over a merge chain", () => {
     };
   };
 
+  it("excludes different-water history from requests and statistics and explains why", async () => {
+    const { tool, urls } = makeTool("fresh-water", "salt-water");
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "OWC",
+    });
+    expect(result.n_samples).toBe(2);
+    expect(result.value).toBeCloseTo(7.2);
+    expect(urls.some((url) => url.includes(encodeURIComponent(PRED)))).toBe(false);
+    expect(result.note).toContain("different water type");
+  });
+
+  it("retains unknown-water history and surfaces the uncertainty in both note paths", async () => {
+    const { tool } = makeTool("fresh-water");
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "OWC",
+    }) as { n_samples: number; note: string; user_notes: string[] };
+    expect(result.n_samples).toBe(3);
+    expect(result.note).toContain("water types could not be compared");
+    expect(result.user_notes).toContainEqual(expect.stringContaining("water types could not be compared"));
+  });
+
   it("fans out over the chain, de-duplicates the overlap, and never reads the foreign label", async () => {
     const { tool, urls } = makeTool();
     const result = await tool.run({
@@ -216,13 +314,16 @@ describe("query_sensor_data over a merge chain", () => {
     const { tool } = makeTool();
     const result = await tool.run({
       metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "OWC",
-    }) as { device: Record<string, unknown>; note: string };
+    }) as { device: Record<string, unknown>; note: string; user_notes: string[] };
 
     expect(result.device.history_labels).toEqual([SURVIVOR, PRED]);
     expect(result.device.history_withheld).toEqual([
       { label: FOREIGN, reason: "different organization — history not transferred" },
     ]);
     expect(result.note).toContain("NOT included");
+    // The reader's version states the limit without the model instruction.
+    expect(result.user_notes).toContainEqual(expect.stringContaining("not available to this account"));
+    expect(result.user_notes.join(" ")).not.toMatch(/\bSay\b|query_sensor_data/);
   });
 
   it("tells the model when the pod it was asked about is itself retired", async () => {
@@ -232,6 +333,109 @@ describe("query_sensor_data over a merge chain", () => {
     }) as { note: string };
 
     expect(result.note).toContain(`merged into ${SURVIVOR}`);
+  });
+});
+
+/**
+ * CWA Old as live: merged into Old Woman Creek 2026, registered to an organization id that
+ * matches no organization, and hidden from every `/devices` response. Each caller's `/devices`
+ * is org-scoped, and the period stub grants only what the patched route grants that caller.
+ */
+describe("query_sensor_data and a hidden dangling-organization predecessor", () => {
+  beforeEach(() => { config.tools.predecessorPeriodHandoff = true; });
+  afterEach(() => { config.tools.predecessorPeriodHandoff = false; });
+  const NOW = Date.parse("2026-08-20T00:00:00.000Z");
+  const CWA_OLD = "dev:cwa-old";
+  const NEWPORT_POD = "dev:newport";
+  const reading = (device: string, daysAgo: number, ph: number): Record<string, unknown> => ({
+    device,
+    timestamp: Math.floor((NOW - daysAgo * 24 * 60 * 60_000) / 1000),
+    best_lat: device === NEWPORT_POD ? 33.61 : 41.38,
+    best_lon: device === NEWPORT_POD ? -117.93 : -82.51,
+    water_data: { 99: ph, phError: 0 },
+  });
+  const PERIOD: Record<string, Array<Record<string, unknown>>> = {
+    [SURVIVOR]: [reading(SURVIVOR, 0, 7.1)],
+    [PRED]: [reading(PRED, 2, 7.3)],
+    [CWA_OLD]: [reading(CWA_OLD, 4, 7.5)],
+    [NEWPORT_POD]: [reading(NEWPORT_POD, 0, 8)],
+  };
+  const OWC = {
+    id: "owc",
+    data: {
+      label: SURVIVOR,
+      name: "Old Woman Creek 2026",
+      organization: CWA,
+      labels: [SURVIVOR, PRED, CWA_OLD],
+    },
+  };
+  const NEWPORT_ROW = {
+    id: "newport",
+    data: { label: NEWPORT_POD, name: "Newport Pier", organization: NEWPORT },
+  };
+
+  const makeTool = (
+    devices: unknown[],
+    granted: string[],
+  ): { tool: QuerySensorData; urls: string[] } => {
+    const urls: string[] = [];
+    const fetchImpl = async (url: string): Promise<Response> => {
+      urls.push(url);
+      const label = Object.keys(PERIOD)
+        .find((candidate) => url.includes(encodeURIComponent(candidate)));
+      const refused = label !== undefined && !granted.includes(label);
+      const body = ((): unknown => {
+        if (url.includes("/devices")) {
+          return devices;
+        }
+        if (refused) {
+          return { error: "Device not found" };
+        }
+        if (url.includes("/water/last/")) {
+          return label ? { id: "last", data: PERIOD[label][0] } : {};
+        }
+        return label ? PERIOD[label] : [];
+      })();
+      return {
+        ok: !refused,
+        status: refused ? 400 : 200,
+        json: async () => body,
+        text: async () => JSON.stringify(body),
+      } as unknown as Response;
+    };
+    return {
+      tool: new QuerySensorData({
+        client: new DeviceApiClient({
+          baseUrl: "https://example.invalid/api/v1", token: "test-token", fetchImpl,
+        }),
+        now: () => NOW,
+      }),
+      urls,
+    };
+  };
+
+  it("merges CWA Old into Old Woman Creek 2026 for a Cleveland Water Alliance member", async () => {
+    const { tool, urls } = makeTool([OWC], [SURVIVOR, PRED, CWA_OLD]);
+    const result = await tool.run({
+      metric: "ph", time_range: "last 7 days", aggregation: "mean", device: "Old Woman Creek",
+    }) as { device: Record<string, unknown>; n_samples: number; value: number };
+
+    expect(result.device.history_labels).toEqual([SURVIVOR, PRED, CWA_OLD]);
+    expect(result.device.history_withheld).toBeUndefined();
+    expect(result.n_samples).toBe(3);
+    expect(result.value).toBeCloseTo((7.1 + 7.3 + 7.5) / 3, 6);
+    expect(urls.some((url) => url.includes("/water/period/") && url.includes(encodeURIComponent(CWA_OLD)))).toBe(true);
+  });
+
+  it("gives another organization's member nothing for CWA Old by name or label", async () => {
+    await Promise.all(["CWA Old", CWA_OLD].map(async (device) => {
+      const { tool, urls } = makeTool([NEWPORT_ROW], [NEWPORT_POD]);
+      const result = await tool.run({
+        metric: "ph", time_range: "last 7 days", aggregation: "mean", device,
+      });
+      expect((result as { error: string }).error).toContain(`No device matches "${device}"`);
+      expect(urls.some((url) => url.includes(encodeURIComponent(CWA_OLD)))).toBe(false);
+    }));
   });
 });
 
@@ -265,10 +469,21 @@ describe("pod-scope fixture fleet", () => {
     expect(chain.withheld).toEqual([]);
   });
 
-  it("withholds the dangling-organization leg of a three-label chain", () => {
+  it("withholds different-water and dangling-organization legs of a three-label chain", () => {
     const chain = resolveChain(by("dev:100000000000003"), fleet);
-    expect(chain.labels).toEqual(["dev:100000000000003", "dev:100000000000004"]);
-    expect(chain.withheld.map((entry) => entry.label)).toEqual(["dev:100000000000005"]);
+    expect(chain.labels).toEqual(["dev:100000000000003"]);
+    expect(chain.withheld.map((entry) => entry.label)).toEqual(["dev:100000000000004", "dev:100000000000005"]);
+  });
+
+  it("hands the dangling-organization leg to the period route for its own organization", () => {
+    // The Lakeside organization's /devices as the server returns it: no merged devices.
+    const lakeView = fleet.filter((device) => device.organization === "org-lake-00000000001"
+      && !device.raw.mergedInto);
+    const chain = resolveChain(by("dev:100000000000003"), lakeView, true);
+    expect(chain.labels).toEqual([
+      "dev:100000000000003", "dev:100000000000004", "dev:100000000000005",
+    ]);
+    expect(chain.unconfirmed).toEqual(["dev:100000000000004", "dev:100000000000005"]);
   });
 
   it("withholds a cross-organization predecessor", () => {

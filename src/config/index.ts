@@ -17,6 +17,8 @@ export interface FireworksConfig {
   baseUrl: string;
   chatModel?: string;
   embeddingModel: string;
+  /** Cross-encoder for the `*-rerank` retrieval modes; see `RerankService`. */
+  rerankModel: string;
   /**
    * Deliberately generous. gpt-oss models emit reasoning tokens before visible output and
    * truncate to an empty answer if starved — a low cap fails as silence, not as an error.
@@ -31,12 +33,50 @@ export interface FireworksConfig {
    */
   temperature: number;
   /**
+   * gpt-oss `reasoning_effort`. `default` sends nothing, so the provider's own default applies;
+   * every capture before this setting existed ran that way.
+   */
+  reasoningEffort: (typeof REASONING_EFFORTS)[number];
+  /**
+   * `disabled` sends `thinking: {type: "disabled"}`, the switch models such as `minimax-m3` use to
+   * skip reasoning; `default` sends nothing. gpt-oss ignores it and uses `reasoningEffort`.
+   */
+  thinking: (typeof THINKING_MODES)[number];
+  /**
    * Sent as the OpenAI `user` field. On Fireworks serverless this drives cache affinity:
    * requests sharing a value tend to land on the same worker, which is what makes prompt
    * caching actually hit. A constant is correct for a single-tenant demo; revisit when
    * requests carry real user identity.
    */
   user: string;
+  /**
+   * Model calls allowed in flight at once across the process (`LLM_MAX_CONCURRENT`).
+   *
+   * Fireworks' serverless limits are adaptive tokens-per-minute ceilings, so a burst of
+   * simultaneous tool loops is what trips them; queueing here keeps a busy minute a wait rather
+   * than a wall of 429s. Architecture §2c sets 8.
+   */
+  maxConcurrent: number;
+  /** How long a call may wait for a slot before it is told "busy" (`LLM_QUEUE_TIMEOUT_MS`). */
+  queueTimeoutMs: number;
+  /**
+   * Wait before the one retry after a Fireworks 429 or 503 (`LLM_RETRY_DELAY_MS`), unless the
+   * provider's `Retry-After` asks for less.
+   */
+  retryDelayMs: number;
+}
+
+/**
+ * The check between the CER server and this service (release plan S2).
+ *
+ * A shared secret rather than Cloud Run identity tokens: Cloud Run strips the signature from the
+ * forwarded service token, so this process could not verify one itself (runbook §5), and minting
+ * identity tokens in the CER server was moved after launch. Undefined means the check is off,
+ * which is how local runs, the eval harness and the demo frontend work; production refuses to
+ * boot without it.
+ */
+export interface ServiceAuthConfig {
+  key?: string;
 }
 
 export interface DeviceApiConfig {
@@ -78,6 +118,8 @@ export interface DeviceApiConfig {
  * the base prompt stays a byte-exact prefix no matter which flags are on.
  */
 export interface ToolsConfig {
+  /** Enable only after every period-route server enforces Q6 authorization. */
+  predecessorPeriodHandoff: boolean;
   /** Master switch for `query_sensor_data` — the prompt block, the tools array, and the loop. */
   sensorTool: boolean;
   /**
@@ -187,10 +229,24 @@ export interface QuotaConfig {
   /** The literal string the operator wrote (`"7d"`), reused verbatim in logs and error prose. */
   windowLabel: string;
   scope: QuotaScope;
+  /**
+   * Where the counters live (`QUERY_QUOTA_STORE`). `memory` is the default for tests and local
+   * runs; `firestore` keeps them in the `gilligan_usage` collection so they survive restarts and
+   * are shared across instances, and requires a one-day window because its documents are keyed
+   * by UTC day.
+   */
+  store: QuotaStoreName;
+  /**
+   * The fraction of a finite allowance at or below which the usage status reports `nearLimit`
+   * (`QUERY_QUOTA_WARN_AT`), so the dashboard can warn before the refusal rather than at it.
+   */
+  warnAt: number;
 }
 
+export type QuotaStoreName = "memory" | "firestore";
+
 /**
- * Durable per-response record for dispute reconstruction (`docs/RESPONSIBILITY.md` #6).
+ * Durable per-response record for dispute reconstruction (`docs/records/RESPONSIBILITY.md` #6).
  *
  * Defaults to **off**, same reasoning as `SENSOR_TOOL`/`REPORT_TOOL`: a deployment with no
  * Firestore credentials configured must not start writing on every chat response.
@@ -207,10 +263,15 @@ export interface AuditConfig {
  *
  * `includeDrafts` also defaults to off. On, customers see wording no supervisor has approved,
  * so it exists only for the supervisor's own review of a running demo.
+ *
+ * `cerDescription` is the approved answer to "what does Clean Earth Rovers do". Unset, the prompt
+ * carries no such rule and the question stays out of scope; the text is never model-written, and
+ * it lives in configuration so a placeholder cannot ship in code.
  */
 export interface CatalogueConfig {
   prompt: boolean;
   includeDrafts: boolean;
+  cerDescription?: string;
 }
 
 export type CorpusSourceName = "artifact" | "firestore";
@@ -227,6 +288,16 @@ export interface RetrievalConfig {
    * could have a run measured against the wrong source and misreport the arm's cost.
    */
   corpusSource: CorpusSourceName;
+  /**
+   * Rewrite a follow-up into a standalone search query from the conversation before retrieval
+   * (`src/retrieval/queryRewrite.ts`). Off by default: it adds a model call to every follow-up.
+   */
+  queryRewrite: boolean;
+  /**
+   * With `queryRewrite` on, also rewrite a first turn into a search query (`rewriteFirstTurn`).
+   * Off by default: it adds a model call to every first turn. Ignored while `queryRewrite` is off.
+   */
+  queryRewriteFirstTurn: boolean;
 }
 
 export interface Config {
@@ -236,6 +307,7 @@ export interface Config {
   logLevel: string;
   firestore: FirestoreConfig;
   fireworks: FireworksConfig;
+  serviceAuth: ServiceAuthConfig;
   deviceApi: DeviceApiConfig;
   tools: ToolsConfig;
   chat: ChatConfig;
@@ -311,6 +383,9 @@ const readEnum = <T extends string>(name: string, allowed: readonly T[], fallbac
   }
   return raw as T;
 };
+
+export const REASONING_EFFORTS = ["default", "low", "medium", "high"] as const;
+export const THINKING_MODES = ["default", "disabled"] as const;
 
 /** The one spelling of "no ceiling" this service accepts, in every quota variable. */
 export const UNLIMITED = "unlimited";
@@ -402,9 +477,18 @@ const load = (): Config => {
       baseUrl: readString("FIREWORKS_BASE_URL", "https://api.fireworks.ai/inference/v1") as string,
       chatModel: readString("LLM_MODEL"),
       embeddingModel: readString("EMBEDDING_MODEL", "nomic-ai/nomic-embed-text-v1.5") as string,
+      rerankModel: readString("RERANK_MODEL", "fireworks/qwen3-reranker-8b") as string,
       maxTokens: readInt("LLM_MAX_TOKENS", 4096),
       temperature: readFloat("LLM_TEMPERATURE", 0),
+      reasoningEffort: readEnum("LLM_REASONING_EFFORT", REASONING_EFFORTS, "default"),
+      thinking: readEnum("LLM_THINKING", THINKING_MODES, "default"),
       user: readString("FIREWORKS_USER", "clean-earth-rag") as string,
+      maxConcurrent: readInt("LLM_MAX_CONCURRENT", 8),
+      queueTimeoutMs: readInt("LLM_QUEUE_TIMEOUT_MS", 20_000),
+      retryDelayMs: readInt("LLM_RETRY_DELAY_MS", 2_000),
+    },
+    serviceAuth: {
+      key: readString("CER_RAG_SERVICE_KEY"),
     },
     deviceApi: {
       baseUrl: readString("DEVICE_API_BASE_URL"),
@@ -413,6 +497,7 @@ const load = (): Config => {
       defaultDeviceLabel: readString("SENSOR_DEVICE_LABEL"),
     },
     tools: {
+      predecessorPeriodHandoff: readBool("PREDECESSOR_PERIOD_HANDOFF", false),
       sensorTool: readBool("SENSOR_TOOL", false),
       reportTool: readBool("REPORT_TOOL", false),
       maxToolRounds: readInt("MAX_TOOL_ROUNDS", 16),
@@ -429,6 +514,8 @@ const load = (): Config => {
       windowMs: quotaWindow.ms,
       windowLabel: quotaWindow.label,
       scope: readEnum<QuotaScope>("QUERY_QUOTA_SCOPE", ["caller", "global"], "caller"),
+      store: readEnum<QuotaStoreName>("QUERY_QUOTA_STORE", ["memory", "firestore"], "memory"),
+      warnAt: readFloat("QUERY_QUOTA_WARN_AT", 0.2),
     },
     retrieval: {
       defaultMode: readString("DEFAULT_RETRIEVAL", "stub") as string,
@@ -438,6 +525,8 @@ const load = (): Config => {
         ["artifact", "firestore"],
         "artifact",
       ),
+      queryRewrite: readBool("QUERY_REWRITE", false),
+      queryRewriteFirstTurn: readBool("QUERY_REWRITE_FIRST_TURN", false),
     },
     waterType: readEnum<WaterType>("WATER_TYPE", ["freshwater", "saltwater"], "freshwater"),
     audit: {
@@ -446,6 +535,7 @@ const load = (): Config => {
     catalogue: {
       prompt: readBool("CATALOGUE_PROMPT", false),
       includeDrafts: readBool("CATALOGUE_DRAFTS", false),
+      cerDescription: readString("CER_DESCRIPTION"),
     },
   };
 
@@ -456,6 +546,31 @@ const load = (): Config => {
   }
   if (config.tools.rawLimit < 1) {
     errors.push(`RAW_LIMIT must be at least 1 (got ${config.tools.rawLimit})`);
+  }
+  if (config.fireworks.maxConcurrent < 1) {
+    errors.push(`LLM_MAX_CONCURRENT must be at least 1 (got ${config.fireworks.maxConcurrent})`);
+  }
+  if (config.fireworks.queueTimeoutMs < 0 || config.fireworks.retryDelayMs < 0) {
+    errors.push("LLM_QUEUE_TIMEOUT_MS and LLM_RETRY_DELAY_MS must not be negative");
+  }
+  if (config.quota.warnAt < 0 || config.quota.warnAt > 1) {
+    errors.push(`QUERY_QUOTA_WARN_AT must be between 0 and 1 (got ${config.quota.warnAt})`);
+  }
+  // The Firestore documents are one per user per UTC day (`gilligan_usage`, framework doc), so a
+  // different window would count a week into a document named for one day.
+  if (config.quota.store === "firestore" && config.quota.windowMs !== DURATION_UNITS_MS.d) {
+    errors.push(
+      `QUERY_QUOTA_STORE=firestore needs QUERY_QUOTA_WINDOW=1d (got "${config.quota.windowLabel}")`,
+    );
+  }
+  // Short keys are guessable, and a guessed key lets anyone set the identity the quota trusts.
+  if (config.serviceAuth.key !== undefined && config.serviceAuth.key.length < 32) {
+    errors.push("CER_RAG_SERVICE_KEY must be at least 32 characters");
+  }
+  // Production without the check would accept forged user identities from anyone who can reach
+  // the service, so it is a boot failure rather than a warning.
+  if (config.isProduction && config.serviceAuth.key === undefined) {
+    errors.push("CER_RAG_SERVICE_KEY must be set in production");
   }
 
   if (errors.length > 0) {
@@ -521,8 +636,9 @@ const load = (): Config => {
       `QUERY_QUOTA is ON — requests=${describe(config.quota.requests)}, `
       + `tokens=${describe(config.quota.tokens)}, reports=${describe(config.quota.reports)} `
       + `per ${config.quota.windowLabel} `
-      + `per ${config.quota.scope}. Counters are in-process: they reset on redeploy and are not `
-      + "shared between instances.",
+      + `per ${config.quota.scope}. ${config.quota.store === "firestore"
+        ? "Counters are in Firestore (gilligan_usage)."
+        : "Counters are in-process: they reset on redeploy and are not shared between instances."}`,
     );
     if (config.quota.requests === UNLIMITED && config.quota.tokens === UNLIMITED
       && config.quota.reports === UNLIMITED) {
@@ -538,7 +654,9 @@ const load = (): Config => {
     if (config.quota.reports === 0) {
       log.warn("QUERY_QUOTA_REPORTS is 0 - every report download will be refused.");
     }
-    if (config.quota.scope === "caller") {
+    if (config.quota.scope === "caller" && config.serviceAuth.key !== undefined) {
+      log.info("QUERY_QUOTA_SCOPE=caller keys on the user identity the CER server sends.");
+    } else if (config.quota.scope === "caller") {
       // See src/quota/quotaKey.ts. Said out loud because the failure is silent: everyone
       // sharing one bucket looks exactly like a quota that is simply too small.
       log.warn(
@@ -548,6 +666,13 @@ const load = (): Config => {
         + "the whole deployment.",
       );
     }
+  }
+
+  if (config.serviceAuth.key === undefined) {
+    log.warn(
+      "CER_RAG_SERVICE_KEY is not set - any caller is accepted and user identity headers are "
+      + "ignored. Local runs only.",
+    );
   }
 
   if (config.audit.enabled) {

@@ -1,0 +1,225 @@
+{
+  "id": "long-groundwater-oxygen",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+    "usgs-nfm-a6.3-specific-conductance.pdf"
+  ],
+  "requires": [],
+  "notes": "Tests whether groundwater oxygen sampling controls survive a detour into conductivity subsamples and indirect returns to pump and bubble-handling decisions.\nClaims: do-flowthrough-chamber-01, do-positive-displacement-pump-01, do-shield-tubing-sunlight-01, do-tap-tubing-blunt-tool-01, do-no-back-pressure-01, do-downhole-sensor-before-pump-01, mp-gw-no-air-01, sc-subsample-bottle-rinse-01, sc-diw-then-sample-rinse-01, sc-subsample-measure-asap-01, mp-record-method-01, mp-gw-sediment-05, mp-record-conditions-03.\nTurn roles: 1=early; 2=early; 3=early; 4=on-topic+cross-document; 5=switch; 6=on-topic+cross-document; 7=return; 8=back-reference(2); 9=back-reference(3); 10=cross-document; 11=on-topic+cross-document; 12=capped-back-reference(1).",
+  "turns": [
+    {
+      "role": "user",
+      "content": "We can't get the oxygen sensor down our narrow monitoring well, so we'll pump water through a chamber at the surface. What pump and tubing should I set up, and where should the chamber sit?",
+      "rubric": {
+        "must_contain": [
+          "Uses a flow-through chamber when downhole DO sensor deployment is impractical.",
+          "Uses a positive-displacement submersible pump.",
+          "Uses relatively gas-impermeable high-density plastic or fluorocarbon-polymer tubing.",
+          "Protects the exposed tubing and chamber from direct sunlight."
+        ],
+        "must_not": [
+          "Recommends open-bucket transfer as equivalent to the specified pumped DO setup."
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "There are bubbles along the line, and someone has partly pinched the chamber outlet. What needs fixing before we trust it?",
+      "rubric": {
+        "must_contain": [
+          "Taps the tubing with a blunt tool to dislodge entrained gas bubbles.",
+          "Flushes dislodged bubbles from the tubing and chamber.",
+          "Eliminates back pressure in the chamber.",
+          "Leaves the chamber outlet free flowing."
+        ],
+        "must_not": [
+          "Recommends restricting the chamber outlet to suppress bubbles."
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "At the wider well tomorrow we can lower everything directly. Where do the sensors go in relation to the pump, and what should we watch while pumping?",
+      "rubric": {
+        "must_contain": [
+          "Lowers the DO and temperature sensors to the measuring point.",
+          "Lowers the pump after the sensors.",
+          "Monitors DO variation during purging."
+        ],
+        "must_not": [
+          "Lowers the pump first and treats the sensor order as irrelevant."
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "At today's surface setup, could air getting in at a loose joint matter even if we don't see much foam?",
+      "rubric": {
+        "must_contain": [
+          "Secures the tubing fittings to prevent air from entering the cell.",
+          "Explains that entering air can affect measurement accuracy and stability.",
+          "Keeps the chamber outlet free flowing."
+        ],
+        "must_not": [
+          "Treats a lack of visible foam as proof that an air leak cannot affect readings."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Separate job: we're measuring conductivity on mixed stream samples in bottles. How should I prepare the bottle and the measurement container before putting the sample in?",
+      "rubric": {
+        "must_contain": [
+          "Uses a clean sample bottle.",
+          "Rinses the bottle three times with the sample.",
+          "Rinses the measurement container three times with deionized water as part of preparation."
+        ],
+        "must_not": [
+          "Replaces the required sample-water bottle rinse with a single dry wipe."
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "If those bottles have to wait while we finish another measurement, how should we close them, and what should the field record say about how we measured?",
+      "rubric": {
+        "must_contain": [
+          "Fills the prepared bottle completely to the top.",
+          "Caps the bottle tightly.",
+          "Records the field-measurement method where applicable."
+        ],
+        "must_not": [
+          "Recommends leaving a large air space in the sample bottle."
+        ],
+        "cite": [
+          "usgs-nfm-a6.3-specific-conductance.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "OK, back to the oxygen chamber at the well. The sun has moved onto the line and there are bubbles again; what should I sort out?",
+      "rubric": {
+        "must_contain": [
+          "Protects the exposed sample tubing from direct sunlight.",
+          "Protects the chamber from direct sunlight.",
+          "Dislodges and flushes bubbles by tapping the tubing with a blunt tool."
+        ],
+        "must_not": [
+          "Continues with conductivity-bottle preparation instead of the pumped oxygen setup."
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "That partly closed outlet and trapped-air problem from earlier - what's the correction again before I take another set?",
+      "rubric": {
+        "must_contain": [
+          "Eliminates back pressure in the flow-through chamber.",
+          "Makes the outlet free flowing.",
+          "Uses a blunt tool to tap the tubing and dislodge bubbles for flushing."
+        ],
+        "must_not": [
+          "Gives conductivity-bottle capping instructions for the oxygen chamber outlet."
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "For the wider well I mentioned near the start, remind me what goes down first and what we're watching during the purge.",
+      "rubric": {
+        "must_contain": [
+          "Lowers the DO and temperature sensors to the measuring point.",
+          "Follows the sensors with the pump.",
+          "Monitors DO variation during purging."
+        ],
+        "must_not": [
+          "Answers about rinsing the conductivity sample bottles instead of downhole deployment."
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The chamber has grit in it too. Why does that matter, and what else about the line and the day's conditions belongs in our checks?",
+      "rubric": {
+        "must_contain": [
+          "Notes that accumulated sediment in the cell can adversely affect sensors.",
+          "Checks for and eliminates chamber back pressure.",
+          "Records onsite conditions that could have affected data quality."
+        ],
+        "must_not": [
+          "Declares accumulated sediment harmless to all sensors."
+        ],
+        "cite": [
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Before we leave this setup for the next crew, give me the tubing checklist for preventing air problems.",
+      "rubric": {
+        "must_contain": [
+          "Uses relatively gas-impermeable high-density plastic or fluorocarbon-polymer tubing.",
+          "Keeps tubing fittings secure so air does not enter the cell.",
+          "Dislodges and flushes entrained bubbles from tubing and chamber."
+        ],
+        "must_not": [
+          "Says secure fittings remove the need to check for bubbles already in the tubing."
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The narrow-well workaround we started with - remind me of the pump type, line material, and where to put it in relation to the sun.",
+      "rubric": {
+        "must_contain": [
+          "Specifies a positive-displacement submersible pump for the ex situ DO setup.",
+          "Specifies relatively gas-impermeable high-density plastic or fluorocarbon-polymer tubing.",
+          "Protects exposed tubing and the chamber from direct sunlight."
+        ],
+        "must_not": [
+          "Answers about conductivity sample bottles instead of the groundwater oxygen setup.",
+          "presents a guess about which earlier instrument or procedure is meant as though it were certain"
+        ],
+        "cite": [
+          "usgs-nfm-a6.2-dissolved-oxygen.pdf"
+        ]
+      }
+    }
+  ]
+}

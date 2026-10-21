@@ -1,0 +1,51 @@
+{
+  "fixtureId": "followup-mixing-the-clarity-bottle",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "tby-static-invert-25-no-shake-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives gentle inversion, no shaking and bubble clearance before filling."
+        },
+        {
+          "claimId": "tby-bottle-invert-25-1s-01",
+          "rubric": [
+            2,
+            4
+          ],
+          "why": "Gives the one-second inversion cycle and immediate pouring when bottle transfer is unavoidable."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "tby-storage-amber-4c-24h-01",
+          "rubric": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "why": "Gives conditional temporary storage, the 24-hour limit, chilling and amber-bottle requirements."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "tby-first-readings-settling-01",
+      "why": "Concerns readings and remixing after filling the cell, not the requested bottle-preparation procedure."
+    }
+  ]
+}

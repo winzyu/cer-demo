@@ -1,0 +1,225 @@
+{
+  "id": "long-ph-storage",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "IpH_probe.pdf",
+    "usgs-nfm-a6.4-ph.pdf",
+    "usgs-nfm-a6.1-temperature.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+  ],
+  "requires": [],
+  "notes": "Tests whether long-term pH probe storage instructions survive a switch to air-temperature observations and later indirect references.\nClaims: ph-storage-cap-01, ph-store-upright-wet-01, ph-no-diw-storage-01, ph-longterm-cable-01, ph-storage-solution-expiry-01, ph-storage-environment-01, ph-repeated-dry-cycles-01, t-air-5ft-01, t-air-equil-3-5min-01, t-air-radiant-01, t-air-equil-longer-01, t-air-median-01, t-air-report-01deg-01, mp-storage-case-foam-02.\nTurn roles: 1=early; 2=early; 3=early; 4=on-topic; 5=switch; 6=on-topic; 7=return; 8=back-reference(2); 9=back-reference(3); 10=cross-document; 11=on-topic; 12=capped-back-reference(1).",
+  "turns": [
+    {
+      "role": "user",
+      "content": "I'm putting our Atlas Industrial pH probe away for a few months after this job. What liquid belongs in the cap, and how should it sit?",
+      "rubric": {
+        "must_contain": [
+          "Uses pH probe storage solution to top up the cap.",
+          "Stores the electrode upright.",
+          "Does not use deionized water for storage unless the manufacturer instructs it."
+        ],
+        "must_not": [
+          "Recommends deionized water as the default long-term storage liquid."
+        ],
+        "cite": [
+          "IpH_probe.pdf",
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The cap is topped up now, but the connector is still damp from the rinse. What should I do with that end before packing it?",
+      "rubric": {
+        "must_contain": [
+          "Cleans the electrode cable contacts and connector.",
+          "Allows the contacts to dry thoroughly.",
+          "Seals and stores the dry contacts in a plastic bag."
+        ],
+        "must_not": [
+          "Seals wet contacts in the bag."
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "I've found two bottles of the storage liquid and one has an unreadable date. How should we manage those bottles and the place we keep the kit?",
+      "rubric": {
+        "must_contain": [
+          "Labels storage-solution containers with an expiration date.",
+          "Discards expired storage solution appropriately.",
+          "Keeps the system in a clean, dry area.",
+          "Protects the system from extreme heat or cold."
+        ],
+        "must_not": [
+          "Invents a universal shelf life for all pH storage solutions."
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "One of these probes has been drying out between visits. Is that a harmless habit, and which way does the cap tighten?",
+      "rubric": {
+        "must_contain": [
+          "Repeated wetting and drying can eventually damage the probe.",
+          "Keeps the probe wet for best results.",
+          "Tightens the Atlas Industrial pH probe cap counterclockwise."
+        ],
+        "must_not": [
+          "Says repeated drying is harmless because the probe tolerates a single dry period."
+        ],
+        "cite": [
+          "IpH_probe.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Different job for a moment: I need an air-temperature entry beside today's water sample. How high should I hang the sensor, how long should I leave it, and what nearby surfaces should I avoid?",
+      "rubric": {
+        "must_contain": [
+          "Places or hangs the air-temperature sensor about 5 feet above the ground.",
+          "Allows 3 to 5 minutes for air-temperature equilibration.",
+          "Avoids radiant-heat influences such as vehicle sides, metal walls, or rock exposures."
+        ],
+        "must_not": [
+          "Uses the water-deployment 60-second minimum as the complete air-temperature waiting instruction."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "It takes longer out here than in the water, and I've got several readings now. Which value do I report and how finely?",
+      "rubric": {
+        "must_contain": [
+          "Explains that a sensor equilibrates more slowly in air than in water.",
+          "Uses the median of the air-temperature measurements for reporting.",
+          "Reports routine air temperature to the nearest 0.1 degree Celsius."
+        ],
+        "must_not": [
+          "Reports the arithmetic mean instead of the specified median."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "OK, back to packing the pH probe away. Can I fill the cap with the rinse water and lay it flat in the cupboard?",
+      "rubric": {
+        "must_contain": [
+          "Rejects deionized-water storage unless the manufacturer instructs otherwise.",
+          "Stores the electrode upright.",
+          "Explains that upright storage keeps filling solution or gel in contact with the reference junction."
+        ],
+        "must_not": [
+          "Continues giving air-temperature measurement instructions."
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "That damp end we dealt with earlier - remind me of the order before it goes in the bag.",
+      "rubric": {
+        "must_contain": [
+          "Cleans the cable contacts and connector first.",
+          "Dries the contacts thoroughly before sealing.",
+          "Stores the prepared contacts sealed in a plastic bag."
+        ],
+        "must_not": [
+          "Answers about drying the air-temperature sensor rather than preparing the electrode connector."
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Those bottles I found earlier - does keeping them in a cool cupboard let me ignore the dates?",
+      "rubric": {
+        "must_contain": [
+          "States that storage solutions have a limited shelf life.",
+          "Requires expiration-date labels on the containers.",
+          "Discards expired solutions appropriately."
+        ],
+        "must_not": [
+          "Substitutes air-temperature reporting rules for storage-solution management.",
+          "Invents an extension of the expiration date for cool storage."
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "I'm packing the whole sonde alongside it. What do I do about the probe cap and the padding in the case?",
+      "rubric": {
+        "must_contain": [
+          "Tops up the cap with pH probe storage solution as needed.",
+          "Tightens the probe cap counterclockwise.",
+          "Uses closed-cell nonabsorbent foam cushioning for the multiparameter instrument."
+        ],
+        "must_not": [
+          "Specifies absorbent foam as the recommended sonde cushioning."
+        ],
+        "cite": [
+          "IpH_probe.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The only space left is a shed that freezes at night. What's the storage checklist for the cupboard we should use instead?",
+      "rubric": {
+        "must_contain": [
+          "Uses a clean storage area.",
+          "Uses a dry storage area.",
+          "Protects the system from extreme hot or cold temperatures."
+        ],
+        "must_not": [
+          "Approves freezing storage just because the cap contains solution."
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The one I was putting away at the very start - remind me which way up it goes, what I top it up with, and whether plain rinse water will do.",
+      "rubric": {
+        "must_contain": [
+          "Stores the pH electrode upright.",
+          "Tops up the cap with pH probe storage solution.",
+          "Rejects deionized-water storage unless the manufacturer instructs it."
+        ],
+        "must_not": [
+          "Answers about the air-temperature sensor instead of the pH probe.",
+          "presents a guess about which earlier instrument or procedure is meant as though it were certain"
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf",
+          "IpH_probe.pdf"
+        ]
+      }
+    }
+  ]
+}

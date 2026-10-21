@@ -14,7 +14,7 @@ import type {
   ParameterStats, ReportInput, ReportStatus, WQEvent,
 } from "./types";
 import {
-  flagFor, heldSteady, isRelativeIndex, outOfRangeShare, statValue, withUnit,
+  flagFor, heldSteady, isRelativeIndex, outOfRangeShare, runsFor, statValue, withUnit,
 } from "./types";
 import {
   clarityBandFor,
@@ -23,9 +23,12 @@ import {
   TURBIDITY_ALL_ZERO_CAVEAT,
   TURBIDITY_SCALE_CAVEAT,
 } from "./referenceRanges";
-import { entriesFor, entryText, waterClassFor } from "../catalogue/select";
+import {
+  DATA_ISSUE_ONLY_ENTRIES, entriesFor, entryText, waterClassFor,
+} from "../catalogue/select";
 import type { Finding, UsableGuidance } from "../catalogue/select";
 import type { CatalogueEntry, RecommendationSlot, WaterClass } from "../catalogue/types";
+import type { ReportOmitGroup } from "./omit";
 
 /**
  * Section 4's wording for one event. The event itself (`events.ts`) says what was detected; this
@@ -55,18 +58,33 @@ export interface NarrativeSections {
   guidanceIds: string[];
 }
 
-/** The heading for an event whose cause the catalogue does not let the report name. */
-export const UNEXPLAINED_HEADING = "Threshold crossing";
+/**
+ * The heading for an event whose cause the catalogue does not let the report name: v2 §9.2's
+ * "Anomaly, cause unclear" tier. A named cause is headed "Consistent with <cause>", v2's tier for
+ * two or more parameters matching a signature; "Strongly consistent with" needs neighbour or
+ * contextual evidence this pipeline does not have, and "Confirmed" is never assigned from sensor
+ * data (docs/timeline.md, 2026-10-11).
+ */
+export const UNEXPLAINED_HEADING = "Anomaly, cause unclear";
+
+/** v2 §9.2's heading for an event whose cause the catalogue approves naming. */
+export const consistentWithHeading = (type: string): string => `Consistent with ${type}`;
+
+export { DATA_ISSUE_ONLY_ENTRIES };
+
+/** v2 §9.2's required wording for the "data issue likely" tier. */
+export const DATA_ISSUE_SENTENCE = "This pattern most likely reflects a sensor or data issue.";
 
 /** A recommendation slot with no approved entry for this report's findings. */
 export const NO_APPROVED_STEP = "No approved recommendation covers these findings yet.";
 
-const UNEXPLAINED_INTERPRETATION = "Readings crossed this pod's configured thresholds. No approved "
-  + "explanation covers this pattern, so the report does not name a cause.";
+const UNEXPLAINED_INTERPRETATION = "An anomaly was observed; the cause cannot be determined from "
+  + "sensor data. No approved explanation covers this pattern, so the report does not name a cause.";
 
 /** Leads a hedged explanation: one approved below the floor for naming a cause. */
-const HEDGED_INTERPRETATION = "Readings crossed this pod's configured thresholds. The evidence is "
-  + "too weak for the report to name a cause, but one approved explanation fits the pattern:";
+const HEDGED_INTERPRETATION = "An anomaly was observed; the cause cannot be determined from sensor "
+  + "data. The evidence is too weak for the report to name a cause, but one approved explanation "
+  + "fits the pattern:";
 
 const byKind = (entries: CatalogueEntry[], kind: CatalogueEntry["kind"]): CatalogueEntry[] => (
   entries.filter((e) => e.kind === kind)
@@ -115,9 +133,9 @@ const eventNarrative = (
   guidance: UsableGuidance,
 ): EventNarrative => {
   const hours = (event.windowEndMs - event.windowStartMs) / 3_600_000;
+  // A persistent offset's likely causes are stated once, in its parameter's analysis line.
   const duration = event.persistent
-    ? "Readings stayed outside the configured thresholds for most of the period, which points at "
-      + "thresholds that do not fit this site at least as strongly as at a single incident."
+    ? "The window covers most of the reporting period; see the parameter analysis."
     : `The change lasted ${hours.toFixed(1)} hours.`;
   const explanations = byKind(matched, "explanation")
     .map((e) => `${entryText(e, guidance)} ${e.limitations}`);
@@ -126,13 +144,14 @@ const eventNarrative = (
     ? [HEDGED_INTERPRETATION, ...hedged.map((e) => `${entryText(e, guidance)} ${e.limitations}`)]
     : [UNEXPLAINED_INTERPRETATION];
   const interpretation = [
+    // Approved explanations already open in v2's "Consistent with ..." wording.
     ...(causeNamed ? explanations : unnamed),
     ...limitations,
     duration,
   ].join(" ");
   const steps = byKind(matched, "next-step").map((e) => e.title);
   return {
-    heading: causeNamed ? event.type : UNEXPLAINED_HEADING,
+    heading: causeNamed ? consistentWithHeading(event.type) : UNEXPLAINED_HEADING,
     causeNamed,
     interpretation,
     followUp: steps.length > 0 ? `${steps.join("; ")} (see Recommendations).` : NO_APPROVED_STEP,
@@ -163,16 +182,7 @@ const patternPhrase: Record<ParameterStats["pattern"], string> = {
  * capitalize(), which would also lowercase interior text such as "ORP" or "mg/L". */
 const sentenceCase = (s: string): string => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
-/** Finds when a parameter first left baseline, from raw series if present. */
-const firstExcursionTimestamp = (p: ParameterStats): string | null => {
-  if (!p.series || p.series.length === 0) {
-    return null;
-  }
-  const b = p.baseline;
-  const sorted = [...p.series].sort((a, b2) => a[0] - b2[0]);
-  const excursion = sorted.find(([, v]) => v < b.baselineMin || v > b.baselineMax);
-  return excursion ? new Date(excursion[0]).toISOString().slice(0, 16).replace("T", " ") : null;
-};
+const timestamp = (ms: number): string => new Date(ms).toISOString().slice(0, 16).replace("T", " ");
 
 /** How far past the baseline edge, relative to the baseline's own width. */
 const magnitudeWord = (extreme: number, edge: number, width: number): string => {
@@ -231,43 +241,54 @@ const trendWord = (p: ParameterStats): string => {
  * the reading is at or beyond the top of the conversion's own scale, which points at the sensor
  * or its wiring at least as readily as it points at turbid water. An all-zero period gets
  * `TURBIDITY_ALL_ZERO_CAVEAT` instead, for the same reason in the other direction.
+ *
+ * `omit` drops the scale caveat (`turbidity_notes`) or the off-scale and all-zero sentences
+ * (`sensor_fault_notes`); the band, numbers and trend always stay.
  */
-const relativeIndexAnalysisLine = (p: ParameterStats): string => {
+const relativeIndexAnalysisLine = (
+  p: ParameterStats,
+  omit: readonly ReportOmitGroup[],
+): string => {
   const band = clarityBandFor(p.mean);
   const minBand = clarityBandFor(p.min);
   const maxBand = clarityBandFor(p.max);
   const spread = minBand === maxBand
     ? ""
     : ` The period spanned ${minBand.toLowerCase()} to ${maxBand.toLowerCase()} conditions.`;
-  const offScale = isOffScaleTurbidity(p.mean)
+  const faultNotes = !omit.includes("sensor_fault_notes");
+  const offScale = faultNotes && isOffScaleTurbidity(p.mean)
     ? " This reading is at or beyond the top of the conversion's scale, which indicates a "
       + "sensor or wiring problem as readily as it indicates turbid water -- worth checking "
       + "against turbVolt directly."
     : "";
-  const allZero = isAllZeroTurbidity(p.max) ? ` ${TURBIDITY_ALL_ZERO_CAVEAT}` : "";
+  const allZero = faultNotes && isAllZeroTurbidity(p.max) ? ` ${TURBIDITY_ALL_ZERO_CAVEAT}` : "";
+  const scale = omit.includes("turbidity_notes") ? "" : ` ${TURBIDITY_SCALE_CAVEAT}`;
   return `Water clarity read as ${band} for the period (relative index mean `
     + `${p.mean.toFixed(1)}, range ${p.min.toFixed(1)}-${p.max.toFixed(1)}), `
-    + `${trendWord(p)}.${spread} ${TURBIDITY_SCALE_CAVEAT}${offScale}${allZero}`;
+    + `${trendWord(p)}.${spread}${scale}${offScale}${allZero}`;
 };
 
 const paramAnalysisLine = (
   p: ParameterStats,
-  probeAccuracy: (key: string, reading: number) => number,
+  noiseFloor: (key: string, reading: number) => number,
+  omit: readonly ReportOmitGroup[],
 ): string => {
   const b = p.baseline;
-  const flag = flagFor(p, probeAccuracy);
+  const flag = flagFor(p, noiseFloor);
   const phrase = patternPhrase[p.pattern];
 
-  // "site baseline" for a reviewed reference range; "operator-set threshold for this device" for
-  // one read off the device registry. The two carry different authority and the sentence has to
-  // say which it used -- same rule the header applies to the water body type.
-  const baselineTerm = b.baselineSource === "operator-threshold"
-    ? "operator-set threshold for this device"
-    : "site baseline";
+  // The two sources carry different authority and the sentence has to say which it used -- same
+  // rule the header applies to the water body type.
+  let baselineTerm = "site baseline";
+  if (b.baselineSource === "v2-fallback") {
+    baselineTerm = "general range for this water type (a generic fallback)";
+  } else if (b.baselineSource === "operator-threshold") {
+    baselineTerm = "operator-set threshold for this device";
+  }
 
   let text: string;
   if (flag === "Qualitative") {
-    text = relativeIndexAnalysisLine(p);
+    text = relativeIndexAnalysisLine(p, omit);
   } else if (flag === "N/A") {
     text = `${sentenceCase(phrase)}. No baseline is established for this parameter -- reported `
       + "for reference only, not flagged against a range.";
@@ -276,38 +297,50 @@ const paramAnalysisLine = (
       + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)} ${baselineTerm}.`;
   } else {
     const width = b.baselineMax - b.baselineMin;
-    // BOTH directions, not the one the flag happened to be derived from. This used to pick a
-    // single side -- so dissolved oxygen printed its 23.32 mg/L peak and never mentioned the
-    // 1.72 mg/L minimum in the same period, which is the near-hypoxic number a reader would
-    // actually act on. A parameter that left the range at both ends says so at both ends.
+    // Each direction's extreme comes from its qualifying runs, never from a lone reading: one
+    // stray point must not be described as the parameter's excursion (flagRules.ts). Both
+    // directions are named when both had runs.
+    const runs = runsFor(p, noiseFloor)?.outOfRange ?? [];
+    const high = runs.filter((r) => r.direction === "high");
+    const low = runs.filter((r) => r.direction === "low");
     const excursions = [
-      p.max > b.baselineMax
-        ? `${magnitudeWord(p.max, b.baselineMax, width)} above it to `
-          + `${withUnit(statValue(p.max), b.unit)}`
+      high.length > 0
+        ? (() => {
+          const peak = Math.max(...high.map((r) => r.extreme));
+          return `${magnitudeWord(peak, b.baselineMax, width)} above it to `
+            + `${withUnit(statValue(peak), b.unit)}`;
+        })()
         : null,
-      p.min < b.baselineMin
-        ? `${magnitudeWord(p.min, b.baselineMin, width)} below it to `
-          + `${withUnit(statValue(p.min), b.unit)}`
+      low.length > 0
+        ? (() => {
+          const trough = Math.min(...low.map((r) => r.extreme));
+          return `${magnitudeWord(trough, b.baselineMin, width)} below it to `
+            + `${withUnit(statValue(trough), b.unit)}`;
+        })()
         : null,
     ].filter((clause): clause is string => clause !== null);
     const article = "aeiou".includes(flag.toLowerCase()[0]) ? "an" : "a";
     text = `${sentenceCase(phrase)}; against the `
-      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)} ${baselineTerm} it moved `
-      + `${excursions.join(" and ")}, recorded as ${article} ${flag.toLowerCase()}.`;
-    // How much of the period, not just whether it ever happened: min/max alone make one bad
-    // reading in 1,382 read exactly like a month-long offset.
+      + `${withUnit(`${b.baselineMin}-${b.baselineMax}`, b.unit)} ${baselineTerm} it stayed `
+      + `${excursions.join(" and ")} for at least three readings in a row, recorded as `
+      + `${article} ${flag.toLowerCase()}.`;
+    // How much of the period, not just whether it ever happened.
     const share = outOfRangeShare(p);
     if (share !== null) {
       text += ` Outside baseline in ${(share * 100).toFixed(0)}% of the period's series buckets.`;
     }
-    const excursionTime = firstExcursionTimestamp(p);
-    if (excursionTime) {
-      text += ` First left baseline at ${excursionTime}.`;
+    if (runsFor(p, noiseFloor)?.persistent && runs.length > 0) {
+      // v2 §7.2 rule 7, said once, here, with its start (POST_LAUNCH_BACKLOG.md §1b, C4).
+      text += ` It sat outside this range for most of the period, from ${timestamp(runs[0].startMs)}, `
+        + "which more likely reflects a threshold that does not fit the site, sensor fouling or "
+        + "calibration than a change in the water.";
+    } else if (runs.length > 0) {
+      text += ` First stayed outside it from ${timestamp(runs[0].startMs)}.`;
     }
   }
   // Provenance travels with the numbers, and the "why not" travels with their absence -- see
-  // ParameterBaseline.baselineNote.
-  if (b.baselineNote) {
+  // ParameterBaseline.baselineNote. `threshold_notes` leaves both out.
+  if (b.baselineNote && !omit.includes("threshold_notes")) {
     text += ` ${b.baselineNote}`;
   }
   if (p.excursionNote) {
@@ -320,12 +353,16 @@ const paramAnalysisLine = (
  * `guidance` is the catalogue content this deployment may show (`src/catalogue/index.ts`).
  * Possible causes and every recommendation for a flagged period come only from it; the routine
  * and "not assessed" lines below are about monitoring and configuration, not about the water.
+ *
+ * `omit` is the requester's list of notes to leave out (`omit.ts`); empty, the default, keeps
+ * every note.
  */
 export const deterministicNarrative = (
   report: ReportInput,
-  probeAccuracy: (key: string, reading: number) => number,
+  noiseFloor: (key: string, reading: number) => number,
   status: ReportStatus,
   guidance: UsableGuidance,
+  omit: readonly ReportOmitGroup[] = [],
 ): NarrativeSections => {
   // "N/A" is excluded alongside "Normal": it means the parameter has no baseline to be outside
   // of (temperature on a device with no usable registry threshold -- see operatorThresholds.ts),
@@ -336,24 +373,33 @@ export const deterministicNarrative = (
   // uncalibrated relative scale with no operator range at all, so it can never be "outside the
   // site baseline". It gets its own bullet below instead of being folded into an excursion list.
   const nonNormal = report.parameters
-    .filter((p) => !["Normal", "N/A", "Qualitative"].includes(flagFor(p, probeAccuracy)));
+    .filter((p) => !["Normal", "N/A", "Qualitative"].includes(flagFor(p, noiseFloor)));
 
   // Turbidity always gets a summary line, whatever the band -- it is a deliberately reported
   // metric, and silence would read as "not measured" rather than "measured and clear".
   const clarityBullets = report.parameters
     .filter((p) => isRelativeIndex(p.baseline))
     .map((p) => {
-      const offScale = isOffScaleTurbidity(p.mean)
+      const faultNotes = !omit.includes("sensor_fault_notes");
+      const offScale = faultNotes && isOffScaleTurbidity(p.mean)
         ? " Off-scale: check against turbVolt directly."
         : "";
-      const allZero = isAllZeroTurbidity(p.max)
+      const allZero = faultNotes && isAllZeroTurbidity(p.max)
         ? " All readings were 0: possibly a missing sensor, not confirmed clear water."
         : "";
+      const scale = omit.includes("turbidity_notes")
+        ? "."
+        : " — operator-authoritative bands over an uncalibrated scale with no operator range; "
+          + "reported as a band, not judged against one.";
       return `${p.baseline.label}: ${clarityBandFor(p.mean)} (relative index mean `
-        + `${p.mean.toFixed(1)}, ${trendWord(p)}) — operator-authoritative bands over an `
-        + "uncalibrated scale with no operator range; reported as a band, not judged "
-        + `against one.${offScale}${allZero}`;
+        + `${p.mean.toFixed(1)}, ${trendWord(p)})${scale}${offScale}${allZero}`;
     });
+
+  const dataIssues = report.dataQuality?.likelyDataIssue ?? [];
+  const dataIssueBullets = dataIssues.length > 0
+    ? [`${dataIssues.join(", ")}: ${DATA_ISSUE_SENTENCE} See Data Quality.`]
+    : [];
+  const inspection = guidance.entries.filter((e) => DATA_ISSUE_ONLY_ENTRIES.has(e.id));
 
   let summaryBullets: string[];
   if (status === "Not assessed") {
@@ -363,11 +409,13 @@ export const deterministicNarrative = (
     // though it never had a baseline to be "not assessed" about.
     summaryBullets = [
       `Overall status: ${status} — no numeric parameter could be compared against a baseline `
-        + "this period, because this device has no usable registry thresholds.",
+        + "this period, because this device has no usable registry thresholds and no general "
+        + "range applies.",
       `This is not a clean result; it means nothing was checked for the ${report.site.startDate} `
         + `to ${report.site.endDate} reporting period. See each parameter's note in Section 3 for `
         + "which registry field is missing or invalid.",
       ...clarityBullets,
+      ...dataIssueBullets,
       "Recommendation: set operator minimum/maximum thresholds for this device in the registry "
         + "so future reports can compare readings against a baseline.",
     ];
@@ -379,7 +427,10 @@ export const deterministicNarrative = (
       "No pollution event signatures were identified; diel and tidal rhythms tracked the site "
         + "baseline throughout.",
       ...clarityBullets,
-      "Recommendation: continue routine monitoring.",
+      ...dataIssueBullets,
+      dataIssues.length > 0
+        ? "Recommendation: inspect the sensors named above; otherwise continue routine monitoring."
+        : "Recommendation: continue routine monitoring.",
     ];
   } else {
     const flagged = nonNormal.length > 0 ? nonNormal.map((p) => p.baseline.label).join(", ") : "no parameters";
@@ -392,6 +443,7 @@ export const deterministicNarrative = (
         + `to ${report.site.endDate} reporting period.`,
       `${sentenceCase(eventClause)}.`,
       ...clarityBullets,
+      ...dataIssueBullets,
       "Recommendation: see Recommendations below for the operational, investigative, and "
         + "stakeholder follow-up.",
     ];
@@ -399,8 +451,11 @@ export const deterministicNarrative = (
 
   const parameterAnalysis = new Map<string, string>();
   report.parameters
-    .filter((p) => !heldSteady(p, flagFor(p, probeAccuracy)))
-    .forEach((p) => parameterAnalysis.set(p.baseline.label, paramAnalysisLine(p, probeAccuracy)));
+    .filter((p) => !heldSteady(p, flagFor(p, noiseFloor)))
+    .forEach((p) => parameterAnalysis.set(
+      p.baseline.label,
+      paramAnalysisLine(p, noiseFloor, omit),
+    ));
 
   const water = waterClassFor(report.site.waterBodyType);
   const selections = report.events.map((event) => {
@@ -428,10 +483,17 @@ export const deterministicNarrative = (
     const crossing = nonNormal.length > 0
       ? entriesFor(guidance.entries, { trigger: "threshold-crossing", water })
       : [];
-    used = [...crossing, ...selections.flatMap(({ matched }) => matched)];
+    used = [...crossing, ...selections.flatMap(({ matched }) => matched)]
+      .filter((e) => dataIssues.length > 0 || !DATA_ISSUE_ONLY_ENTRIES.has(e.id));
+    if (dataIssues.length > 0) used = [...new Set([...used, ...inspection])];
     operational = slotText("operational", used, guidance);
     investigative = slotText("investigative", used, guidance);
     stakeholder = slotText("stakeholder", used, guidance);
+  } else if (dataIssues.length > 0) {
+    used = inspection;
+    operational = slotText("operational", used, guidance);
+    investigative = "None required this period.";
+    stakeholder = "Routine report distribution to client only.";
   } else {
     operational = "No action needed; maintain routine calibration schedule.";
     investigative = "None required this period.";

@@ -1,0 +1,97 @@
+{
+  "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "tby-bias-factors-condensation-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Identifies cold-cell condensation and the other listed bench biases."
+        },
+        {
+          "claimId": "tby-transport-temp-difference-01",
+          "rubric": [
+            3
+          ],
+          "why": "Explains temperature changes during transport as a cause of differing readings."
+        },
+        {
+          "claimId": "tby-dynamic-preferred-01",
+          "rubric": [
+            4
+          ],
+          "why": "Supports preferring dynamic measurement over static bench samples."
+        },
+        {
+          "claimId": "tby-equilibrate-ambient-warning-01",
+          "rubric": [
+            5
+          ],
+          "why": "Gives the condensation remedy and warning about changing particle associations."
+        },
+        {
+          "claimId": "fm-subsample-bias-01",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Explains why discrete samples are more vulnerable to temperature and other sampling biases."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "tby-not-flowthrough-discharge-01",
+          "rubric": [
+            3
+          ],
+          "why": "Forbids collecting a discrete turbidity sample from the sensor chamber discharge."
+        },
+        {
+          "claimId": "tby-time-sensitive-onsite-01",
+          "rubric": [
+            5
+          ],
+          "why": "Requires prompt on-site measurement, preferably in situ, because samples change with time."
+        },
+        {
+          "claimId": "tby-ph-change-precipitation-01",
+          "rubric": [
+            5
+          ],
+          "why": "Explains one time-dependent change that supports prompt on-site measurement."
+        },
+        {
+          "claimId": "tby-storage-amber-4c-24h-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the amber bottle, sunlight, temperature and holding-time limits."
+        },
+        {
+          "claimId": "fm-subsample-forbidden-params-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Requires qualifiers and comments for subsampled turbidity, temperature, DO and Eh."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "a60-bailer-turbidity-bias-01",
+      "why": "Bailer deployment is not established, and neither rubric asks about its specific disturbance."
+    }
+  ]
+}

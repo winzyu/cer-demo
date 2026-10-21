@@ -7,7 +7,7 @@ import type { Chunk } from "../types/retrieval.types";
 
 const log = createLogger("AuditLog");
 
-/** One record per chat response (`docs/RESPONSIBILITY.md` #6). */
+/** One record per chat response (`docs/records/RESPONSIBILITY.md` #6). */
 export const AUDIT_LOG_COLLECTION = "chat_audit_log";
 
 /**
@@ -73,8 +73,8 @@ export const writeAuditLog = async (record: AuditLogRecord, db?: Firestore): Pro
 };
 
 /**
- * The lookup path (`docs/RESPONSIBILITY.md` #6): a record that exists but cannot be pulled under
- * time pressure is not an audit trail. Filters by caller and/or an ISO timestamp range — both
+ * The lookup path (`docs/records/RESPONSIBILITY.md` #6): a record that exists but cannot be pulled
+ * under time pressure is not an audit trail. Filters by caller and/or an ISO timestamp range — both
  * optional, both combinable — newest first.
  */
 export const findAuditLogRecords = async (

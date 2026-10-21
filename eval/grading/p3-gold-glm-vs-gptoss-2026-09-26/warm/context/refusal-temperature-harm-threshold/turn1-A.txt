@@ -1,0 +1,68 @@
+### https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf (chunk usgs-nfm-a6.1-temperature.pdf__b94bbf9a9ecf)
+
+-- 9 of 23 --2 	Chapter A6.1. Temperature
+general introduction to the NFM (USGS Techniques and
+Methods, book 9, chapter A0—U.S. Geological Survey,
+2018) at https://doi.org/10.3133/tm9A0. The authoritative
+current versions of NFM chapters are available in the USGS
+Publications Warehouse at https://pubs.usgs.gov. Comments,
+questions, and suggestions related to the NFM can be
+addressed to nfm@usgs.gov.
+1.1. 	Overview of Temperature
+TEMPERATURE: a measure of warmth or coldness of a
+substance with reference to a standard value.
+Measurements of air and water temperature at a field
+site are essential for water-quality data collection. Determina-
+tion of dissolved-oxygen concentrations, conductivity, pH,
+rate and equilibria of chemical reactions, biological activity,
+and fluid properties relies on accurate temperature measure-
+ments. The USGS currently (2024) measures and publishes
+water temperature data at more than 3,500 surface-water and
+groundwater stations, including wells, springs, streams, lakes,
+rivers, estuaries, and marine environments (U.S. Geological
+Survey, undated). Water temperature data are provided to
+cooperators, data managers, scientists, and the public. Water
+temperature is often measured in conjunction with other water-
+quality parameters to support habitat assessment of threatened
+and endangered species and to evaluate changing climate con-
+ditions. Accurate air- and water-temperature data are essential
+to document thermal alterations to the environment caused by
+natural phenomena and by human activities. Water tempera-
+ture can be subject to environmental regulation and monitoring
+by State and local agencies.
+• The U.S. Geological Survey (USGS) uses the
+Celsius (C) scale for measuring temperature.
+• The procedures in this chapter aim to bring trace-
+ability standards of the National Institute of Standards
+and Technology (NIST), to all USGS measurements
+of temperature.
+2.0. 	Equipment and Supplies
+A temperature sensor is any device used to measure
+temperature. In its simplest form, a temperature sensor can
+contain a detector that creates a signal used to infer tempera-
+ture according to a calibration. Standard procedures used in
+the past by the USGS to measure temperature involved the use
+of liquid-in-glass thermometers. Since the 1990s, digital ther-
+mometers and other equipment utilizing integrated thermistors
+and thermocouples, such as multiparameter instruments, have
+continued to undergo improvements in accuracy, reliability,
+and cost. Digital thermometers have many advantages over
+liquid-in-glass thermometers, including smaller uncertain-
+ties, faster response, ease of automation, and elimination of
+uncertainty related to lighting and viewing angle (Ripple and
+Strouse, 2005). Electronic temperature sensors vary voltage,
+resistance, current, or frequency outputs with temperature.
+Common sensors include thermistors, an electrical resistor
+with a resistance that varies sharply and predictably with tem-
+perature, and thermocouples, sensors containing two dissimilar
+metals bonded to form a connection with a dielectric potential
+that varies with temperature. To make a digital thermometer,
+
+ANSWER EVIDENCE:
+{
+  "audit": {
+    "original_answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that.\n\nWhat's missing is a configured threshold for this pod — I have no normal or acceptable temperature range available here, so I can't tell you whether 24 °C is too warm or give you a number to flag on. The loaded documents also don't provide a fish-habitat temperature limit; they only describe temperature as a measurement that supports habitat assessment 【1†\"Water temperature is often measured in conjunction with other water-quality parameters to support habitat assessment of threatened and endangered species\"】.\n\nWhat I can do instead: report your pod's temperature readings over the week and show you the direction and size of any change, if you'd like.",
+    "corrections": [],
+    "invalid_citations": []
+  }
+}

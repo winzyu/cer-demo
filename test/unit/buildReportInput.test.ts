@@ -3,6 +3,11 @@ import path from "path";
 import { DeviceApiClient } from "../../src/devices/DeviceApiClient";
 import { QuerySensorData } from "../../src/tools/querySensorData";
 import { buildReportInput } from "../../src/report/buildReportInput";
+import { prepareReport } from "../../src/report/produceReport";
+import { stuckSensorNote, stuckSensorUserNote } from "../../src/devices/readingQc";
+
+const STUCK_SENSOR_NOTE = stuckSensorNote(["Turbidity"]);
+const STUCK_SENSOR_USER_NOTE = stuckSensorUserNote(["Turbidity"]);
 import { flagFor } from "../../src/report/types";
 import { probeAccuracy } from "../../src/report/referenceRanges";
 import type { DeviceSummary } from "../../src/types/device.types";
@@ -18,7 +23,10 @@ const FIXTURES = path.join(__dirname, "../fixtures/device-api");
 const load = (name: string): unknown => JSON.parse(fs.readFileSync(path.join(FIXTURES, name), "utf8"));
 
 const DEVICES = load("devices.json");
-const ALGALITA_PERIOD = load("algalita-period-1-day.json") as Array<Record<string, unknown>>;
+// Synthetic GPS fixes let these numeric regression cases establish a current site.
+// The captured artifact remains verbatim; its original 0,0 rows are tested separately.
+const ALGALITA_PERIOD: Array<Record<string, unknown>> = (load("algalita-period-1-day.json") as Array<Record<string, unknown>>)
+  .map((reading) => ({ ...reading, best_lat: 33.74, best_lon: -118.1 }));
 const OWC_PERIOD_DAY = load("owc-period-1-day.json");
 const OWC_LAST = load("owc-last.json") as { data: Record<string, unknown> };
 
@@ -62,11 +70,82 @@ const makeSensor = (
 
   const client = new DeviceApiClient({ baseUrl: "https://example.invalid/api/v1", token: "test-token", fetchImpl });
   return new QuerySensorData({
-    client, now: () => NOW, rawLimit: 200, waterType: "saltwater",
+    client, now: () => NOW, rawLimit: 200,
   });
 };
 
 describe("buildReportInput", () => {
+  it("uses current-site dates in the report and Summary and preserves the earlier-location note", async () => {
+    const periodDay = [
+      { at: "2026-06-20T12:00:00Z", lat: 34 },
+      { at: "2026-08-01T12:00:00Z", lat: 33 },
+      { at: "2026-08-12T12:00:00Z", lat: 33 },
+      { at: "2026-08-13T12:00:00Z", lat: 0 },
+    ].map(({ at, lat }) => ({
+      timestamp: Date.parse(at) / 1000, best_lat: lat, best_lon: lat ? -118 : 0,
+      water_data: { 99: 8, phError: 0 },
+    }));
+    const prepared = await prepareReport(makeSensor({ periodDay }), { timeRange: "last 60 days", device: "Algalita" });
+    expect(prepared.error).toBeUndefined();
+    if (prepared.error !== undefined) throw new Error(prepared.error);
+    expect(prepared.report.site).toMatchObject({ startDate: "2026-08-01", endDate: "2026-08-12" });
+    expect(prepared.narrative.summaryBullets.join(" ")).toContain("2026-08-01 to 2026-08-12");
+    expect(prepared.userNotes).toEqual(expect.arrayContaining([expect.stringContaining("earlier location")]));
+    expect(prepared.report.dataQuality!.completenessNotes).toContain("earlier location");
+    expect(prepared.report.site.periodNote).toBeDefined();
+    expect(prepared.report.site.periodNote).toContain("earlier location");
+  });
+
+  it("tells a report after a move that nothing was left out of its period, not that readings were", async () => {
+    // Coverage check, 2026-10-12: a week's PDF said 775 earlier-location readings "were excluded"
+    // in its Summary and its completeness row, though that site ended 43 days before the week.
+    const periodDay = [
+      { at: "2026-06-20T12:00:00Z", lat: 34 },
+      { at: "2026-08-01T12:00:00Z", lat: 33 },
+      { at: "2026-08-10T12:00:00Z", lat: 33 },
+      { at: "2026-08-12T12:00:00Z", lat: 33 },
+    ].map(({ at, lat }) => ({
+      timestamp: Date.parse(at) / 1000, best_lat: lat, best_lon: -118,
+      water_data: { 99: 8, phError: 0 },
+    }));
+    const prepared = await prepareReport(makeSensor({ periodDay }), { timeRange: "last 7 days", device: "Algalita" });
+    if (prepared.error !== undefined) throw new Error(prepared.error);
+    expect(prepared.report.site.periodNote).toBe("The pod has been at its current site since "
+      + "2026-08-01T12:00:00.000Z; its 1 earlier-location reading(s) (2026-06-20T12:00:00.000Z to "
+      + "2026-06-20T12:00:00.000Z) fall outside the requested period, so none were left out of it.");
+    expect(prepared.report.dataQuality!.completenessNotes).not.toContain("earlier location");
+    expect(JSON.stringify(prepared.userNotes ?? [])).not.toContain("earlier location");
+  });
+
+  it("counts usable and left-out rows once even when several metrics share a row", async () => {
+    const water = [
+      { 99: 8, 72: 25, phError: 0, turbError: 0 },
+      { 99: 2, 72: 25, phError: 0, turbError: 0 },
+      { 99: 2, 72: 25, phError: 0, turbError: 1 },
+      {},
+    ];
+    const periodDay = water.map((water_data, i) => ({
+      timestamp: NOW / 1000 - i * 3600, best_lat: 33, best_lon: -118, water_data,
+    }));
+    const { report } = await buildReportInput(makeSensor({ periodDay }), { timeRange: "last day", device: "Algalita" });
+    expect(report!.dataQuality!.completenessPct).toBe(50);
+    expect(report!.dataQuality!.completenessNotes).toContain("2 of 4 readings");
+    expect(report!.dataQuality!.completenessNotes).toContain("2 readings were left out");
+    expect(report!.dataQuality!.calibrationNotes).toContain("may be sensor faults and were left out");
+    expect(report!.dataQuality!.calibrationNotes).not.toContain("sensor rails");
+  });
+
+  it("records one generation timestamp for the report date and reading age", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-09-29T12:34:00Z"));
+    try {
+      const { report } = await buildReportInput(makeSensor(), { timeRange: "last day", device: "Algalita" });
+      expect(report).toHaveProperty("generatedAt", "2026-09-29T12:34:00.000Z");
+      expect(report!.site.reportDate).toBe("2026-09-29");
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("builds a ReportInput covering every parameter with real readings", async () => {
     const sensor = makeSensor();
     const { report, error, skippedParameters } = await buildReportInput(
@@ -78,6 +157,9 @@ describe("buildReportInput", () => {
     expect(report).toBeDefined();
     expect(report!.site.siteName).toContain("Algalita");
     expect(report!.parameters).toHaveLength(6);
+    expect(report!.dataQuality!.completenessNotes).toContain(
+      `${ALGALITA_PERIOD.length} of ${ALGALITA_PERIOD.length} readings`,
+    );
   });
 
   it("labels temperature in the unit the device API actually returns (°F, not °C)", async () => {
@@ -112,6 +194,7 @@ describe("buildReportInput", () => {
 
     /** Minimal sensor with one temperature series and a registry row of the caller's choosing. */
     const sensorWithThresholds = (thresholds?: Record<string, string | number>): QuerySensorData => ({
+      queryBatch: QuerySensorData.prototype.queryBatch,
       query: async () => ({
         device: { name: "Stub Pod", label: "dev:stub", operating_environment: "salt-water" },
         time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -196,8 +279,8 @@ describe("buildReportInput", () => {
 
     it("rejects a bad threshold for one metric while the other four still resolve normally", async () => {
       // A registry row can have one placeholder field (maxPH=100, the CER Conference Pod's real
-      // value) without the rest of the row being junk. pH alone should fall back to no baseline,
-      // with a rejection note -- everything else on this device keeps its own threshold.
+      // value) without the rest of the row being junk. pH alone falls back to v2's general range
+      // for this salt-water pod, labelled generic -- everything else keeps its own threshold.
       const sensor = makeSensor({
         devices: [{
           id: "bad-ph-pod",
@@ -218,9 +301,10 @@ describe("buildReportInput", () => {
       const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
 
       const ph = report!.parameters.find((p) => p.baseline.key === "ph")!;
-      expect(ph.baseline.hasFixedBaseline).toBe(false);
-      expect(ph.baseline.baselineSource).toBeUndefined();
-      expect(ph.baseline.baselineNote).toContain("pH");
+      expect(ph.baseline).toMatchObject({
+        hasFixedBaseline: true, baselineSource: "v2-fallback", baselineMin: 7.8, baselineMax: 8.3,
+      });
+      expect(ph.baseline.baselineNote).toMatch(/no usable pH threshold.*generic fallback.*upwelling/);
 
       const orp = report!.parameters.find((p) => p.baseline.key === "orp")!;
       expect(orp.baseline.hasFixedBaseline).toBe(true);
@@ -249,6 +333,7 @@ describe("buildReportInput", () => {
       ]);
 
       const owcSensor = (): QuerySensorData => ({
+        queryBatch: QuerySensorData.prototype.queryBatch,
         query: async () => ({
           device: { name: "Old Woman Creek 2026", label: "dev:owc", operating_environment: "fresh-water" },
           time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -335,6 +420,7 @@ describe("buildReportInput", () => {
 
       it("when the registry lookup itself comes back empty", async () => {
         const sensor = {
+          queryBatch: QuerySensorData.prototype.queryBatch,
           query: (sensorWithThresholds() as unknown as { query: unknown }).query,
           deviceRecord: async () => null,
         } as unknown as QuerySensorData;
@@ -359,6 +445,7 @@ describe("buildReportInput", () => {
           { start: "2026-08-01T00:00:00.000Z", end: "2026-08-01T12:00:00.000Z", mean, min, max, n: 20 },
         ]);
         const stubSensor = {
+          queryBatch: QuerySensorData.prototype.queryBatch,
           query: async () => ({
             device: { name: "Stub Pod", label: "dev:stub", operating_environment: "salt-water" },
             time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -409,6 +496,7 @@ describe("buildReportInput", () => {
       // these readings -- the exact dev: label the query resolved is what gets looked up.
       const requested: Array<string | undefined> = [];
       const sensor = {
+        queryBatch: QuerySensorData.prototype.queryBatch,
         query: async () => ({
           device: { name: "Algalita Pod", label: "dev:351077454569099", operating_environment: "salt-water" },
           time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -468,12 +556,12 @@ describe("buildReportInput", () => {
     expect(ph.mean).toBeLessThanOrEqual(ph.max);
   });
 
-  it("reports Not available for coordinates and client, rather than fabricating placeholder values", async () => {
+  it("uses the current-site coordinates and leaves the unavailable client unset", async () => {
     const sensor = makeSensor();
     const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
 
-    expect(report!.site.latitude).toBeUndefined();
-    expect(report!.site.longitude).toBeUndefined();
+    expect(report!.site.latitude).toBe(33.74);
+    expect(report!.site.longitude).toBe(-118.1);
     expect(report!.site.clientName).toContain("Not available");
   });
 
@@ -499,7 +587,31 @@ describe("buildReportInput", () => {
     const { report, error } = await buildReportInput(sensor, { timeRange: "last day", device: "OWC" });
 
     expect(report).toBeUndefined();
-    expect(error).toContain("No readings found");
+    expect(error).toContain("No usable readings found");
+  });
+
+  it("builds the no-readings error from reader notes only, never the model-facing site note", async () => {
+    const SITE_NOTE = "Model-only: this device reports under dev:stub; quote no numbers from before 2026-08-01.";
+    const READER_NOTE = "History from this pod's earlier deployment is not shown.";
+    const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
+      query: async () => ({
+        device: { name: "Stub Pod", label: "dev:stub", operating_environment: "salt-water" },
+        time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
+        site_note: SITE_NOTE,
+        user_notes: [READER_NOTE, STUCK_SENSOR_USER_NOTE],
+        metrics: { turbidity: { value: null, n_samples: 0, excluded_stuck: 96, series: [] } },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+
+    const { report, error } = await buildReportInput(stubSensor, { timeRange: "last week" });
+
+    expect(report).toBeUndefined();
+    expect(error).toBe(`No usable readings found for any parameter in "last week". ${READER_NOTE} `
+      + STUCK_SENSOR_USER_NOTE);
+    expect(error).not.toContain(SITE_NOTE);
+    expect(error).not.toContain(STUCK_SENSOR_NOTE);
   });
 
   it("threads the caller's bearer token from ToolContext into every device call", async () => {
@@ -514,6 +626,7 @@ describe("buildReportInput", () => {
     const calls: Array<{ token: string | undefined }> = [];
     const registryCalls: Array<{ token: string | undefined }> = [];
     const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
       query: async (_params: unknown, token?: string) => {
         calls.push({ token });
         return { device: { name: "Stub" }, time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" }, metrics: {} };
@@ -576,6 +689,7 @@ describe("buildReportInput", () => {
 
     it("falls back to the deployment value only when the registry says nothing usable", async () => {
       const stubSensor = {
+        queryBatch: QuerySensorData.prototype.queryBatch,
         query: async () => ({
           device: { name: "Unregistered Pod", operating_environment: null },
           time_range_resolved: { start: "2026-08-01T00:00:00.000Z", end: "2026-08-08T00:00:00.000Z" },
@@ -615,6 +729,7 @@ describe("buildReportInput", () => {
 
     it("raises calibration to Review, naming the metric, when a probe railed without a fault flag", async () => {
       const stubSensor = {
+        queryBatch: QuerySensorData.prototype.queryBatch,
         query: async () => ({
           device: { name: "Algalita Pod", operating_environment: "salt-water" },
           time_range_resolved: { start: "2026-07-21T00:00:00.000Z", end: "2026-08-20T00:00:00.000Z" },
@@ -656,6 +771,7 @@ describe("buildReportInput", () => {
     // feeding it to the event detector invites a step-change event out of a gap. Section 2's
     // extremes stay exact over every usable reading.
     const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
       query: async () => ({
         device: { name: "Algalita Pod", operating_environment: "salt-water" },
         time_range_resolved: { start: "2026-07-21T00:00:00.000Z", end: "2026-08-20T00:00:00.000Z" },
@@ -685,6 +801,70 @@ describe("buildReportInput", () => {
     expect(ph.max).toBe(8.9);
     expect(ph.min).toBe(7.0);
   });
+
+  it("keeps a 1-day series for a pod reporting twice an hour (report audit #4)", async () => {
+    // Balboa Yacht Basin Buoy, live 2026-09-25: 1-hour auto buckets holding n=2 each but one
+    // (n=4). A fixed floor of 3 kept only the n=4 bucket, so the report had no trend at all.
+    const start = Date.parse("2026-09-25T00:00:00.000Z");
+    const buckets = Array.from({ length: 25 }, (_, h) => ({
+      start: new Date(start + h * 3_600_000).toISOString(),
+      end: new Date(start + (h + 1) * 3_600_000).toISOString(),
+      mean: h === 12 ? 0.2 : 0.1,
+      min: 0,
+      max: 0.3,
+      n: h === 12 ? 4 : 2,
+    }));
+    const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
+      query: async () => ({
+        device: { name: "Balboa Yacht Basin Buoy", operating_environment: "salt-water" },
+        time_range_resolved: { start: buckets[0].start, end: buckets[24].end },
+        metrics: { dissolved_oxygen: { value: 0.1, n_samples: 52, series: buckets } },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+
+    const { report } = await buildReportInput(stubSensor, { timeRange: "last day" });
+    const dissolvedOxygen = report!.parameters.find((p) => p.baseline.key === "dissolved_oxygen")!;
+
+    expect(dissolvedOxygen.series).toHaveLength(25);
+  });
+
+  it("still drops a single-reading bucket when the pod's own buckets hold three readings", async () => {
+    // The floor follows the cadence (half the median bucket count), so n=1 among n=3 is thin.
+    const start = Date.parse("2026-09-25T00:00:00.000Z");
+    const buckets = [3, 3, 1, 3, 3].map((n, h) => ({
+      start: new Date(start + h * 3_600_000).toISOString(),
+      end: new Date(start + (h + 1) * 3_600_000).toISOString(),
+      mean: n === 1 ? 9 : 7.2,
+      min: 7,
+      max: 9,
+      n,
+    }));
+    const stubSensor = {
+      queryBatch: QuerySensorData.prototype.queryBatch,
+      query: async () => ({
+        device: { name: "Stub", operating_environment: "salt-water" },
+        time_range_resolved: { start: buckets[0].start, end: buckets[4].end },
+        metrics: { ph: { value: 7.2, n_samples: 13, series: buckets } },
+      }),
+      deviceRecord: async () => null,
+    } as unknown as QuerySensorData;
+
+    const { report } = await buildReportInput(stubSensor, { timeRange: "last day" });
+    const ph = report!.parameters.find((p) => p.baseline.key === "ph")!;
+
+    expect(ph.series).toHaveLength(4);
+    expect(ph.series!.some(([, v]) => v === 9)).toBe(false);
+  });
+
+  it("carries the device's newest reading time for the PDF to state its age (report audit #3)", async () => {
+    const sensor = makeSensor();
+    const { report } = await buildReportInput(sensor, { timeRange: "last day", device: "Algalita" });
+
+    expect(report!.site.lastReadingAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(Date.parse(report!.site.lastReadingAt!)).toBeLessThanOrEqual(NOW);
+  });
 });
 
 describe("buildReportInput - pattern tags", () => {
@@ -707,6 +887,7 @@ describe("buildReportInput - pattern tags", () => {
   );
 
   const stubSensor = (hourly: ReturnType<typeof hourlyBuckets>) => ({
+    queryBatch: QuerySensorData.prototype.queryBatch,
     query: async (params: { aggregation: string; bucket?: string }) => {
       const series = params.bucket === "hour"
         ? hourly

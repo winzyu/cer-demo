@@ -1,0 +1,147 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-28T04:14:41.277Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1336533,
+    "cachedPromptTokens": 653054,
+    "completionTokens": 95535,
+    "usd": 0.323604024
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.875,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.55,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.3333333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.1777777777777778,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-bailed-orp-jumping",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the ORP equilibration time and stabilization criterion saying the documents don't provide them and makes none of the rubric's ORP-specific must-contain points. Unmet: states the measurement must be made in situ with a submersible instrument or through an airtight flowthrough system that eliminates aeration; states the tubing must be relatively impermeable to oxygen the fittings airtight and atmospheric oxygen purged from the tubing and flow channels before measuring; states the reading drifts until thermal equilibrium is reached and that this can take longer than 30 minutes; After thermal equilibration takes readings every few minutes for 15-20 minutes and then about every 10 minutes until at least 30 minutes from the initial measurement and a constant potential; notes the ORP system responds more slowly than pH and asymmetrically taking longer in one direction than the other; States calculated Eh is reported to the nearest 10 mV; states the temperature the electrode system used and the pH at the time of measurement must be recorded with the value"
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes several EPA cadence points but omits the sampling-location exemption and the measurement-mode DO post-calibration check and it violates a must-not by asserting the EPA and USGS documents 'differ' without any supporting comparison. Unmet: End-of-day calibration check except when calibrated at each sampling location under the stated exemption; DO post-calibration check done in measurement mode recording DO temperature and barometric pressure against an oxygen-solubility chart"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the A6.8 conductivity-dependent criteria (±0.1 pH unit; ±0.3 pH unit below 75 µS/cm) that the rubric requires refusing that part and so cannot make the required distinction even though it correctly reports A6.4's 0.05 pH-unit final-buffer check. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check (0.05 pH unit of certified value at calibration temperature)"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses and supplies none of the required values the 0.03 mg/L difference the Benson and Krause note the ±0.2 mg/L tolerance comparison or the use-one-protocol advice so it misses every must-contain point. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure; notes the USGS values are generated from the Benson and Krause equations; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer states the multiply-by-factor method but withholds the required 0.8235 factor refusing that part as unavailable so the key figure the rubric asks for is missing. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm; Attributes the factor to the salinity-correction table in the USGS NFM dissolved-oxygen chapter (table 6.2-4)"
+        },
+        {
+          "fixtureId": "probecal-ph-slope-acceptance",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer correctly names the slope and gives the 95-101 percent / 56.2-59.8 mV at 25 °C figures but it uses the stated 12-18 month working life as a criterion for whether the electrode is still usable which the rubric lists as a must-not. Unmet: Notes a healthy electrode responds quickly in buffer on the order of one to two minutes"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer places pH before specific conductance (\"do pH conductivity and ORP first\") violating a must-not item and omits the temperature-first ordering the ionic-strength rationale and the pH-buffer contamination note. Unmet: Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then oxidation-reduction potential after pH; Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next; Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal about data retention and makes none of the rubric's required points about the turbidity fouling check or the EPA SOP's calibration/drift criteria. Unmet: States the corpus gives no rule for deciding which part of a long record may be kept; States no source gives an allowable rate of drift (per-day/per-week); States it gives no procedure for correcting or adjusting a record after retrieval; Notes the turbidity chapter's fouling check comparing calibrant readings before/after cleaning; States the fouling check quantifies one sensor's condition not an acceptance rule for the record; Notes the EPA SOP calibrates before deployment checks on recovery defers drift criteria to the QA plan and supplies default post-calibration criteria only when the plan is silent; Declines to convert EPA post-calibration criteria into a keep-or-discard threshold for a month of record; Notes EPA default post-calibration criteria are a pass-or-fail check at recovery not a retention rule and failing data are qualified rather than discarded"
+        },
+        {
+          "fixtureId": "probecal-ph-slope-acceptance",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — All five must-contain points are made correctly but the answer invents a separate numeric replacement criterion — a 'typical useful life expectancy ... approximately 12 to 18 months' — that appears nowhere in the retrieved documents and is used to suggest the electrode is at end of life violating the must-not against inventing a numeric replacement threshold distinct from the slope acceptance range."
+        }
+      ]
+    }
+  ]
+}

@@ -37,9 +37,30 @@ describe("isPlausible", () => {
     expect(isPlausible("ph", 0)).toBe(false);
     expect(isPlausible("ph", 14)).toBe(false);
     expect(isPlausible("ph", 7.2)).toBe(true);
-    // Extreme but real acid-mine-drainage / alkaline-discharge water still passes.
-    expect(isPlausible("ph", 2.5)).toBe(true);
-    expect(isPlausible("ph", 12.5)).toBe(true);
+  });
+
+  it("flags pH outside what natural water reaches, including the Algalita Pod's live 2.07 and 12.62", () => {
+    // Report audit 2026-09-25 finding 5: a seawater pod (~pH 8.1) printed a 1-day minimum of 2.07
+    // and a 7-day maximum of 12.62, and each alone set the report to Action Required.
+    expect(isPlausible("ph", 2.07)).toBe(false);
+    expect(isPlausible("ph", 12.62)).toBe(false);
+    expect(isPlausible("ph", 2.99)).toBe(false);
+    expect(isPlausible("ph", 12.01)).toBe(false);
+  });
+
+  it("keeps the most extreme natural waters the fleet could plausibly sit in", () => {
+    // Peat bog / humic brown-water streams bottom out near pH 3.5; soda lakes and eutrophic water
+    // at the photosynthetic peak reach about 11. The bound is inclusive at 3 and 12.
+    [3, 3.5, 4.2, 6.5, 8.1, 9.8, 11, 12].forEach((ph) => {
+      expect(isPlausible("ph", ph)).toBe(true);
+    });
+  });
+
+  it("keeps the pH scale itself as the rail operator limits are validated against", () => {
+    // operatorThresholds.ts reads min/max as its pH rail; tightening those would reject
+    // configured limits rather than readings.
+    expect(PLAUSIBLE_RANGES.ph.min).toBe(0);
+    expect(PLAUSIBLE_RANGES.ph.max).toBe(14);
   });
 
   it("keeps 0 plausible for ORP and turbidity -- the carve-out aggregate.ts documents", () => {
@@ -79,6 +100,9 @@ describe("isPlausible", () => {
     expect(PLAUSIBLE_RANGES.dissolvedOxygen.max).toBeGreaterThan(11); // freshwater baseline top
     expect(PLAUSIBLE_RANGES.temperature.max).toBeGreaterThan(95); // prompt's stated °F ceiling
     expect(PLAUSIBLE_RANGES.temperature.min).toBeLessThan(32);
+    // Every non-placeholder operator pH limit in the recorded registry fixtures lies in 5-10.
+    expect(PLAUSIBLE_RANGES.ph.naturalWater!.min).toBeLessThan(5);
+    expect(PLAUSIBLE_RANGES.ph.naturalWater!.max).toBeGreaterThan(10);
   });
 });
 

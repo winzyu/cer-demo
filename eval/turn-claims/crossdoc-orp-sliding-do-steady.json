@@ -1,0 +1,125 @@
+{
+  "fixtureId": "crossdoc-orp-sliding-do-steady",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "orp-zobells-shelf-life-01",
+          "rubric": [
+            7
+          ],
+          "why": "Gives at least 90 days of chilled stability, not a fixed expiry."
+        },
+        {
+          "claimId": "orp-table653-25c-430-01",
+          "rubric": [
+            3
+          ],
+          "why": "Gives theoretical ZoBell Eh at 25 C."
+        },
+        {
+          "claimId": "orp-table653-values-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Provides the temperature-dependent table and its 25 C value."
+        },
+        {
+          "claimId": "orp-example-22c-01",
+          "rubric": [
+            6
+          ],
+          "why": "Demonstrates reference-potential addition and the 5 mV acceptance window."
+        },
+        {
+          "claimId": "orp-field-cal-equilibrate-01",
+          "rubric": [
+            1,
+            5
+          ],
+          "why": "Describes a ZoBell field check with 15-30 minutes for thermal equilibrium."
+        },
+        {
+          "claimId": "orp-equilibrate-15-30-01",
+          "rubric": [
+            1,
+            5
+          ],
+          "why": "Gives the ZoBell equipment-test equilibration time."
+        },
+        {
+          "claimId": "orp-interpolate-tables-01",
+          "rubric": [
+            4,
+            6
+          ],
+          "why": "Requires interpolation and adding the reference potential to measured emf."
+        },
+        {
+          "claimId": "mp-t6-zobell-temperature-11",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Directs a ZoBell check that accounts for solution temperature."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "a60-xcut-tbl601-all-01",
+          "rubric": [
+            1,
+            2,
+            5
+          ],
+          "why": "Gives optical-DO tolerance and the table's parameter list; matches explicit evidence."
+        },
+        {
+          "claimId": "a60-xcut-sw-60s-median3-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the surface-water median rule; matches explicit evidence."
+        },
+        {
+          "claimId": "a60-xcut-gw-median5-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the groundwater median rule."
+        },
+        {
+          "claimId": "orp-reading-cadence-01",
+          "rubric": [
+            5
+          ],
+          "why": "Requires a constant ORP potential over the reading sequence; matches explicit evidence."
+        }
+      ],
+      "uncovered": [
+        3
+      ]
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "orp-quinhydrone-30c-01",
+      "why": "Only supports the quinhydrone must_not condition in turn 1."
+    },
+    {
+      "claimId": "mp-t6-parameter-chapter-map-06",
+      "why": "Routes users to parameter chapters without supplying either turn's required facts."
+    },
+    {
+      "claimId": "orp-thermal-equilibrium-30min-01",
+      "why": "Concerns initial ORP thermal equilibration, not the DO variability response or ORP constant-potential criterion."
+    }
+  ]
+}

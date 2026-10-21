@@ -1,0 +1,313 @@
+{
+  "fixtureId": "long-sonde-repair",
+  "set": "committed",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "query": "After a wet trip, our handheld sonde display is showing numbers that look scrambled or in the wrong scale. What should I check before deciding the sensors are bad?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Check that the correct units are selected.\n• Inspect all connectors for moisture, dirt, damage, and loose connections.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-scrambled-03"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "query": "One sensor port is damp and we may need to fit a spare sensor. Can I dry the whole head with alcohol, including the optical oxygen face?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "sensor ports on the sonde\nbody should be dry before sensors are replaced. Use\ncompressed air or isopropyl alcohol to dry the ports.",
+          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+          "claimIds": [
+            "mp-dry-ports-08",
+            "mp-solvent-do-warning-09"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "query": "There's also a warning on the display and one sensor looks physically damaged. Can the crew carry on after wiping it, or what has to happen?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "If the display shows a warning message, do not use the\ninstrument system until the error has been identified,\nunderstood, and corrected.",
+          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+          "claimIds": [
+            "mp-warning-message-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "query": "Tomorrow's start will be cold, and last week several channels dropped out together before dawn. What power-related checks should go on the list?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Battery performance decreases with decreasing temperature. Carry spare batteries.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-display-off-02"
+          ]
+        },
+        {
+          "chunkId": "cer-water-quality-guidance-v2-excerpt.md__84a6c0991f1b",
+          "contentHash": "84a6c0991f1b",
+          "filename": "cer-water-quality-guidance-v2-excerpt.md",
+          "grade": 2,
+          "evidence": "Check battery voltage for any pre-dawn anomaly.",
+          "locator": "Sections 7.2-7.3 and 11, fault rules and coupling - \"Required Metadata for Every DataPod\"",
+          "claimIds": [
+            "v2x-predawn-battery-check"
+          ]
+        },
+        {
+          "chunkId": "cer-water-quality-guidance-v2-excerpt.md__1cb22682df6a",
+          "contentHash": "1cb22682df6a",
+          "filename": "cer-water-quality-guidance-v2-excerpt.md",
+          "grade": 2,
+          "evidence": "simultaneous step change,\n  noise, or dropouts across several channels. Key discriminator: coincides with falling battery\n  voltage, often pre-dawn on solar systems or after cloudy days.",
+          "locator": "Section 7.1, fault matrix - \"Galvanic DO electrolyte or anode depletion\"",
+          "claimIds": [
+            "v2x-battery-brownout"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "query": "Different site now: after rain at our marine outfall, the turbidity jumped while salinity and pH fell. What stormwater pattern does that fit, and what can be riding in with it?",
+      "relevant": [
+        {
+          "chunkId": "cer-water-quality-guidance-v2-excerpt.md__8d042e92296a",
+          "contentHash": "8d042e92296a",
+          "filename": "cer-water-quality-guidance-v2-excerpt.md",
+          "grade": 2,
+          "evidence": "Salinity / SC strong decrease near outfalls; pH decrease; Turbidity strong increase. Key\n  discriminator: coincides with rainfall; turbidity spike.",
+          "locator": "Section 6.2, marine event matrix - \"freshening with rising ORP\"",
+          "claimIds": [
+            "v2x-marine-stormwater-discriminator"
+          ]
+        },
+        {
+          "chunkId": "cer-water-quality-guidance-v2-excerpt.md__26568f5d8f4d",
+          "contentHash": "26568f5d8f4d",
+          "filename": "cer-water-quality-guidance-v2-excerpt.md",
+          "grade": 2,
+          "evidence": "stormwater routinely carries bacteria, metals, and\n  hydrocarbons. Treat a stormwater signature as a likely contamination event even though DataPods\n  cannot measure those contaminants.",
+          "locator": "Sections 6.3-6.4, freshwater differences and detailed signatures - \"Raw Sewage Spill (Marine)\"",
+          "claimIds": [
+            "v2x-stormwater-contamination"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "query": "So how many milligrams per litre of metals are in that water? We've only got the pod readings; can you work out the concentration from that spike?",
+      "relevant": [
+        {
+          "chunkId": "cer-water-quality-guidance-v2-excerpt.md__26568f5d8f4d",
+          "contentHash": "26568f5d8f4d",
+          "filename": "cer-water-quality-guidance-v2-excerpt.md",
+          "grade": 2,
+          "evidence": "stormwater routinely carries bacteria, metals, and\n  hydrocarbons. Treat a stormwater signature as a likely contamination event even though DataPods\n  cannot measure those contaminants.",
+          "locator": "Sections 6.3-6.4, freshwater differences and detailed signatures - \"Raw Sewage Spill (Marine)\"",
+          "claimIds": [
+            "v2x-stormwater-contamination"
+          ]
+        },
+        {
+          "chunkId": "cer-water-quality-guidance-v2-excerpt.md__84a6c0991f1b",
+          "contentHash": "84a6c0991f1b",
+          "filename": "cer-water-quality-guidance-v2-excerpt.md",
+          "grade": 2,
+          "evidence": "Turbidity and contaminants: Particles carry nutrients, metals, hydrocarbons, bacteria. Diagnostic\n  use: Turbidity spike is a loading proxy.",
+          "locator": "Sections 7.2-7.3 and 11, fault rules and coupling - \"Required Metadata for Every DataPod\"",
+          "claimIds": [
+            "v2x-turbidity-loading-proxy"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "query": "OK, back to the sonde we were repairing. We still see the warning after cleaning; should we put it back to work, and what about the damaged sensor?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "If the display shows a warning message, do not use the\ninstrument system until the error has been identified,\nunderstood, and corrected.",
+          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+          "claimIds": [
+            "mp-warning-message-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "query": "That damp socket and the face beside it from earlier - which part needs drying before the swap, and what should I keep the solvent off?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "sensor ports on the sonde\nbody should be dry before sensors are replaced. Use\ncompressed air or isopropyl alcohol to dry the ports.",
+          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+          "claimIds": [
+            "mp-dry-ports-08",
+            "mp-solvent-do-warning-09"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "query": "The warning and damaged part I mentioned near the start - is wiping the part and acknowledging the message enough to release the kit?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__6ae74c4bc1f3",
+          "contentHash": "6ae74c4bc1f3",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "If the display shows a warning message, do not use the\ninstrument system until the error has been identified,\nunderstood, and corrected.",
+          "locator": "Section 4.2 Groundwater bullets and section 5.0 Troubleshooting — \"Field-measurement sensors must first be allowed to reach thermal equilibrium\"",
+          "claimIds": [
+            "mp-warning-message-07"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "query": "Once it's fixed, a serviced channel shows a sudden offset right when we worked on it. What record should I compare that with, and what checks need recording after replacement?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Examine the sensor for dirt or damage. Clean sensors according to the manufacturer’s\ninstructions. Replace damaged sensors and recalibrate.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-clean-replace-07"
+          ]
+        },
+        {
+          "chunkId": "cer-water-quality-guidance-v2-excerpt.md__5a42618c2d1c",
+          "contentHash": "5a42618c2d1c",
+          "filename": "cer-water-quality-guidance-v2-excerpt.md",
+          "grade": 2,
+          "evidence": "Post-maintenance step: Channels affected: serviced channels. Signature: abrupt offset at a\n  maintenance timestamp. Key discriminator: matches maintenance log.",
+          "locator": "Section 7.1 continuation, clock-drift row completed from chunk 6 - \"compare to sunrise and sunset\"",
+          "claimIds": [
+            "v2x-maintenance-step"
+          ]
+        },
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__75d13350deef",
+          "contentHash": "75d13350deef",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Calibration records must be maintained and entered\ninto the appropriate instrument or sensor logbook and",
+          "locator": "Section 3.0 Calibration, record-keeping bullets — \"Calibration records must be maintained\"",
+          "claimIds": [
+            "mp-cal-records-01"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "query": "We're ready to carry it back out. What should I inspect on the leads, and how tightly can I coil them in the case?",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__dbea57f43cf5",
+          "contentHash": "dbea57f43cf5",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "Routinely inspect cables for damage, and electronic\nconnectors and sensor ports for corrosion.",
+          "locator": "Section 2.2 Instrument Maintenance and Storage — \"Each instrument requires a dedicated logbook\"",
+          "claimIds": [
+            "mp-inspect-cables-11",
+            "mp-cable-coil-07"
+          ]
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "query": "The strange display I opened with - remind me what to check in the settings and at the connections before blaming the water.",
+      "relevant": [
+        {
+          "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__f09f4667e6ea",
+          "contentHash": "f09f4667e6ea",
+          "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
+          "grade": 2,
+          "evidence": "• Check that the correct units are selected.\n• Inspect all connectors for moisture, dirt, damage, and loose connections.",
+          "locator": "Table 6.8–6. Troubleshooting tips for typical problems with multiparameter instruments",
+          "claimIds": [
+            "mp-t6-scrambled-03"
+          ]
+        }
+      ]
+    }
+  ]
+}

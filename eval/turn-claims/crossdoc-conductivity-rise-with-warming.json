@@ -1,0 +1,87 @@
+{
+  "fixtureId": "crossdoc-conductivity-rise-with-warming",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "sc-temperature-coefficient-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Explains warming-related conductivity increase and its ion-dependent 0.5-3 percent rate."
+        },
+        {
+          "claimId": "sc-equation2-compensation-01",
+          "rubric": [
+            3,
+            5
+          ],
+          "why": "Gives the measured-temperature-minus-25 correction to conductivity at 25 C."
+        },
+        {
+          "claimId": "sc-alpha-typical-value-01",
+          "rubric": [
+            1,
+            3,
+            4,
+            5
+          ],
+          "why": "Gives meter compensation methods and the 25 C reference, motivating a check of whether the output is already corrected."
+        },
+        {
+          "claimId": "sc-compensation-accuracy-5pct-01",
+          "rubric": [
+            6
+          ],
+          "why": "Gives the typical compensation accuracy and its temperature and pH range."
+        },
+        {
+          "claimId": "sc-thermistor-check-01",
+          "rubric": [
+            1
+          ],
+          "why": "Identifies automatic thermistor-based compensation, so displayed conductance may already be corrected."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "sc-thermistor-check-01",
+          "rubric": [
+            4
+          ],
+          "why": "Explains how a faulty compensation thermistor corrupts specific conductance."
+        },
+        {
+          "claimId": "t-verified-multiparam-accuracy-01",
+          "rubric": [
+            1
+          ],
+          "why": "Requires accuracy within 0.2 C when temperature corrects another parameter."
+        },
+        {
+          "claimId": "t-temp-cal-differs-01",
+          "rubric": [
+            2
+          ],
+          "why": "Defines temperature calibration as verifying accuracy across the range of use."
+        },
+        {
+          "claimId": "mp-t4-nist-thermometer-02",
+          "rubric": [
+            3
+          ],
+          "why": "Requires a NIST-certified or traceable calibration thermometer."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

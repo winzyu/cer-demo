@@ -5,7 +5,7 @@
   "turns": [
     {
       "turn": 1,
-      "query": "Water at one of our sites was 20 °C this morning and the barometer on the pod read 760 mm. If that water were fully saturated with air, what should the DO sensor be showing?",
+      "query": "Using USGS A6.2 table 6.2-2, what is the freshwater equilibrium dissolved-oxygen saturation value at 20 °C and 760 mmHg?",
       "relevant": [
         {
           "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__b2afa57c2372",

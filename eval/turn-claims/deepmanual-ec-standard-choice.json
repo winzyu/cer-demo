@@ -1,0 +1,72 @@
+{
+  "fixtureId": "deepmanual-ec-standard-choice",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "sc-diw-below-3-uscm-01",
+          "rubric": [
+            1,
+            4
+          ],
+          "why": "Forbids DIW calibration while allowing a rinse-water response check."
+        },
+        {
+          "claimId": "sc-diw-zero-check-01",
+          "rubric": [
+            4
+          ],
+          "why": "Distinguishes a dry-air or DIW zero-response check from calibration."
+        },
+        {
+          "claimId": "sc-calibrate-above-200-01",
+          "rubric": [
+            2
+          ],
+          "why": "Recommends standards above 200 microsiemens/cm because lower values are vulnerable to bias."
+        },
+        {
+          "claimId": "sc-low-conductivity-standard-contamination-01",
+          "rubric": [
+            2
+          ],
+          "why": "Explains contamination and dilution susceptibility of low-conductivity standards."
+        },
+        {
+          "claimId": "sc-one-point-standard-values-01",
+          "rubric": [
+            3
+          ],
+          "why": "Selects the nearest expected-value standard and supplies the 500 microsiemens/cm example."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "sc-diw-below-3-uscm-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Gives the less-than-3 limit that the 6 microsiemens/cm reading fails."
+        },
+        {
+          "claimId": "sc-diw-zero-check-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives the low-end check method and threshold that 6 microsiemens/cm exceeds."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

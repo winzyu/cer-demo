@@ -1,0 +1,91 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-27T19:49:11.157Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 601613,
+    "cachedPromptTokens": 434560,
+    "completionTokens": 87462
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 1.0833333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.6,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.3125,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.3,
+        "coverage": 1,
+        "met": true
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": true,
+      "findings": []
+    }
+  ]
+}

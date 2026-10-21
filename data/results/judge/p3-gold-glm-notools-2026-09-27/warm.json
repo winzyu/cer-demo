@@ -1,0 +1,104 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-27T08:17:36.093Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 590861,
+    "cachedPromptTokens": 99216,
+    "completionTokens": 79117
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 1.0416666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.125,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.4375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.2777777777777777,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer declares the standard buffers adequate at pH 3.2 (\"standard buffers are fine at pH 3.2\") violating the must-not item and it misses the 1.68-buffer requirement the bracketing failure at pH 3.2 the 10 °C buffer-temperature condition and the 0.05 pH-unit check. Unmet: States the usual 4/7/10 buffer set is not sufficient for acidic water and a pH 1.68 (or 2) buffer is needed when acidic waters are measured; States the sample pH must fall inside the calibrated range so a 4/7/10 set does not bracket pH 3.2; States the calibration buffers must be within about 10 C of the sample temperature; States that a check of the buffer nearest the sample pH should be within about 0.05 pH unit of its value at that temperature or the system is recalibrated"
+        },
+        {
+          "fixtureId": "crossdoc-do-calibrated-dry-deployed-brackish",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes the minimum-frequency midday-drift and continuous-sonde points but omits the sampling-location exemption the DO post-calibration check details and the QA-plan drift-criteria condition and it violates a must-not by asserting the EPA SOP 'sets a different cadence than the USGS guidance' without any support for the USGS cadence. Unmet: EPA cadence includes an end-of-day calibration check except when the instrument is calibrated at each sampling location; DO post-calibration check is done in measurement mode recording DO temperature and barometric pressure for comparison against an oxygen-solubility chart; The SOP's own drift criteria apply only when the project quality assurance plan does not specify its own"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "note": "Label -> arm mapping. DO NOT open before grading is complete and scores.csv is filled in.",
+  "pass": "warm",
+  "run": "p3-calib-2026-09-24",
+  "generatedAt": "2026-09-24T23:52:48.315Z",
+  "key": {
+    "crossdoc-how-steady-before-i-write-it-down": {
+      "A": "hybrid-slice-vector",
+      "B": "gold-context"
+    },
+    "crossdoc-soft-water-ph-wont-settle": {
+      "A": "hybrid-slice-vector",
+      "B": "gold-context"
+    },
+    "deepmanual-brackish-do-correction": {
+      "A": "gold-context",
+      "B": "hybrid-slice-vector"
+    },
+    "definitional-eh-versus-the-millivolts-we-log": {
+      "A": "hybrid-slice-vector",
+      "B": "gold-context"
+    },
+    "followup-mixing-the-clarity-bottle": {
+      "A": "hybrid-slice-vector",
+      "B": "gold-context"
+    },
+    "precedence-ph-river-range-not-pod-limit": {
+      "A": "gold-context",
+      "B": "hybrid-slice-vector"
+    },
+    "probecal-ec-never-recalibrate": {
+      "A": "hybrid-slice-vector",
+      "B": "gold-context"
+    },
+    "refusal-how-long-can-it-stay-in": {
+      "A": "hybrid-slice-vector",
+      "B": "gold-context"
+    }
+  }
+}

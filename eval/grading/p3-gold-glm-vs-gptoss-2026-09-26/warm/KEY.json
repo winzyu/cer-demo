@@ -1,0 +1,28 @@
+{
+  "note": "Label -> arm mapping. DO NOT open before grading is complete and scores.csv is filled in.",
+  "pass": "warm",
+  "run": "p3-gold-glm-vs-gptoss-2026-09-26",
+  "generatedAt": "2026-09-27T01:40:22.061Z",
+  "key": {
+    "crossdoc-conductivity-rise-with-warming": {
+      "A": "gpt-oss-120b",
+      "B": "glm-5p3-flash"
+    },
+    "deepmanual-brackish-do-correction": {
+      "A": "glm-5p3-flash",
+      "B": "gpt-oss-120b"
+    },
+    "definitional-required-versus-recommended": {
+      "A": "glm-5p3-flash",
+      "B": "gpt-oss-120b"
+    },
+    "probecal-ph-slope-acceptance": {
+      "A": "gpt-oss-120b",
+      "B": "glm-5p3-flash"
+    },
+    "refusal-temperature-harm-threshold": {
+      "A": "glm-5p3-flash",
+      "B": "gpt-oss-120b"
+    }
+  }
+}

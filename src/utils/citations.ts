@@ -19,6 +19,9 @@ export interface CitationEvidence {
 const MARKERS = /【(?:[^【】\n]*】|\s*\d+\s*(?:[†‡:|,;–—-]\s*)?["“”„‟″][^【】\n]*?["“”„‟″]\s*[}\]]+(?:】)?|[^【】\n]*(?=[\n【]|$))/g;
 const DOCUMENT = /^【\s*(\d+)\s*(?:(?:[†‡:|,;–—-]\s*)?["“”„‟″]([^【】\n]*?)["“”„‟″]|†\s*L(\d+)(?:\s*-\s*L?(\d+))?)?\s*】$/;
 
+/** Remove prior-turn citation handles using the same parser as citation auditing. */
+export const stripCitationMarkers = (text: string): string => text.replace(MARKERS, "");
+
 export const normalizeHyphens = (text: string): string => text.replace(/[\u2010-\u2015\u2212\ufe63\uff0d]/g, "-");
 
 export const assessCitations = (

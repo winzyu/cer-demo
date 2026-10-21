@@ -340,4 +340,18 @@ describe("bucketize", () => {
     expect(buckets).toHaveLength(10);
     expect(buckets[buckets.length - 1].max).toBe(99);
   });
+
+  it("keeps the earliest partial day of a 60-day auto series that starts mid-day", () => {
+    // Hourly readings over exactly 60 days from 12:00Z: 61 calendar days, the first one partial.
+    const start = Date.parse("2026-07-01T12:00:00.000Z");
+    const sixtyDays: Sample[] = Array.from({ length: 60 * 24 + 1 }, (_, index) => sample(
+      new Date(start + index * 3_600_000).toISOString(),
+      index === 0 ? -1 : 10,
+    ));
+    const buckets = aggregate(sixtyDays, "series", 200).series!;
+
+    expect(buckets.length).toBeLessThanOrEqual(60);
+    expect(buckets.reduce((sum, bucket) => sum + bucket.n, 0)).toBe(sixtyDays.length);
+    expect(Math.min(...buckets.map((bucket) => bucket.min))).toBe(-1);
+  });
 });

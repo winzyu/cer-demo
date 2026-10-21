@@ -1,0 +1,54 @@
+{
+  "id": "deepmanual-spring-upwelling-lookalike-e7",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "cer-water-quality-guidance-v2-excerpt.md"
+  ],
+  "requires": [],
+  "notes": "Drafted for plan E7 and has not been reviewed by a human. Tests the natural pollution look-alike in sections 5.3 and 5.8. The scenario is supplied by the user, not retrieved pod telemetry; no configured thresholds are available.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Consider a coastal pod in Southern California in spring: over two days the water cooled by several degrees while DO and pH both fell. From the guidance, is that enough to call it pollution, or is there a natural look-alike to consider?",
+      "rubric": {
+        "must_contain": [
+          "Identifies coastal upwelling as a plausible natural explanation, not a confirmed diagnosis.",
+          "Explains that upwelling brings cold, low-oxygen, high-CO2 deep water to the surface, so temperature, DO and pH fall together.",
+          "Connects the spring timing and cooling over two days to the documented strongest spring season and 2-6 degrees C cooling over one to three days.",
+          "States that the DO and pH decline can resemble organic pollution and is insufficient on its own to establish pollution."
+        ],
+        "must_not": [
+          "Declares pollution or upwelling confirmed from the supplied pattern alone.",
+          "Calls the supplied readings normal, abnormal, in range or out of range using document values as this pod's thresholds.",
+          "Claims to have checked this pod's readings, wind observations or nearby sites."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "For that same case, what other signs would support upwelling, and what tests does section 5.8 say a candidate pollution event should pass?",
+      "rubric": {
+        "must_contain": [
+          "Identifies a slight salinity rise, little turbidity change and a similar pattern at nearby sites as supporting upwelling signs to check, not observations already established.",
+          "States that a candidate pollution event must pass data-quality checks.",
+          "States that it must be a step change or sustained excursion breaking expected diel, tidal and seasonal patterns.",
+          "States that upwelling, internal tides, a heatwave and direct rainfall must not explain the change.",
+          "States that at least two parameters must show a correlated shift consistent with a section 6 event signature."
+        ],
+        "must_not": [
+          "Treats any two parameters moving together as sufficient proof of pollution.",
+          "Claims that a natural explanation makes the water safe to swim in.",
+          "Invents specific section 8 procedures or acceptance thresholds absent from the excerpt."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ],
+        "notes": "Section 5.8 references section 8, which is omitted from the supplied excerpt; require only the stated data-quality condition, not missing procedures."
+      }
+    }
+  ]
+}

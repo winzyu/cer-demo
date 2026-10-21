@@ -103,7 +103,7 @@
     },
     {
       "turn": 2,
-      "query": "Fine - so what do I carry to check it with? Our water runs somewhere around 700 in the summer.",
+      "query": "Fine - so what do I carry to check it with? Our water runs somewhere around 700 µS/cm in the summer.",
       "relevant": [
         {
           "chunkId": "EC_K_1.0_probe.pdf__e602012341c1",

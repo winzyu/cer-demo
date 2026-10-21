@@ -1,0 +1,132 @@
+{
+  "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "a60-tbl601-caption-01",
+          "rubric": [
+            6
+          ],
+          "why": "Defines stabilization over five or more measurements; matches the explicit evidence."
+        },
+        {
+          "claimId": "a60-xcut-tbl601-all-01",
+          "rubric": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "why": "Supplies the general table's parameter-specific tolerances."
+        },
+        {
+          "claimId": "a60-xcut-equilibrate-01",
+          "rubric": [
+            6
+          ],
+          "why": "Requires stabilization over consecutive measurements; matches the explicit evidence."
+        },
+        {
+          "claimId": "a60-xcut-sw-60s-median3-01",
+          "rubric": [
+            7,
+            8
+          ],
+          "why": "Gives the surface-water minimum and manufacturer guidance."
+        },
+        {
+          "claimId": "mp-60s-surface-water-06",
+          "rubric": [
+            7
+          ],
+          "why": "Gives the surface-water thermal-equilibrium minimum; matches the evidence's 60-second requirement."
+        },
+        {
+          "claimId": "mp-60s-groundwater-03",
+          "rubric": [
+            8
+          ],
+          "why": "States that 60 seconds is a minimum and some instruments require longer; matches explicit evidence."
+        },
+        {
+          "claimId": "mp-60s-longer-manufacturer-07",
+          "rubric": [
+            8
+          ],
+          "why": "Requires checking manufacturer guidance for waits longer than 60 seconds."
+        },
+        {
+          "claimId": "mp-equilibrium-range-04",
+          "rubric": [
+            8
+          ],
+          "why": "Explains waits of several minutes depending on instrument and temperature change."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "a60-tbl601-caption-01",
+          "rubric": [
+            3
+          ],
+          "why": "Defines the table as variability criteria; matches the explicit evidence."
+        },
+        {
+          "claimId": "a60-xcut-tbl601-all-01",
+          "rubric": [
+            1
+          ],
+          "why": "Supplies the general-table side of the comparison with multiparameter criteria."
+        },
+        {
+          "claimId": "a60-xcut-exceeds-criteria-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives extended equilibration, extra readings and documented final-value selection; matches the explicit evidence."
+        },
+        {
+          "claimId": "a60-tbl601-multiparam-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Explicitly refers multiparameter users to A6.8 for similar criteria."
+        },
+        {
+          "claimId": "mp-t5-accuracy-caveat-08",
+          "rubric": [
+            3
+          ],
+          "why": "Separates stabilization criteria from sensor accuracy; matches the explicit evidence."
+        },
+        {
+          "claimId": "mp-t6-equilibrate-temp-09",
+          "rubric": [
+            4
+          ],
+          "why": "Supports further thermal equilibration for unstable readings; matches explicit evidence."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "a60-xcut-gw-median5-01",
+      "why": "Gives the routine groundwater median, not the persistent-variability procedure requested here."
+    },
+    {
+      "claimId": "mp-stabilize-to-table-01",
+      "why": "Matches explicit evidence but only points to a table; it supplies none of the requested numerical criteria or comparisons."
+    }
+  ]
+}

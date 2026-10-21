@@ -22,20 +22,29 @@
 import { config } from "../config";
 import { codedError } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 import { prepareReport } from "../report/produceReport";
 import {
-  flagFor, reportPeriod, statValue, withUnit,
+  parseReportOmit, REPORT_OMIT_DESCRIPTIONS, REPORT_OMIT_GROUPS,
+} from "../report/omit";
+import {
+  flagFor, reportPeriod, runsFor, statValue, withUnit,
 } from "../report/types";
 import { metricBlindSpotNote, WIRE_KEY_TO_METRIC } from "../report/operatorThresholds";
-import { probeAccuracy } from "../report/referenceRanges";
+import { minimumDetectableChange } from "../report/referenceRanges";
 import type {
-  Flag, ReportInput, WaterBodyType, ParameterStats, StatusAssessment,
+  ReportInput, WaterBodyType, ParameterStats, StatusAssessment,
 } from "../report/types";
 import { readingAge } from "./readingAge";
 
 const log = createLogger("GenerateReport");
+
+/** Each `omit` value with what it removes, for the tool description. */
+const omitValues = REPORT_OMIT_GROUPS
+  .map((group) => `${group} = ${REPORT_OMIT_DESCRIPTIONS[group]}`)
+  .join("; ");
 
 export const generateReportDefinition: ToolDefinition = {
   type: "function",
@@ -60,6 +69,15 @@ export const generateReportDefinition: ToolDefinition = {
           type: "string",
           description: "Device name or dev: label. Required whenever more than one device is visible.",
         },
+        omit: {
+          type: "array",
+          description:
+            "Notes to leave out of the PDF, ONLY when the user explicitly asks to remove them "
+            + "(for example to share a cleaner copy). Omit this argument otherwise: a report "
+            + `includes every note by default. Values: ${omitValues}. Numbers, flags, status `
+            + "and recommendations are never removed.",
+          items: { type: "string", enum: [...REPORT_OMIT_GROUPS] },
+        },
       },
       required: ["time_range"],
     },
@@ -72,13 +90,12 @@ const failure = (message: string): SensorToolResult => ({ error: message });
  * One compact line per numeric metric describing where its baseline came from, keyed by the
  * same wire metric names `query_sensor_data`/`get_pod_thresholds` use.
  *
- * Every numeric parameter is now judged against this device's own **operator-configured
- * registry threshold** -- the "Water Quality Metrics -- Source of Truth" table was vetoed in
- * full (project supervisor, 2026-09-13; see docs/timeline.md) and no longer feeds any baseline.
- * A reader who disagrees with a range needs to know it lives in the device registry, not in an
- * approved document, and a metric with no usable threshold has no baseline at all rather than a
- * fallback. The numbers here have already passed `operatorThresholds.ts` validation, so unlike
- * the raw `thresholds` object this is safe to put in front of the model.
+ * Every numeric parameter is judged against this device's own **operator-configured registry
+ * threshold** when it is usable, and otherwise against source-of-truth v2's general range for
+ * the pod's water class where v2 gives one (docs/timeline.md, 2026-10-10). A reader who disagrees
+ * with a range needs to know which it is: a configured one lives in the device registry, a
+ * fallback is generic. The numbers here have already passed validation, so unlike the raw
+ * `thresholds` object this is safe to put in front of the model.
  *
  * The blind-spot clause (`metricBlindSpotNote`) is recomputed here rather than read off
  * `ParameterBaseline.baselineNote`, so this summary's wording does not depend on what the PDF's
@@ -98,6 +115,10 @@ const baselineProvenance = (report: ReportInput): Record<string, string> => {
       return [wireKey, `not established${b.baselineNote ? ` — ${b.baselineNote}` : ""}`];
     }
     const range = `${b.baselineMin}-${b.baselineMax}${b.unit ? ` ${b.unit}` : ""}`;
+    if (b.baselineSource === "v2-fallback") {
+      return [wireKey, `${range} (generic fallback from the source-of-truth document, not a `
+        + "limit set for this site)"];
+    }
     const blindSpot = metricBlindSpotNote(metricKey, b.baselineMin, b.baselineMax);
     return [wireKey, blindSpot ? `${range} (configured; ${blindSpot})` : `${range} (configured)`];
   }));
@@ -109,8 +130,11 @@ const baselineProvenance = (report: ReportInput): Record<string, string> => {
  * and wrote "Action Required" beside "no abnormal conditions" (`CONVERSATION_QA_2026-09-24.md`
  * finding 3).
  */
-const parameterFlags = (report: ReportInput): Record<string, Flag> => Object.fromEntries(
-  report.parameters.map((p): [string, Flag] => [p.baseline.key, flagFor(p, probeAccuracy)]),
+const parameterFlags = (report: ReportInput): Record<string, string> => Object.fromEntries(
+  report.parameters.map((p): [string, string] => {
+    const flag = flagFor(p, minimumDetectableChange);
+    return [p.baseline.key, flag === "N/A" ? "Not assessed" : flag];
+  }),
 );
 
 /**
@@ -125,19 +149,24 @@ const statusReason = (report: ReportInput, basis: StatusAssessment): string => {
   const observed = basis.parameters.map((key) => {
     const p = byKey.get(key) as ParameterStats;
     const b = p.baseline;
+    const runs = runsFor(p, minimumDetectableChange)?.outOfRange ?? [];
+    const since = runs.length > 0 ? `, first from ${new Date(runs[0].startMs).toISOString()}` : "";
     // Keyed as in parameter_flags, and "from ... to" because a hyphen misreads beside a negative.
     return `${key} ranged from ${withUnit(`${statValue(p.min)} to ${statValue(p.max)}`, b.unit)} `
-      + `against its configured ${withUnit(`${b.baselineMin} to ${b.baselineMax}`, b.unit)}`;
+      + `against its ${b.baselineSource === "v2-fallback" ? "generic fallback" : "configured"} `
+      + `${withUnit(`${b.baselineMin} to ${b.baselineMax}`, b.unit)}${since}`;
   }).join("; ");
   switch (basis.rule) {
     case "exceedance":
-      return "Action Required because a parameter went beyond its configured threshold by more "
-        + `than the exceedance margin: ${observed}. This is independent of the event count.`;
+      return "Action Required because a parameter stayed beyond its threshold by more than the "
+        + `exceedance margin for at least three readings in a row: ${observed}. `
+        + "This is independent of the event count.";
     case "high-confidence-high-event":
       return "Action Required because a high-severity event was detected with enough confidence "
         + "to name it; see event_types.";
     case "excursion":
-      return `Watch because a parameter moved outside its configured threshold: ${observed}.`;
+      return "Watch because a parameter stayed outside its threshold for at least three readings "
+        + `in a row: ${observed}. A single reading outside it never sets a flag.`;
     case "event":
       return "Watch because the report flagged a candidate event; see event_types. No parameter "
         + "left its configured threshold.";
@@ -195,20 +224,33 @@ export class GenerateReport {
     }
 
     const device = typeof args.device === "string" ? args.device : undefined;
+    const parsedOmit = parseReportOmit(args.omit);
+    if (parsedOmit.error !== undefined) {
+      return failure(parsedOmit.error);
+    }
+    const { omit } = parsedOmit;
 
     const prepared = await prepareReport(
       this.sensor,
       // Fallback, not an override: the device registry's operating_environment wins when it has
       // one. See BuildReportInputParams.waterBodyTypeFallback.
-      { timeRange, device, waterBodyTypeFallback: this.defaultWaterBodyType },
+      {
+        timeRange, device, omit, waterBodyTypeFallback: this.defaultWaterBodyType,
+      },
       context,
     );
     if (prepared.error !== undefined) {
       return failure(prepared.error);
     }
     const {
-      report, status, statusBasis, narrative, skippedParameters,
+      report, status, statusBasis, narrative, skippedParameters, userNotes,
     } = prepared;
+    const readerNotes = [
+      ...(userNotes ?? []),
+      ...(skippedParameters?.length
+        ? [`No readings for ${skippedParameters.join(", ")}, so the report covers the other parameters only.`]
+        : []),
+    ];
     const { events } = report;
     // The period ends on the device's newest reading, not today, so a silent pod's "last 30
     // days" quietly ends on the day it stopped. The age says so.
@@ -253,10 +295,21 @@ export class GenerateReport {
       // What the page sends to `POST /api/v1/reports` to download the PDF. The arguments this
       // summary was computed from, echoed rather than resolved: the route re-validates them
       // against the caller's own token, so nothing here is trusted on the way back in.
-      report_request: { time_range: timeRange, ...(device ? { device } : {}) },
-      ...(skippedParameters && skippedParameters.length > 0
-        ? { note: `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.` }
-        : {}),
+      report_request: {
+        time_range: timeRange, ...(device ? { device } : {}), ...(omit.length > 0 ? { omit } : {}),
+      },
+      // What the PDF leaves out at the user's request, for the reply to confirm; the summary
+      // above is complete either way.
+      ...(omit.length > 0 ? { omitted_from_pdf: omit } : {}),
+      note: [
+        report.dataQuality?.completenessNotes,
+        report.dataQuality?.calibrationStatus === "Review" ? report.dataQuality.calibrationNotes : null,
+        skippedParameters?.length
+          ? `No readings for: ${skippedParameters.join(", ")}. Report covers the remaining parameters only.` : null,
+      ].filter(Boolean).join(" "),
+      // The review-worthy parts of the data-quality notes (stuck, railed readings) and the site
+      // notes arrive in the series read's reader notes; the usable-reading count is in the PDF.
+      ...(readerNotes.length > 0 ? { [USER_NOTES_FIELD]: readerNotes } : {}),
     };
   }
 }

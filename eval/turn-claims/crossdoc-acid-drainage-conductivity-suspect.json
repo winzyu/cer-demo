@@ -1,0 +1,105 @@
+{
+  "fixtureId": "crossdoc-acid-drainage-conductivity-suspect",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "sc-low-ph-50pct-error-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Explains the low-pH compensation error, its size and hydrogen-ion cause."
+        },
+        {
+          "claimId": "sc-compensation-50pct-lowph-error-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Gives the normal pH range and possible 50 percent error below it."
+        },
+        {
+          "claimId": "sc-low-ph-largest-error-source-01",
+          "rubric": [
+            4
+          ],
+          "why": "Identifies temperature correction as the largest low-pH error source."
+        },
+        {
+          "claimId": "sc-lowph-compare-to-25c-01",
+          "rubric": [
+            5,
+            6
+          ],
+          "why": "Gives the 25 C comparison and both acceptance tolerances."
+        },
+        {
+          "claimId": "sc-report-nonstandard-compensation-01",
+          "rubric": [
+            7
+          ],
+          "why": "Requires recording a nonstandard compensation factor in comments."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "ph-table641-buffers-01",
+          "rubric": [
+            1
+          ],
+          "why": "Requires a pH 1.68 or 2 buffer for acidic waters."
+        },
+        {
+          "claimId": "ph-cal-three-conditions-01",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Requires bracketing the sample pH and buffers within 10 C."
+        },
+        {
+          "claimId": "ph-buffer-within-10c-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the buffer-to-sample temperature limit."
+        },
+        {
+          "claimId": "ph-measurement-envelope-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives the standard measurement procedure's pH envelope."
+        },
+        {
+          "claimId": "ph-cal-procedure-envelope-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives the calibration procedure's pH envelope."
+        }
+      ],
+      "uncovered": [
+        5
+      ]
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "sc-mccleskey-lowph-method-01",
+      "why": "Names an alternative method; neither rubric requires its identity."
+    },
+    {
+      "claimId": "ph-mv-test-168-01",
+      "why": "Gives a millivolt test, not the requested 0.05 pH buffer check."
+    }
+  ]
+}

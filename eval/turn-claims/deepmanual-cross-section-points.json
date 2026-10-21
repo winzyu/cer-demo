@@ -1,0 +1,70 @@
+{
+  "fixtureId": "deepmanual-cross-section-points",
+  "fixtureClass": "deep-in-manual",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "a60-xcut-well-mixed-5pct-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Gives the profile-based well-mixed criterion permitting a centroid measurement."
+        },
+        {
+          "claimId": "a60-small-stream-centroid-01",
+          "rubric": [
+            3
+          ],
+          "why": "Permits a single centroid point in a small well-mixed stream."
+        },
+        {
+          "claimId": "a60-edi-min-four-01",
+          "rubric": [
+            4
+          ],
+          "why": "Gives the minimum four equal-discharge increments."
+        },
+        {
+          "claimId": "a60-ewi-min-10-increments-01",
+          "rubric": [
+            5
+          ],
+          "why": "Gives ten equal-width increments for streams at least five feet wide."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "a60-xcut-edi-60s-median-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives the post-equilibration 60-second median for each EDI vertical."
+        },
+        {
+          "claimId": "a60-xcut-ewi-60s-median-01",
+          "rubric": [
+            2
+          ],
+          "why": "Gives the post-equilibration 60-second median for each EWI vertical."
+        },
+        {
+          "claimId": "a60-xcut-sw-60s-median3-01",
+          "rubric": [
+            1,
+            3
+          ],
+          "why": "Gives the equilibration minimum and final-three-or-more median rule."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

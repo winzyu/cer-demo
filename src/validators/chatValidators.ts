@@ -8,7 +8,7 @@ export interface ChatRequest {
   retrieval?: string;
   /** Opt in to a Server-Sent Events response instead of a single JSON body. */
   stream?: boolean;
-  /** Prior turns, oldest first. Trimmed to the newest `MAX_HISTORY_MESSAGES`. */
+  /** Prior turns, oldest first. Newest history fitting both count and byte caps is retained. */
   history?: ChatMessage[];
   /**
    * Pod the caller has already chosen (the UI's pod selector), by name or `dev:` label.
@@ -33,6 +33,9 @@ const CLIENT_ROLES = ["user", "assistant"] as const;
  */
 const MAX_DEVICE_LENGTH = 120;
 
+/** UTF-8 bytes of the serialized history array, including JSON escaping and punctuation. */
+export const MAX_HISTORY_BYTES = 64 * 1024;
+
 const parseHistory = (value: unknown): ChatMessage[] => {
   if (!Array.isArray(value)) {
     throw new ValidationError("\"history\" must be an array when provided.");
@@ -56,9 +59,31 @@ const parseHistory = (value: unknown): ChatMessage[] => {
     return { role, content } as ChatMessage;
   });
 
-  // Trim oldest first: recent turns carry the conversational context that matters, and the
-  // cap exists to bound cost rather than to reject the request.
-  return messages.slice(-config.chat.maxHistoryMessages);
+  // Keep a contiguous suffix. Treat adjacent user/assistant messages as one exchange so
+  // trimming never separates a normal pair. Other valid role sequences remain supported.
+  // Stop at an oversized exchange instead of replaying older context across a missing turn.
+  let start = messages.length;
+  let bytes = 2; // JSON array brackets.
+  while (start > 0) {
+    let candidate = start - 1;
+    if (messages[candidate].role === "assistant" && messages[candidate - 1]?.role === "user") {
+      candidate -= 1;
+    }
+    if (messages.length - candidate > config.chat.maxHistoryMessages) {
+      break;
+    }
+    const groupBytes = messages.slice(candidate, start).reduce(
+      (total, message) => total + Buffer.byteLength(JSON.stringify(message), "utf8"),
+      0,
+    );
+    const commas = start - candidate - (start === messages.length ? 1 : 0);
+    if (bytes + groupBytes + commas > MAX_HISTORY_BYTES) {
+      break;
+    }
+    bytes += groupBytes + commas;
+    start = candidate;
+  }
+  return messages.slice(start);
 };
 
 /**

@@ -1,0 +1,89 @@
+{
+  "fixtureId": "definitional-what-a-bare-tu-label-tells-us",
+  "fixtureClass": "definitional",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "tby-turbidity-unit-generic-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Defines the generic label as leaving instrument design unspecified."
+        },
+        {
+          "claimId": "tby-jtu-ftu-obsolete-01",
+          "rubric": [
+            4
+          ],
+          "why": "Identifies the historical JTU and FTU labels and their disuse."
+        },
+        {
+          "claimId": "a60-tbl601-units-01",
+          "rubric": [
+            1
+          ],
+          "why": "Expands TU as turbidity units."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "a60-tbl601-units-01",
+          "rubric": [
+            4
+          ],
+          "why": "Expands FNU as formazin nephelometric units."
+        },
+        {
+          "claimId": "tby-nephelometry-definition-01",
+          "rubric": [
+            3
+          ],
+          "why": "Defines the 90-degree detector geometry of nephelometry."
+        },
+        {
+          "claimId": "tby-fnu-family-wavelength-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Links the FNU family to the near-infrared wavelength range."
+        },
+        {
+          "claimId": "tby-ntu-family-wavelength-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Links the NTU family to broad-spectrum light at 400-680 nm."
+        },
+        {
+          "claimId": "tby-t4-ntu-fnu-90deg-01",
+          "rubric": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "why": "Maps wavelength and 90-degree geometry to the expanded NTU and FNU labels."
+        },
+        {
+          "claimId": "tby-t6-fnmu-fnu-expansion-01",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Distinguishes the multibeam label and expands FNU."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

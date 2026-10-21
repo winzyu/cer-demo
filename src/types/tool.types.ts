@@ -61,6 +61,16 @@ export interface ToolContext {
   token?: string;
 }
 
+/**
+ * Result field holding caveats written for a person, as an array of plain sentences.
+ *
+ * A result's `note` is written for the model and carries instructions ("confirm with
+ * query_sensor_data before...") a reader must never see; the page shows only this field.
+ * `ChatOrchestrator` removes it from the copy the model reads, so adding one never changes
+ * the model's input.
+ */
+export const USER_NOTES_FIELD = "user_notes";
+
 /** A tool the loop can dispatch to. */
 export interface ToolHandler {
   definition: ToolDefinition;

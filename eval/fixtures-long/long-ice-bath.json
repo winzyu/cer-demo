@@ -1,0 +1,220 @@
+{
+  "id": "long-ice-bath",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.1-temperature.pdf",
+    "usgs-nfm-a6.4-ph.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+  ],
+  "requires": [],
+  "notes": "Tests whether an ice-bath temperature check remains coherent after a switch to pH sampling in fast current and later references to bath preparation.\nClaims: t-0c-diw-ice-01, t-0c-container-fill-01, t-0c-stir-uniform-01, t-0c-trend-remedy-01, t-certified-spec-01, ph-no-fast-flow-immersion-01, ph-fast-flow-bulb-damage-01, ph-fast-flow-equilibrium-01, ph-surface-methods-01, ph-diurnal-surface-01, mp-cal-records-01, t-record-001-resolution-01.\nTurn roles: 1=early; 2=early; 3=early; 4=on-topic; 5=switch; 6=on-topic; 7=return; 8=back-reference(2); 9=back-reference(3); 10=cross-document; 11=on-topic; 12=capped-back-reference(1).",
+  "turns": [
+    {
+      "role": "user",
+      "content": "I'm setting up a zero-degree check for our field thermometer before the next trip. Can I use ordinary freezer ice, and how small a container can I get away with?",
+      "rubric": {
+        "must_contain": [
+          "Uses ice made from deionized water for a true 0-degree-Celsius check.",
+          "Uses deionized water for the bath liquid.",
+          "Allows a 1,000-milliliter Dewar flask, or a larger container if needed."
+        ],
+        "must_not": [
+          "Treats an arbitrary cup of ordinary ice water as a guaranteed true zero-degree reference."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The middle and the edge don't read quite the same. How should I check around the bath, and can I use the reference probe to stir it?",
+      "rubric": {
+        "must_contain": [
+          "Checks readings at multiple locations within the bath.",
+          "Uses the certified or traceable sensor for those checks.",
+          "Does not use the sensor as a stirring tool."
+        ],
+        "must_not": [
+          "Recommends stirring the bath with the temperature sensor."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The reading is still creeping instead of holding. What practical changes to the bath should I try?",
+      "rubric": {
+        "must_contain": [
+          "Suggests stirring the bath more.",
+          "Suggests adding more ice.",
+          "Suggests insulating the bath."
+        ],
+        "must_not": [
+          "Accepts a steadily drifting bath as a stable verification reference."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "I'm borrowing a certified reference thermometer for this. What range, accuracy and display detail does that reference need?",
+      "rubric": {
+        "must_contain": [
+          "Requires a reference range covering at least -5 to 45 degrees Celsius.",
+          "Requires certified accuracy of plus or minus 0.05 degree Celsius or better.",
+          "Requires readout resolution of at least 0.001 degree Celsius."
+        ],
+        "must_not": [
+          "Confuses the reference thermometer specification with the field sensor's acceptance tolerance."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Different field issue: the creek is running hard and I was going to hold the pH electrode straight in the fast current. Why might that be a bad idea?",
+      "rubric": {
+        "must_contain": [
+          "Advises against immersing the pH electrode in fast-flowing surface water.",
+          "Warns that scratching, pitting, or coating can damage the glass bulb and impair its function.",
+          "Notes that rapidly moving water can affect reference-junction equilibrium."
+        ],
+        "must_not": [
+          "Says faster flow always improves pH electrode performance."
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Could we use a sample from the churn instead, and if morning and afternoon pH differ, could the plants be part of it?",
+      "rubric": {
+        "must_contain": [
+          "Allows pH measurement on a sample withdrawn from an approved compositing device such as a churn or cone splitter.",
+          "Identifies photosynthesis as a cause of daily surface-water pH variation.",
+          "Identifies respiration as a cause of daily surface-water pH variation."
+        ],
+        "must_not": [
+          "Attributes every morning-to-afternoon pH difference to instrument failure."
+        ],
+        "cite": [
+          "usgs-nfm-a6.4-ph.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "OK, back to the ice-bath check in the workshop. If it starts drifting again while we get ready, what are the simple fixes?",
+      "rubric": {
+        "must_contain": [
+          "Stirs the bath more to address unstable or nonuniform readings.",
+          "Adds more ice as a possible remedy.",
+          "Insulates the bath as a possible remedy."
+        ],
+        "must_not": [
+          "Answers about fast-current pH sampling instead of the temperature bath."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "That middle-versus-edge check from earlier - which sensor do I use, where do I check, and what mustn't I use it for?",
+      "rubric": {
+        "must_contain": [
+          "Uses a certified or traceable temperature sensor.",
+          "Checks at multiple locations in the bath.",
+          "Does not use the sensor to stir the bath."
+        ],
+        "must_not": [
+          "Applies the pH fast-flow warning instead of explaining the bath-uniformity check."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "That creeping reading I mentioned near the start has returned. Apart from stirring more, what can I change about the ice and insulation?",
+      "rubric": {
+        "must_contain": [
+          "Recommends more stirring as a remedy for bath trends or nonuniformity.",
+          "Recommends adding more ice.",
+          "Recommends insulating the bath."
+        ],
+        "must_not": [
+          "Explains daily pH changes instead of addressing the drifting bath."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The thermometer lives on our sonde. What reference accuracy and resolution should we write into the check sheet, and where do the calibration records belong?",
+      "rubric": {
+        "must_contain": [
+          "Specifies certified reference accuracy of plus or minus 0.05 degree Celsius or better.",
+          "Specifies reference readout resolution of at least 0.001 degree Celsius.",
+          "Maintains calibration records in the appropriate instrument or sensor logbook."
+        ],
+        "must_not": [
+          "Treats a fine display resolution alone as proof of certified accuracy."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "When I write down the comparison, what precision should I keep, and what range and accuracy should the borrowed reference have?",
+      "rubric": {
+        "must_contain": [
+          "Records comparison measurements to the nearest 0.01 degree Celsius or the maximum display resolution.",
+          "Requires the certified reference to cover at least -5 to 45 degrees Celsius.",
+          "Requires certified reference accuracy of plus or minus 0.05 degree Celsius or better."
+        ],
+        "must_not": [
+          "Rounds every comparison reading to whole degrees Celsius."
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The zero-point setup I asked about first - what should the frozen and liquid parts be made from, and what's the small flask size again?",
+      "rubric": {
+        "must_contain": [
+          "Uses deionized-water ice for the true 0-degree-Celsius bath.",
+          "Uses deionized water for the liquid bath.",
+          "Identifies a 1,000-milliliter Dewar flask as a possible container, with larger sizes allowed as needed."
+        ],
+        "must_not": [
+          "Answers about the pH sample in the churn instead of the ice-bath setup.",
+          "presents a guess about which earlier instrument or procedure is meant as though it were certain"
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
+        ]
+      }
+    }
+  ]
+}

@@ -1,10 +1,13 @@
 {
   "id": "refusal-temperature-harm-threshold",
   "class": "refusal",
-  "expected_to_favor": "direct-feed",
-  "answerable_from": [],
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.1-temperature.pdf",
+    "epa-sop-field-instrument-calibration-2010.pdf"
+  ],
   "requires": [],
-  "notes": "No USGS chapter in this corpus interprets a value ecologically. Gap entries used: a6.8 'No ecological or health interpretation of any value — zero occurrences of \"healthy\", \"aquatic life\", or \"hypoxia\". Like every USGS chapter in this corpus it says how to obtain a defensible number, never what the number means'; a6.2 'States no ecological or regulatory dissolved-oxygen threshold of any kind ... never uses the phrases aquatic life, water-quality criteria, fish kill, eutrophication or stress'; a6.1 'Contains no procedure, threshold, or definition for turbidity, ORP, or pH measurement itself; the chapter is single-parameter'. The failure modes named are the ones the adjacent material invites: a probe's operating temperature envelope and the chapter's plus-or-minus measurement tolerances. The operator source-of-truth document has since been removed from the corpus (see docs/ARCHIVED.md), so every rubric line and gap entry that named it is gone from this fixture, and expected_to_favor's justification no longer rests on it. Predicted to favour direct-feed: the slice now holds only the four probe datasheets, none of them a temperature probe, so it has no temperature-specific material to be tempted by and must refuse outright, while retrieval hands the RAG arm whole chapters of confident-sounding temperature and oxygen figures that invite misapplication as ecological thresholds.",
+  "notes": "The supplied sources do not establish the applicable numeric thermal-harm criterion for this creek, species and season. They do discuss biological and regulatory context, so a refusal must not deny all ecological interpretation. Per-turn evidence supports the temperature chapter's measurement scope and the EPA calibration SOP's role. Expected to favor RAG for source-grounded explanations beyond the probe-only slice.",
   "turns": [
     {
       "role": "user",
@@ -12,7 +15,7 @@
       "rubric": {
         "must_contain": [
           "States that none of these sources give a water temperature at which conditions become harmful to fish or other aquatic life",
-          "States that the USGS temperature chapter is a method for obtaining an accurate reading and offers no interpretation of what a reading means for the stream",
+          "States that the USGS temperature chapter covers measurement and discusses biological and habitat relevance, but does not supply the requested numeric thermal-harm criterion for this site",
           "States that no source here sets a temperature at which an alert should be raised",
           "Declines to name a temperature to flag on rather than supplying one"
         ],
@@ -23,20 +26,29 @@
           "presents the procedural boundary at 40 or 45 degrees C, which concerns sensor verification, as a limit for the waterbody",
           "treats the thermal discharge signature of temperature strongly up with oxygen moderately down as a numeric threshold",
           "invents a seasonal or site-specific temperature baseline and attributes it to these sources"
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf"
         ]
       },
-      "requires_refusal": true
+      "requires_refusal": true,
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "quote": "site are essential for water-quality data collection. Determina-"
+        }
+      ]
     },
     {
       "role": "user",
       "content": "If I want to put \"too warm\" in the report, is there anything in what we've got that I can point at, or am I going to the state for that?",
       "rubric": {
         "must_contain": [
-          "States that none of these sources are regulatory",
+          "States that these sources do not provide the applicable thermal water-quality criterion; does not deny their references to regulatory context",
           "States that the EPA document present is a procedure for calibrating field instruments, not a set of water-quality criteria",
-          "States that the USGS chapters describe how to produce a defensible measurement and never say what the measurement means",
+          "Distinguishes measurement guidance and qualitative environmental interpretation from the missing site-applicable numeric thermal-harm criterion",
           "Confirms that a citable threshold for calling the water too warm has to come from the state or another authority outside these sources",
-          "Offers what the sources do support reporting: the measured values, when the warm stretch occurred and how long it lasted, alongside the oxygen record"
+          "Offers to report supplied measured values, timing, duration and oxygen history, without inventing readings or implying live access in this offline conversation"
         ],
         "must_not": [
           "quotes an EPA or state water-quality criterion as though it came from these sources",
@@ -44,9 +56,23 @@
           "names a designated-use, fishery, or thermal-standard classification threshold",
           "supplies a hedged number in place of a refusal",
           "invents a citation to a document that is not among these sources"
+        ],
+        "cite": [
+          "usgs-nfm-a6.1-temperature.pdf",
+          "epa-sop-field-instrument-calibration-2010.pdf"
         ]
       },
-      "requires_refusal": true
+      "requires_refusal": true,
+      "retrieval_evidence": [
+        {
+          "filename": "usgs-nfm-a6.1-temperature.pdf",
+          "quote": "site are essential for water-quality data collection. Determina-"
+        },
+        {
+          "filename": "epa-sop-field-instrument-calibration-2010.pdf",
+          "quote": "The purpose of this standard operating procedure (SOP) is to provide a framework for calibrating"
+        }
+      ]
     }
   ]
 }

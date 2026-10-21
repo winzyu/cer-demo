@@ -1,0 +1,217 @@
+{
+  "fixtureId": "long-ice-bath",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "t-0c-diw-ice-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Uses ice made from deionized water for a true 0-degree-Celsius check. Uses deionized water for the bath liquid."
+        },
+        {
+          "claimId": "t-0c-container-fill-01",
+          "rubric": [
+            3
+          ],
+          "why": "Allows a 1,000-milliliter Dewar flask, or a larger container if needed."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "t-0c-stir-uniform-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Checks readings at multiple locations within the bath. Uses the certified or traceable sensor for those checks. Does not use the sensor as a stirring tool."
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "claims": [
+        {
+          "claimId": "t-0c-trend-remedy-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Suggests stirring the bath more. Suggests adding more ice. Suggests insulating the bath."
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "claims": [
+        {
+          "claimId": "t-certified-spec-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Requires a reference range covering at least -5 to 45 degrees Celsius. Requires certified accuracy of plus or minus 0.05 degree Celsius or better. Requires readout resolution of at least 0.001 degree Celsius."
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "claims": [
+        {
+          "claimId": "ph-no-fast-flow-immersion-01",
+          "rubric": [
+            1
+          ],
+          "why": "Advises against immersing the pH electrode in fast-flowing surface water."
+        },
+        {
+          "claimId": "ph-fast-flow-bulb-damage-01",
+          "rubric": [
+            2
+          ],
+          "why": "Warns that scratching, pitting, or coating can damage the glass bulb and impair its function."
+        },
+        {
+          "claimId": "ph-fast-flow-equilibrium-01",
+          "rubric": [
+            3
+          ],
+          "why": "Notes that rapidly moving water can affect reference-junction equilibrium."
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "claims": [
+        {
+          "claimId": "ph-surface-methods-01",
+          "rubric": [
+            1
+          ],
+          "why": "Allows pH measurement on a sample withdrawn from an approved compositing device such as a churn or cone splitter."
+        },
+        {
+          "claimId": "ph-diurnal-surface-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Identifies photosynthesis as a cause of daily surface-water pH variation. Identifies respiration as a cause of daily surface-water pH variation."
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "claims": [
+        {
+          "claimId": "t-0c-trend-remedy-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Stirs the bath more to address unstable or nonuniform readings. Adds more ice as a possible remedy. Insulates the bath as a possible remedy."
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "claims": [
+        {
+          "claimId": "t-0c-stir-uniform-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Uses a certified or traceable temperature sensor. Checks at multiple locations in the bath. Does not use the sensor to stir the bath."
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "claims": [
+        {
+          "claimId": "t-0c-trend-remedy-01",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Recommends more stirring as a remedy for bath trends or nonuniformity. Recommends adding more ice. Recommends insulating the bath."
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "claims": [
+        {
+          "claimId": "t-certified-spec-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Specifies certified reference accuracy of plus or minus 0.05 degree Celsius or better. Specifies reference readout resolution of at least 0.001 degree Celsius."
+        },
+        {
+          "claimId": "mp-cal-records-01",
+          "rubric": [
+            3
+          ],
+          "why": "Maintains calibration records in the appropriate instrument or sensor logbook."
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "claims": [
+        {
+          "claimId": "t-certified-spec-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Requires the certified reference to cover at least -5 to 45 degrees Celsius. Requires certified reference accuracy of plus or minus 0.05 degree Celsius or better."
+        },
+        {
+          "claimId": "t-record-001-resolution-01",
+          "rubric": [
+            1
+          ],
+          "why": "Records comparison measurements to the nearest 0.01 degree Celsius or the maximum display resolution."
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "claims": [
+        {
+          "claimId": "t-0c-diw-ice-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Uses deionized-water ice for the true 0-degree-Celsius bath. Uses deionized water for the liquid bath."
+        },
+        {
+          "claimId": "t-0c-container-fill-01",
+          "rubric": [
+            3
+          ],
+          "why": "Identifies a 1,000-milliliter Dewar flask as a possible container, with larger sizes allowed as needed."
+        }
+      ]
+    }
+  ],
+  "neither": []
+}

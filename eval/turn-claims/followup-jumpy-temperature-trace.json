@@ -1,0 +1,43 @@
+{
+  "fixtureId": "followup-jumpy-temperature-trace",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "t-table-erratic-01",
+          "rubric": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "why": "Lists erratic-reading causes and the weak-battery overlap with inaccurate readings."
+        },
+        {
+          "claimId": "t-table-inaccurate-causes-01",
+          "rubric": [
+            4
+          ],
+          "why": "Lists inaccurate-reading causes to distinguish them from erratic-reading checks."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "t-table-erratic-01",
+          "rubric": [
+            1
+          ],
+          "why": "Warns that cable replacement may require recertification."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

@@ -1,0 +1,253 @@
+{
+  "fixtureId": "long-sonde-repair",
+  "fixtureClass": "follow-up",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "mp-t6-scrambled-03",
+          "rubric": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "why": "Checks that the correct measurement units are selected. Inspects connectors for moisture. Inspects connectors for dirt or damage. Checks for loose connections."
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "mp-dry-ports-08",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Dries the sensor port before installing the replacement sensor. Identifies compressed air as a port-drying option."
+        },
+        {
+          "claimId": "mp-solvent-do-warning-09",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Warns that alcohol or other solvents can destroy the optical DO sensing surface. Warns that alcohol or other solvents can damage some plastics and o-rings."
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "claims": [
+        {
+          "claimId": "mp-warning-message-07",
+          "rubric": [
+            1
+          ],
+          "why": "Does not use the instrument until the warning's underlying error is identified, understood, and corrected."
+        },
+        {
+          "claimId": "mp-t6-clean-replace-07",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Replaces damaged sensors. Recalibrates after replacing a damaged sensor."
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "claims": [
+        {
+          "claimId": "mp-t6-display-off-02",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Notes that battery performance decreases as temperature decreases. Carries spare batteries."
+        },
+        {
+          "claimId": "v2x-predawn-battery-check",
+          "rubric": [
+            3
+          ],
+          "why": "Checks battery voltage for a pre-dawn anomaly."
+        },
+        {
+          "claimId": "v2x-battery-brownout",
+          "rubric": [
+            4
+          ],
+          "why": "Identifies simultaneous steps, noise, or dropouts across channels with falling battery voltage as a possible power brownout."
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "claims": [
+        {
+          "claimId": "v2x-marine-stormwater-discriminator",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Recognizes a salinity or specific-conductance decrease near an outfall as part of the marine stormwater pattern. Recognizes the turbidity spike coinciding with rain as a stormwater discriminator. Identifies lower pH as part of the marine stormwater pattern."
+        },
+        {
+          "claimId": "v2x-stormwater-contamination",
+          "rubric": [
+            4
+          ],
+          "why": "Notes that stormwater can carry bacteria, metals, and hydrocarbons."
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "claims": [
+        {
+          "claimId": "v2x-stormwater-contamination",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "States that DataPods cannot measure the metals in stormwater. Declines to supply a metals concentration from those pod measurements."
+        },
+        {
+          "claimId": "v2x-turbidity-loading-proxy",
+          "rubric": [
+            3
+          ],
+          "why": "Describes a turbidity spike as a loading proxy rather than a measured metals concentration."
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "claims": [
+        {
+          "claimId": "mp-warning-message-07",
+          "rubric": [
+            1
+          ],
+          "why": "Keeps the instrument out of use until the error is identified, understood, and corrected."
+        },
+        {
+          "claimId": "mp-t6-clean-replace-07",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Replaces the damaged sensor. Recalibrates after replacement."
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "claims": [
+        {
+          "claimId": "mp-dry-ports-08",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Dries the sensor port before replacing the sensor. Offers compressed air for drying the port."
+        },
+        {
+          "claimId": "mp-solvent-do-warning-09",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Keeps alcohol and other solvents away from the optical DO sensing surface because they can destroy it. Warns that solvents can also damage some plastics and o-rings."
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "claims": [
+        {
+          "claimId": "mp-warning-message-07",
+          "rubric": [
+            1
+          ],
+          "why": "Requires the underlying error to be identified, understood, and corrected before use."
+        },
+        {
+          "claimId": "mp-t6-clean-replace-07",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Requires replacement of a damaged sensor. Requires recalibration after sensor replacement."
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "claims": [
+        {
+          "claimId": "mp-t6-clean-replace-07",
+          "rubric": [
+            2
+          ],
+          "why": "Recalibrates after replacing the damaged sensor."
+        },
+        {
+          "claimId": "v2x-maintenance-step",
+          "rubric": [
+            1
+          ],
+          "why": "Compares an abrupt offset in a serviced channel with the maintenance timestamp and log."
+        },
+        {
+          "claimId": "mp-cal-records-01",
+          "rubric": [
+            3
+          ],
+          "why": "Maintains calibration records in the appropriate instrument or sensor logbook."
+        }
+      ]
+    },
+    {
+      "turn": 11,
+      "claims": [
+        {
+          "claimId": "mp-inspect-cables-11",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Inspects cables for damage. Inspects connectors and sensor ports for corrosion."
+        },
+        {
+          "claimId": "mp-cable-coil-07",
+          "rubric": [
+            3,
+            4
+          ],
+          "why": "Uses cable coils no tighter than 6 inches in diameter. Stores cables clean and dry."
+        }
+      ]
+    },
+    {
+      "turn": 12,
+      "claims": [
+        {
+          "claimId": "mp-t6-scrambled-03",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Checks that the correct measurement units are selected. Inspects connectors for moisture, dirt, or damage. Checks for loose connections."
+        }
+      ]
+    }
+  ],
+  "neither": []
+}

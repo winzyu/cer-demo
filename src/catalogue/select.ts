@@ -26,6 +26,17 @@ export interface UsableGuidance {
   referrals: Map<string, Referral>;
 }
 
+/**
+ * Entries that recommend inspecting the pod or ruling the instrument out first. v2 §9.2 recommends
+ * inspection only when a data issue is likely, so the report shows these only then and the chat
+ * prompt says so on each record, whatever the entries' own conditions say (POST_LAUNCH_BACKLOG.md
+ * §1b, D2; whether the catalogue itself should carry this condition is STAKEHOLDER_QUESTIONS.md
+ * item 26). `fault-first` joined after it turned a real daily pH dip into "an instrument problem"
+ * (`records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md` §3 cause 2): its limitation says the report
+ * runs no fault checks, but per-reading QC now runs them, and an exceedance passed them.
+ */
+export const DATA_ISSUE_ONLY_ENTRIES: ReadonlySet<string> = new Set(["inspect-sensors", "fault-first"]);
+
 export const usableGuidance = (catalogue: Catalogue, includeDrafts: boolean): UsableGuidance => {
   const usable = (status: string): boolean => status === "approved" || (includeDrafts && status === "draft");
   const referrals = new Map(

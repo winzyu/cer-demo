@@ -1,0 +1,54 @@
+{
+  "id": "deepmanual-warming-do-coupling-e7",
+  "class": "deep-in-manual",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "cer-water-quality-guidance-v2-excerpt.md"
+  ],
+  "requires": [],
+  "notes": "Drafted for plan E7 and has not been reviewed by a human. Tests sections 11, 6.2, 6.4 thermal discharge and 5.6. Flat conductivity must be qualified as corrected specific conductance or salinity; marine-heatwave criteria are document background, not configured pod thresholds.",
+  "turns": [
+    {
+      "role": "user",
+      "content": "In a hypothetical pod record, DO in mg/L fell as the water warmed while conductivity stayed flat. What does that suggest according to the guidance, and what detail about the conductivity channel matters?",
+      "rubric": {
+        "must_contain": [
+          "Explains the inverse temperature-DO relationship: warmer water holds less oxygen, so DO in mg/L can fall as temperature rises.",
+          "Treats warming as a possible explanation rather than concluding that an organic discharge caused the DO decline.",
+          "Distinguishes raw conductivity from temperature-corrected specific conductance or salinity; the latter should be used for this comparison.",
+          "States that raw conductivity rises about 2 percent per degree C, so the unspecified flat conductivity channel cannot simply be assumed to mean unchanged salinity."
+        ],
+        "must_not": [
+          "Assumes without qualification that the supplied conductivity is temperature-corrected.",
+          "Declares a thermal discharge, marine heatwave or organic pollution confirmed from these observations alone.",
+          "Calls the DO normal or abnormal without configured pod thresholds."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Suppose that flat channel is temperature-corrected specific conductance. What additional patterns would distinguish a thermal discharge from a marine heatwave, and how does the guidance define the latter?",
+      "rubric": {
+        "must_contain": [
+          "Describes the thermal-discharge signature as warming with DO falling in mg/L but percent saturation roughly unchanged.",
+          "States that thermal discharge has little change in the other listed chemistry, including specific conductance or salinity, ORP, pH and turbidity.",
+          "Contrasts a marine heatwave as regional sustained warming lasting days to weeks, rather than diagnosing a discharge from one warming pod.",
+          "Gives the literature marine-heatwave definition as temperature above the 90th percentile of local seasonal climatology for at least five consecutive days.",
+          "Separately attributes the fallback to CER: more than 2 degrees C above the same-week site baseline for at least five days when a long climatology is unavailable."
+        ],
+        "must_not": [
+          "Treats flat corrected conductivity alone as enough to distinguish thermal discharge from a marine heatwave.",
+          "Presents the CER fallback or literature definition as this pod's configured alert threshold.",
+          "Invents regional observations, a site baseline or a calculated percent saturation for this scenario.",
+          "Claims that a natural heatwave cannot raise hypoxia risk."
+        ],
+        "cite": [
+          "cer-water-quality-guidance-v2-excerpt.md"
+        ]
+      }
+    }
+  ]
+}

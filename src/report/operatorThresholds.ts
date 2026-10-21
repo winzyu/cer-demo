@@ -7,7 +7,7 @@
  * closes with "Establish a site-specific baseline before treating deviations as events." That
  * site-specific baseline is not missing — it is in the backend's Firestore device registry, as
  * `thresholds.minTemperature` / `thresholds.maxTemperature`, set on 13 of the 15 live devices
- * (`docs/migration/BACKEND_FIELDS.md` §3, §3a). This module is the bridge, and it is kept
+ * (`docs/reference/BACKEND_FIELDS.md` §3, §3a). This module is the bridge, and it is kept
  * separate from `referenceRanges.ts` on purpose: that file is a transcription of two approved
  * documents and nothing operator-entered belongs in it.
  *
@@ -27,10 +27,17 @@
  * "no baseline established", which is exactly what it printed before this module existed —
  * a missing baseline is a safe outcome, a wrong one is not.
  *
+ * Since 2026-10-10 a rejected threshold is not always the end: `resolveLimit` falls back to
+ * source-of-truth v2's general range for the pod's water class where v2 gives one
+ * (`referenceRanges.ts`'s `V2_FALLBACK_RANGES`), and labels it as a generic fallback.
+ *
  * Pure and offline: it takes a plain record and returns a verdict. Nothing here touches the
  * device API.
  */
 import { PLAUSIBLE_RANGES } from "../devices/plausibility";
+import { fallbackWaterClass, V2_FALLBACK_RANGES } from "./referenceRanges";
+import type { FallbackWaterClass } from "./referenceRanges";
+import type { WaterBodyType } from "./types";
 
 /**
  * Sanity rail for an operator-entered temperature **baseline edge**, in °F.
@@ -80,7 +87,7 @@ export const WIRE_KEY_TO_METRIC: Record<string, MetricThresholdKey> = {
 };
 
 /** Registry field names, exact spellings from the live documents (`BACKEND_FIELDS.md` §1, §3). */
-const FIELD_KEYS: Record<MetricThresholdKey, { min: string; max: string }> = {
+export const FIELD_KEYS: Record<MetricThresholdKey, { min: string; max: string }> = {
   temperature: { min: "minTemperature", max: "maxTemperature" },
   ph: { min: "minPH", max: "maxPH" },
   dissolvedOxygen: { min: "minDissolvedOxygen", max: "maxDissolvedOxygen" },
@@ -95,6 +102,15 @@ const METRIC_LABELS: Record<MetricThresholdKey, string> = {
   dissolvedOxygen: "dissolved oxygen",
   orp: "ORP",
   conductivity: "conductivity",
+};
+
+/** The registry's unit per metric, as `metrics.ts` normalizes readings; pH has none. */
+const UNITS: Record<MetricThresholdKey, string> = {
+  temperature: "°F",
+  ph: "",
+  dissolvedOxygen: "mg/L",
+  orp: "mV",
+  conductivity: "µS/cm",
 };
 
 /**
@@ -267,7 +283,7 @@ export const metricThresholdRejectionReason = (
         + "be read as a range.";
     case "implausible": {
       const [lo, hi] = RAILS[metric];
-      return `This device's ${label} thresholds fall outside a plausible range (${lo} to ${hi}), `
+      return `Not assessed: this device's ${label} thresholds fall outside a plausible range (${lo} to ${hi}), `
         + "so they read as a placeholder rather than a configured limit.";
     }
     default:
@@ -299,7 +315,7 @@ export const thresholdRejectionNote = (reason: ThresholdRejection): string => {
       return "This device's temperature thresholds have a minimum above the maximum, so they "
         + `cannot be read as a range. ${tail}`;
     case "implausible":
-      return "This device's temperature thresholds fall outside the range natural surface water "
+      return "Not assessed: this device's temperature thresholds fall outside the range natural surface water "
         + `occupies (${TEMPERATURE_BASELINE_RAIL_F[0]}-${TEMPERATURE_BASELINE_RAIL_F[1]} °F), so `
         + `they read as placeholders rather than a site baseline. ${tail}`;
     default:
@@ -351,4 +367,77 @@ export const metricBlindSpotNote = (
       : null,
   ].filter((c): c is string => c !== null);
   return clauses.length > 0 ? clauses.join(" ") : undefined;
+};
+
+/** Where a metric's limit came from: the device's own registry row, or v2 §3's general range. */
+export type LimitSource = "operator-threshold" | "v2-fallback";
+
+export type ResolvedLimit =
+  | {
+    assessed: true;
+    min: number;
+    max: number;
+    source: LimitSource;
+    /** Set for a fallback: why the operator threshold was not used. */
+    rejection?: ThresholdRejection;
+    /** v2's qualification of a fallback range, such as coastal upwelling. */
+    note?: string;
+  }
+  | { assessed: false; reason: ThresholdRejection };
+
+const WATER_CLASS_TEXT: Record<FallbackWaterClass, string> = {
+  freshwater: "freshwater",
+  brackish: "brackish or estuarine water",
+  coastal: "Southern California coastal and harbor water",
+};
+
+/**
+ * The limit a metric is judged against: the operator threshold when `metricThreshold` accepts it,
+ * otherwise v2 §3's range for the pod's water class, otherwise not assessed (docs/timeline.md,
+ * 2026-10-10).
+ *
+ * `water` must come from the device registry: with no known water type there is no fallback,
+ * because guessing a column would judge seawater against freshwater's range.
+ */
+export const resolveLimit = (
+  thresholds: Record<string, string | number> | null | undefined,
+  metric: MetricThresholdKey,
+  water: WaterBodyType | undefined,
+): ResolvedLimit => {
+  const verdict = metricThreshold(thresholds, metric);
+  if (verdict.usable) {
+    return {
+      assessed: true, min: verdict.min, max: verdict.max, source: "operator-threshold",
+    };
+  }
+  const fallback = water ? V2_FALLBACK_RANGES[fallbackWaterClass(water)][metric] : undefined;
+  if (!fallback) {
+    return { assessed: false, reason: verdict.reason };
+  }
+  return {
+    assessed: true,
+    min: fallback.min,
+    max: fallback.max,
+    source: "v2-fallback",
+    rejection: verdict.reason,
+    ...(fallback.note ? { note: fallback.note } : {}),
+  };
+};
+
+/**
+ * One sentence saying a metric is judged against v2's general range and why, for the report, the
+ * thresholds tool and the sensor tool alike.
+ */
+export const fallbackLimitNote = (
+  metric: MetricThresholdKey,
+  water: WaterBodyType,
+  min: number,
+  max: number,
+  note?: string,
+): string => {
+  const label = METRIC_LABELS[metric];
+  const range = `${min}-${max}${UNITS[metric] ? ` ${UNITS[metric]}` : ""}`;
+  return `This device has no usable ${label} threshold, so ${label} is judged against the general `
+    + `range for ${WATER_CLASS_TEXT[fallbackWaterClass(water)]} in the source-of-truth document `
+    + `(${range}), a generic fallback rather than a limit set for this site.${note ? ` ${note}` : ""}`;
 };

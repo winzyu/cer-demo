@@ -1,0 +1,122 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-26T21:19:20.051Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 581835,
+    "cachedPromptTokens": 67986,
+    "completionTokens": 92617
+  },
+  "results": [
+    {
+      "arm": "gold-context",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.2,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.1,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-warm-week-oxygen-drop",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the two table values and the ~1.0 mg/L drop but omits pressure dependence salinity correction and the caveat that the site-specific remainder cannot be established and it applies the freshwater solubility values unchanged to the brackish site violating a must-not. Unmet: states equilibrium saturation also depends on barometric pressure so the site's actual pressure changes the benchmark; states that in brackish water the freshwater value must be reduced by a salinity correction factor before comparison with the reading; states the actual warming contribution and remaining site-specific drop cannot be established from these readings alone (pressure salinity initial saturation not given)"
+        },
+        {
+          "fixtureId": "definitional-eh-versus-the-millivolts-we-log",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer asserts Eh and the probe's raw ORP millivolt output are the same numerical value violating the 'must not' item about interchangeability and it omits the noble-metal electrode/water boundary definition the reference-electrode caveat and the Eref addition step. Unmet: states that Eh is an equilibrium potential developed at the boundary between a noble-metal electrode and the water and reflects the redox-active species in solution; states that the millivolts the probe reads are not Eh on their own because that raw reading is against the probe's own reference electrode; states that getting Eh means adding the reference electrode's own potential to the measured reading"
+        },
+        {
+          "fixtureId": "deepmanual-zobell-check",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — All three must-contain points are made but the answer invents a waiting time by asserting the stabilization step is 'usually only a few minutes after the 15-30 min equilibration period' a duration no excerpt gives."
+        },
+        {
+          "fixtureId": "probecal-buffer-handling",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that withholds the storage expiration temperature-protection and logbook facts the rubric asks for making none of the must-contain points (though it avoids the must-not items). Unmet: States that the decanted field bottles should be refreshed before every field trip; States that solution past its expiration date must not be used; States that the solutions must be protected from wide temperature swings and from extreme heat or freezing; States that solution which has been frozen or overheated can no longer be assumed valid and should be discarded; Notes that the lot number expiration date and the temperature at use are recorded in the instrument logbook"
+        },
+        {
+          "fixtureId": "probecal-end-of-day-check",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the EPA pH ±0.3 and DO ±0.5 defaults but then refuses the USGS comparison the rubric expects withholding the ±0.05 pH and ±0.2 mg/L figures and omitting the QA-plan caveat so it is a refusal of facts the rubric asks for. Unmet: States the defaults apply only when the project's QA plan does not specify its own drift criteria; States USGS pH practice is tighter requiring recalibration when a buffer is off by more than ±0.05 pH unit; For USGS oxygen verification accepts the A6.2 saturation check within ±0.2 mg/L distinct from EPA's ±0.5 mg/L"
+        }
+      ]
+    }
+  ]
+}

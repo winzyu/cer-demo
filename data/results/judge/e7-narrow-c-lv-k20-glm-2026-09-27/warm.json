@@ -1,0 +1,141 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-28T03:43:04.358Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1326340,
+    "cachedPromptTokens": 586544,
+    "completionTokens": 86245,
+    "usd": 0.328952064
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.875,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.35,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.1666666666666667,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.1875,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.1333333333333333,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes none of the required points and instead resolves the question by picking the more specific chapter's guidance treating the two tables as possibly differing rather than stating they agree. Unmet: states plainly that the two tables give the same stabilisation criteria and do not conflict; states the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind; states the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer; For persistent variability extends equilibration and records additional measurements then reports median of final five or more or selects a representative final reading with documented judgment"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the A6.8 field-form criteria the rubric asks for (no ±0.1 or ±0.3 pH-unit values no distinction drawn) giving only A6.4's 0.05 pH-unit final-buffer check so the required points are missed. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check requiring agreement within 0.05 pH unit of the certified value at calibration temperature"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal that withholds every requested figure and comparison and no must-contain point asked it to decline so it misses all points. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; states the difference is 0.03 mg/L and assesses its significance against the applicable procedure; notes the USGS values are generated from the Benson and Krause equations; compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives the multiplication method and names table 6.2-4 but withholds the required factor 0.8235 saying it lacks the information which is a refusal of a figure the rubric expects. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer approves diluting commercial/formazin calibrants (\"Yes — the USGS guidance ... describes exactly that practice\") and generalizes the dilution practice beyond the 4 000-unit formazin exception violating the must-not items and it makes none of the required must-contain points. Unmet: states that commercial calibration solutions must not be diluted; gives 4 000-unit formazin as the one exception that may be diluted; explains that diluting changes the suspension matrix so the dilutions are no longer linear; recommends buying commercially prepared solutions at the values needed rather than preparing them by dilution"
+        },
+        {
+          "fixtureId": "deepmanual-zobell-check",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer names ZoBell's solution but omits the timing (before field measurements) the 5 mV agreement with the temperature-corrected table value the 430 mV theoretical Eh at 25 °C and the ±5 mV stabilization requirement so no must-contain point is made. Unmet: States the check is made against ZoBell's solution before field measurements; States the calculated Eh of ZoBell's must come within 5 mV of the table value for the solution's temperature; Gives 430 mV as the theoretical Eh of ZoBell's at 25 °C; States the reading must stabilize to within ±5 mV before the temperature and millivolt value are recorded"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer places pH before specific conductance which the rubric's 'must not' list forbids and it omits temperature-first the ionic-strength rationale and the pH-buffer contamination note. Unmet: Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then oxidation-reduction potential after pH; Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next; Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a refusal that only offers general background on internal data storage and makes none of the rubric's required points about record retention drift rates the turbidity fouling check or the EPA pre/post-calibration criteria. Unmet: States the corpus gives no rule for deciding which part of a long record may be kept and which must be thrown out; States no source gives an allowable rate of drift (per-day or per-week) for a sensor left in the water; States it gives no procedure for correcting or adjusting a record after the instrument comes out; Notes the turbidity chapter's fouling check comparing a calibrant reading before and after cleaning taking the percent difference; States the fouling check quantifies one sensor's condition and is not an acceptance rule for the record; Notes the EPA field calibration SOP calibrates before deployment and checks on recovery defers drift criteria to the QA plan and supplies default post-calibration criteria only when the plan is silent; Declines to convert the EPA post-calibration criteria into a keep-or-discard threshold for a month of record and supplies no drift tolerance beyond them; Notes the EPA default post-calibration criteria are a pass-or-fail check on the instrument at recovery not a rule for how much of the record may be kept and failing data are qualified rather than discarded"
+        }
+      ]
+    }
+  ]
+}

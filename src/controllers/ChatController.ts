@@ -1,14 +1,25 @@
 import { NextFunction, Request, Response } from "express";
+import { config } from "../config";
 import { retrievalRegistry } from "../retrieval";
+import { rewriteQuery } from "../retrieval/queryRewrite";
+import { withSourceTitles } from "../retrieval/sourceTitles";
 import type { RetrievalRegistry } from "../retrieval/RetrievalRegistry";
 import type { Chunk } from "../types/retrieval.types";
+import type { ToolInvocation } from "../types/tool.types";
 import { buildMessages } from "../prompt/promptBuilder";
+import {
+  deliveryLines, hasDeliveryLine, madeReports, withDeliveryLines,
+} from "../report/delivery";
+import { coverageLines, hasCoverageLine } from "../tools/dataCoverage";
 import { LlmService } from "../services/LlmService";
 import type { LlmUsage } from "../services/LlmService";
 import { ChatOrchestrator } from "../services/ChatOrchestrator";
 import { buildToolRegistry } from "../tools";
 import { parseChatRequest } from "../validators/chatValidators";
-import { QuotaService, quotaKeyFor, quotaService } from "../quota";
+import {
+  QuotaService, quotaKeyFor, quotaService, quotaSubjectFor,
+} from "../quota";
+import type { QuotaSubject } from "../quota";
 import { buildAuditLogRecord, writeAuditLog } from "../services/auditLog";
 import { createStreamingCommentaryFilter } from "../utils/answerFormat";
 import { assessCitations } from "../utils/citations";
@@ -18,6 +29,14 @@ import { createLogger } from "../utils/logger";
 import { openSseStream, writeSseEvent } from "../utils/sse";
 
 const log = createLogger("Chat");
+
+/** What earlier replies in this chat carried, as told by the server's own lines. */
+interface EarlierReplies {
+  /** A "New PDF" or "No new PDF" line (`report/delivery.ts`). */
+  report: boolean;
+  /** A "Data covered" or "No new readings" line (`tools/dataCoverage.ts`). */
+  data: boolean;
+}
 
 /**
  * Chat endpoint: retrieve context, assemble the prompt, answer.
@@ -53,6 +72,24 @@ export class ChatController {
     this.quota = quota;
   }
 
+  /**
+   * The answer with its server-written lines: which readings it covered (`SPECS.md` §10.8), then
+   * which PDF it made (§10.7), the latter only while reports are on. Unchanged with the tools off.
+   */
+  private withServerLines(
+    answer: string,
+    invocations: ToolInvocation[],
+    earlier: EarlierReplies,
+  ): string {
+    const reports = this.orchestrator.offersReports;
+    return withDeliveryLines(answer, [
+      ...(this.orchestrator.hasTools
+        ? coverageLines(invocations, earlier.data, reports && madeReports(invocations).length > 0)
+        : []),
+      ...(reports ? deliveryLines(invocations, earlier.report) : []),
+    ]);
+  }
+
   postChat = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const {
@@ -62,18 +99,29 @@ export class ChatController {
       // Counted here rather than in the gate: a request that failed validation never reached
       // retrieval or the model, so charging a weekly allowance for a typo'd body would be a
       // bill for nothing. `quotaKeyFor` is pure, so this is the same bucket `quotaGuard` read.
-      const quotaKey = quotaKeyFor(req);
-      this.quota.recordRequest(quotaKey);
+      // Awaited: if the store cannot count the question, nothing is spent on answering it.
+      const quotaKey = quotaSubjectFor(req);
+      await this.quota.recordRequest(quotaKey);
 
-      // Caller identity for the audit record (`docs/RESPONSIBILITY.md` #6). Forced to "caller"
-      // scope regardless of `QUERY_QUOTA_SCOPE` — the audit trail must identify who asked even
-      // when the quota counter itself is bucketed globally.
+      // Caller identity for the audit record (`docs/records/RESPONSIBILITY.md` #6). Forced to
+      // "caller" scope regardless of `QUERY_QUOTA_SCOPE` — the audit trail must identify who asked
+      // even when the quota counter itself is bucketed globally.
       const callerId = quotaKeyFor(req, "caller");
 
       // Selection rules (including the DEBUG_RETRIEVAL override rule) live in the
       // registry, so this controller stays a thin HTTP wrapper.
       const adapter = this.registry.resolve(retrieval);
-      const chunks = await adapter.getContext(query);
+      // A follow-up is searched as a standalone query when QUERY_REWRITE is on; the prompt below
+      // still carries the user's own words. Off, this is the latest message verbatim.
+      const search = config.retrieval.queryRewrite
+        ? await rewriteQuery(this.llm, query, history, {
+          firstTurn: config.retrieval.queryRewriteFirstTurn,
+        })
+        : { query, usage: undefined };
+      if (search.usage?.totalTokens !== undefined) {
+        this.quota.recordTokens(quotaKey, search.usage.totalTokens);
+      }
+      const chunks = await adapter.getContext(search.query, { originalQuery: query });
 
       // Ordering is load-bearing for prompt caching — see promptBuilder.
       const messages = buildMessages({
@@ -90,6 +138,20 @@ export class ChatController {
       // refuses on its own (`querySensorData.ts`, `generateReport.ts`) when this is undefined.
       const token = callerToken(req);
 
+      // The server, not the model, says which PDF an answer made (`SPECS.md` §10.7). A chat whose
+      // earlier reply carried that line gets "No new PDF" on an answer that made none, which
+      // covers a "done" the claim check cannot recognise.
+      // Likewise an earlier reply that read pod data gets a "no new readings" line on an answer
+      // that read none, so a follow-up never passes off an earlier window as a fresh one.
+      const earlier: EarlierReplies = {
+        report: (history ?? []).some((message) => (
+          message.role === "assistant" && hasDeliveryLine(message.content)
+        )),
+        data: (history ?? []).some((message) => (
+          message.role === "assistant" && hasCoverageLine(message.content)
+        )),
+      };
+
       if (stream) {
         await this.streamAnswer(
           res,
@@ -101,6 +163,7 @@ export class ChatController {
           callerId,
           device,
           token,
+          earlier,
         );
         return;
       }
@@ -109,13 +172,18 @@ export class ChatController {
       // both are constructed once at boot and shared by every request, so anything stored on
       // them would be visible to whatever request runs next. With SENSOR_TOOL off the
       // orchestrator has no tools and this is simply ignored — accepted, with no effect.
-      const answer = await this.orchestrator.run(messages, { device, token });
+      const answer = await this.orchestrator.run(messages, {
+        device,
+        token,
+        earlierReport: earlier.report,
+      });
 
       // Retrospective by necessity — a prompt's cost is not knowable before the call. The
       // request that crosses a token ceiling completes; the next one is refused.
-      this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
+      await this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
 
       const checked = assessCitations(answer.content, chunks, answer.invocations);
+      const reply = this.withServerLines(checked.answer, answer.invocations, earlier);
 
       // Fire-and-forget: `writeAuditLog` never throws and must not delay a response already
       // decided (§ "A logging failure must never fail a user's answer").
@@ -130,18 +198,19 @@ export class ChatController {
       }));
 
       res.status(200).json({
-        answer: checked.answer,
+        answer: reply,
         audit: checked.audit,
         model: answer.model,
         mode: adapter.mode,
         // Retrieved context is returned so the caller can show provenance. N5 turns these
         // into inline quote citations.
-        citations: chunks,
+        citations: withSourceTitles(chunks),
         usage: answer.usage,
         // Tool handles link to invocation evidence, separately from document citations.
         // Omitted entirely when no tool ran, so the pre-N3 response shape is unchanged.
         ...(answer.invocations.length > 0 ? { tool_calls: answer.invocations } : {}),
         ...(answer.capped ? { tool_round_cap_reached: true } : {}),
+        ...(answer.reportRetried ? { report_retried: true } : {}),
       });
     } catch (error) {
       // Express 4 does not forward async rejections — without this, a failing
@@ -161,11 +230,12 @@ export class ChatController {
     messages: ReturnType<typeof buildMessages>,
     mode: string,
     chunks: Chunk[],
-    quotaKey: string,
+    quotaKey: QuotaSubject,
     query: string,
     callerId: string,
     device?: string,
     token?: string,
+    earlier: EarlierReplies = { report: false, data: false },
   ): Promise<void> => {
     const controller = new AbortController();
     /**
@@ -185,7 +255,7 @@ export class ChatController {
     });
 
     openSseStream(res);
-    writeSseEvent(res, "meta", { mode, citations: chunks });
+    writeSseEvent(res, "meta", { mode, citations: withSourceTitles(chunks) });
 
     try {
       if (this.orchestrator.hasTools) {
@@ -199,17 +269,20 @@ export class ChatController {
           device,
           token,
           signal: controller.signal,
+          earlierReport: earlier.report,
         });
-        this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
+        await this.quota.recordTokens(quotaKey, answer.usage.totalTokens);
         const checked = assessCitations(answer.content, chunks, answer.invocations);
-        writeSseEvent(res, "token", { text: checked.answer });
+        const reply = this.withServerLines(checked.answer, answer.invocations, earlier);
+        writeSseEvent(res, "token", { text: reply });
         writeSseEvent(res, "done", {
-          answer: checked.answer,
+          answer: reply,
           audit: checked.audit,
           model: answer.model,
           usage: answer.usage,
           ...(answer.invocations.length > 0 ? { tool_calls: answer.invocations } : {}),
           ...(answer.capped ? { tool_round_cap_reached: true } : {}),
+          ...(answer.reportRetried ? { report_retried: true } : {}),
         });
         writeSseEvent(res, "end", {});
 
@@ -253,7 +326,7 @@ export class ChatController {
 
       // Recorded whether or not the provider reported usage: `recordTokens` drops an absent
       // count rather than charging zero, since "free" and "not reported" are different facts.
-      this.quota.recordTokens(quotaKey, usage?.totalTokens);
+      await this.quota.recordTokens(quotaKey, usage?.totalTokens);
 
       const tail = commentary.flush();
       if (tail) {

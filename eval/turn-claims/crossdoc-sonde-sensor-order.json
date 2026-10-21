@@ -1,0 +1,91 @@
+{
+  "fixtureId": "crossdoc-sonde-sensor-order",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "mp-calibration-order-08",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives the general sensor calibration order; matches explicit evidence."
+        },
+        {
+          "claimId": "mp-ionic-strength-rationale-09",
+          "rubric": [
+            4
+          ],
+          "why": "Explains low-to-high ionic strength as protection against residual-standard bias."
+        },
+        {
+          "claimId": "mp-triple-rinse-10",
+          "rubric": [
+            6
+          ],
+          "why": "Requires three deionized-water rinses between standards."
+        },
+        {
+          "claimId": "mp-calibrate-before-each-use-04",
+          "rubric": [
+            7
+          ],
+          "why": "Requires calibration or checks before each field use."
+        },
+        {
+          "claimId": "mp-a61-a67-definitive-06",
+          "rubric": [
+            3
+          ],
+          "why": "Establishes why the parameter-specific DO procedure can qualify the general order."
+        },
+        {
+          "claimId": "sc-calibrate-sc-before-ph-01",
+          "rubric": [
+            2,
+            5
+          ],
+          "why": "Requires conductivity before pH and explains contamination; matches explicit evidence."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "fm-ph-downstream-of-conductivity-01",
+          "rubric": [
+            1
+          ],
+          "why": "Places separately installed pH sensors downstream of conductivity; matches explicit evidence."
+        },
+        {
+          "claimId": "sc-probe-upstream-of-ph-01",
+          "rubric": [
+            1,
+            3
+          ],
+          "why": "Makes conductivity's upstream position conditional on cell design; matches explicit evidence."
+        },
+        {
+          "claimId": "sc-flowcell-shield-sunlight-01",
+          "rubric": [
+            2
+          ],
+          "why": "Requires a flow cell close to the well and shielded from sunlight."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": [
+    {
+      "claimId": "mp-bracket-standards-04",
+      "why": "Matches explicit evidence but bracketing standards serves no must_contain point in either turn."
+    }
+  ]
+}

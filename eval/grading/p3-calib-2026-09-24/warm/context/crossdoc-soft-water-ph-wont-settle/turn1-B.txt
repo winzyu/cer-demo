@@ -1,0 +1,377 @@
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__14c93889640a)
+
+each vertical.
+2. report mean (or median) value, if appropriate, of the medians of verticals (can be used in area-weighted calculations).
+Test, calibrate, and check field instruments.
+Allow sensors to equilibrate with ambient waters.
+Select sampling method.
+EDI—equal-discharge increment
+EWI—equal-width increment
+Figure 6.0–1. 	In situ field-measurement procedures for surface water.
+
+-- 18 of 32 --3.0 	Performing Field Measurements 	11
+Step 1
+Test, calibrate, and check field instruments.
+Step 2
+Select sampling method and determine sampling locations.
+• 	Composite samples: Go to step 3.
+• 	Noncomposite or discrete samples: Go to step 4.
+Step 3
+Field rinse precleaned sampling and compositing or splitting equipment. Collect
+sample in compositing device using clean-hands/dirty-hands procedures.
+Step 4
+Withdraw whole-water subsample or filter the samle (if necessary). Rinse
+collection vessel(s) three times with sample (filtrate for filtered samples).
+Step 5
+Rinse sensors, measurement vessels, and other apparatus three times with
+sample. Rinse with deionized water for alkalinity measurement.
+Step 6
+Pour sample into measurement vessel; insert sensor(s).
+• 	Allow sensors to equilibrate to sample temperature.
+• 	Do not allow sensors to touch bottom or sides of vessel.
+Step 7
+Swirl or stir gently.
+• 	Minimize vortex; keep sensors out of vortex.
+• 	For pH measurement, do not stir samples having conductivity less than 100 μS/cm.
+• 	When using magnetic stir bar, use smallest stir bar.
+Step 9
+Repeat at step 6 on two or moe subsamples from the same sample volume
+to document precision. Rinse sensors thoroughly with deionized water.
+Step 8
+Record field measurement and procedures on field forms.
+• 	Record median value of stabilized readings (see table 6.0-1).
+• 	If readings do not stabilize, incease number of measurements and record last five or more sequential readings.
+• 	If there is a consistent trend toward lower or higher values, record the first value, the range of values, and the time
+period observed.
+Figure 6.0–2. 	Subsample field-measurement procedures for conductivity, pH, and alkalinity of surface water. (μS/cm, microsiemens
+per centimeter at 25 degrees Celsius)
+
+-- 19 of 32 --
+
+12 	Chapter A6.0. Guidelines for Field-Measured Water-Quality Properties
+Figure 6.0–3. 	Sketch of a manifold
+and flow-through cell/chamber used
+during well purging and sample
+collection.
+
+-- 20 of 32 --
+
+3.0 	Performing Field Measurements 	13
+Figure 6.0–4. 	Example of a field form for recording measurements during well purging.
+
+-- 21 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.0/tm9a6.0.pdf (chunk usgs-nfm-a6.0-field-measurement-guidelines.pdf__3d55916fcc8a)
+
+ial thanks are extended to Franceska Wilde (USGS),
+who led the effort for the NFM from its inception until her
+retirement in 2014; the USGS NFM Steering Committee
+(Gerolamo Casile, Alissa Coes, Michael Manning, Cherie
+Miller, Timothy Oden, Lisa Olsen, and Stanley Skrobialowski;
+Cherie Miller, who led the effort from 2016 to 2018; and
+Gerolamo Casile, who assumed responsibility for the NFM in
+2018.-- 27 of 32 --
+
+20 	Chapter A6.0. Guidelines for Field-Measured Water-Quality Properties
+Step 1
+Test, calibrate, and check field instruments.
+Step 2
+Purge well; see text for exceptions and instructions.
+Step 3
+Collect sample in compositing device using clean-hands/dirty-hands procedures. Lower
+sampler smoothly to desired depth; raise sampler smoothly at a constant rate, keeping
+lines clean and off the ground. Place sampler in holding stand.
+Step 4
+Withdraw subsamples from sampler. Attach clean bottom-emptying device if using a bailer.
+Filter inline to bottle/measurement vessel. Drain subsample without turbulence into
+bottles/vessel. Rinse bottle three times with sample (filtrate for filtured samples), fill to top,
+cap tightly, and maintain at temperature of source until measurment.
+Step 5
+Rinse sensors, measurement vessels, and other apparatus three times
+with sample. Rinse with deionized water for alkalinity measurement.
+Step 6
+Pour sample into measurement vessel; insert sensor(s).
+• 	Allow sensors to equilibrate to sample temperature.
+• 	Do not allow sensors to touch bottom or sides of vessel.
+Step 7
+Swirl or stir gently.
+• 	Minimize vortex; keep sensors out of vortex.
+• 	For pH measurement, do not stir samples having conductivity less than 100 μS/cm.
+• 	When using magnetic stir bar, use smallest stir bar.
+Step 8
+Record field measurement and procedures on field forms.
+• 	Record median value of stabilized readings (see table 6.0-1).
+• 	If readings do not stabilize, incease number of measurements and record last five or more sequential readings.
+• 	If there is a consistent trend toward lower or higher values, record the first value, the range of values, and the time
+period observed.
+Step 9
+Repeat from step 6 on two or more subsamples from the same sample volume
+to document precision. Rinse sensors thoroughly with deionized water.
+Figure 6.0–7. 	Subsample field-measurement procedures for conductivity, pH, and alkalinity of groundwater. (μS/cm, microsiemens
+per centimeter at 25 degrees Celsius)
+
+-- 28 of 32 --
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__17e96af99482)
+
+n of the filling solution, as recommended by the
+electrode manufacturer, within the electrode is required to
+obtain accurate measurements.
+Figure 6.4–2. 	Diagram of a combination (single-junction) pH electrode (Ag, silver; AgCl, silver chloride). Modified from pH-meter.info—
+pH electrode construction, accessed February 4, 2020, at http://www.ph-meter.info/pH-electrode-construction.
+
+-- 13 of 32 --6 	Chapter A6.4. Measurement of pH
+The reference junction in the combination electrode is
+an electrically conductive bridge that completes the circuit
+between the reference solution and the sample being mea-
+sured. Typically, this junction is made of a porous material
+such as ceramic, Teflon, or glass fiber. Glass capillary tubes
+are also used in some electrodes. A properly functioning junc-
+tion is important for accurate pH measurements.
+Combination electrodes are housed in either a glass or
+an epoxy body. Epoxy construction is recommended for field
+applications for durability. Most systems today (2020) include
+a thermistor for ATC. Depending on the pH meter, the thermis-
+tor may be a separate probe or may be built into the pH elec-
+trode, or, for multiparameter sondes, it may be incorporated
+into a different part of the instrument.
+Electrode performance degrades with normal use and
+is required to be tracked in the pH-meter/electrode logbook
+by changes in the calibration slope and isopotential point.
+Use of the electrode in severe chemical environments can
+cause more rapid deterioration (table 6.4–2). Many of these
+environments coincide with industrial and urban locations or
+waters that are highly acidic, have high concentrations of dis-
+solved solids, or have high temperatures. If the pH electrode
+is exposed to conditions listed in table 6.4–2, this informa-
+tion should be recorded in the pH-meter/electrode logbook
+and documented in field notes. Plan to replace the electrode
+more frequently if it will be used in the conditions listed
+in table 6.4-2. When measuring pH under specific adverse
+conditions, use electrodes that are designed to operate under
+those conditions (table 6.4–2).
+Table 6.4–2. 	Recommended pH electrodes for a variety of water types.
+[Modified from Ritz and Collins, 2008; H+, hydrogen ion; Na+, sodium ion; <, less than; >, greater than; ≥, greater than or equal to; °C, degrees Celsius; DIW,
+deionized water; M, molar; μS/cm, microsiemens per centimeter at 25 °C]
+Environmental or chemical
+condition Description of water Problem with a common
+combination pH electrode Recommended pH electrode
+Low ionic strength 	Specific conductance <100 μS/
+cm
+Water is not sufficiently
+conductive to complete the
+electrical circuit, causing an
+unstable pH reading.
+Fast-responding (liquid-filled)
+electrode, Ross combination
+glass electrode, double
+junction electrode
+Low pH 	Hyperacidic (pH <0) 	Contamination of the glass
+electrode; non-Nernstian
+response
+Ross combination glass electrode
+Geothermal waters 	High temperature and elevated
+silica concentration
+Polymerization and precipita-
+tion of silica in the reference
+junction upon probe cooling
+Ross combination glass elec-
+trode (soak in 80 °C DIW for
+30 minutes after use)
+Acid-mine waters 	Low pH and elevated iron
+concentration
+Precipitation of iron and
+aluminum hydroxides in the
+reference junction
+Glass pH electrode (soak in
+dilute hydrochloric acid
+[0.1 M] after use)
+Basic ions dominant in solution 	High pH (>10); low H+ activity
+results in measurement of
+other monovalent ions in
+solution
+Sluggish response to changes in
+pH, resulting from dehydration
+of the glass bulb membrane
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.4/tm9a6.4.pdf (chunk usgs-nfm-a6.4-ph.pdf__82b12bdb95cd)
+
+-- 25 of 32 --18 	Chapter A6.4. Measurement of pH
+Step 4. Recheck instrument calibration.
+Check the stability of the pH meter and electrode in the
+field by measuring the pH of the buffer whose pH is nearest
+to that of the samples. If the pH of the buffer differs by more
+than 0.05 pH units from the certified value at the measured
+temperature (table 6.4–3), recalibrate the pH system and then
+remeasure the pH of the sample.
+5.2 	Measurement of pH in Waters with Low
+Specific Conductance
+Accurate and precise measurement of pH in low-specific-
+conductance waters (less than 100 μS/cm) is challenging
+because (1) the water is not sufficiently conductive to complete
+the electrical circuit and allow for a stable pH reading using
+a combination pH electrode, (2) differences in ionic strength
+between the sample and buffers are large, and (3) the potential
+of the liquid junction is larger than normal. Modern reference
+junctions are designed to decrease the effects of low specific
+conductance, but may not always produce the desired accuracy
+for measurements of pH. Low-resistance glass pH electrodes
+or reference junctions with a fast, continuous leak rate can
+be used to make accurate measurements of pH in low-ionic-
+strength waters; however, because these electrodes are expen-
+sive, generally are not designed for fieldwork, and only work
+well in dilute waters, they do not replace traditional electrodes.
+Some methods recommend calibrating with low-ionic-strength
+buffers to minimize liquid junction potential errors, but these
+buffers are easily contaminated and should be avoided in
+field settings.
+The recommended method allows for using normal
+pH field electrodes and standard pH buffers (table 6.4–3)
+by adding a small amount of potassium chloride (KCl) to a
+subsample of water to increase the specific conductance by
+approximately 150 μS/cm. Increasing the specific conduc-
+tance by this amount has little effect on the hydrogen ion
+activity coefficient; the pH is expected to be affected by less
+than 0.01 pH units (Busenberg and Plummer, 1987). It is first
+recommended to determine the pH by using the procedures
+described in section 5.1. If the sample pH does not stabilize,
+and the specific conductance is less than 100 μS/cm, then the
+following procedure is recommended:
+1. 	Before going to the field, prepare small glass vials
+containing 20 milligrams (mg) of dry potassium chlo-
+ride (KCl—crystalline, American Chemical Society-
+certified). Prepare more vials than the expected number
+of pH measurements. (Note: Addition of other salts [for
+example, sodium chloride] also will increase the specific
+conductance, but KCl is recommended to minimize
+effects on the liquid junction potential.)
+2. 	At the sample site, fill a 250-mL polyethylene bottle with
+raw sample water. Immediately transfer 20 mg KCl to
+the sample solution, cap the solution to minimize trans-
+fer of gases, and gently swirl the bottle to dissolve the
+KCl. Maintain the sample at ambient temperature. This
+procedure will increase the specific conductance of the
+sample by approximately 150 μS/cm.
+3. 	Measure the pH on an aliquot of the KCl-amended
+sample from the 250-mL bottle following the procedure
+
+---
+
+### https://pubs.usgs.gov/tm/09/a6.8/tm9a6.8.pdf (chunk usgs-nfm-a6.8-multiparameter-instruments.pdf__4d253f9f732f)
+
+-
+Web.pdf.
+
+-- 19 of 24 --
+
+12 	Chapter A6.8. Use of Multiparameter Instruments for Routine Field Measurements
+Appendix 6.8–1. 	Example of a U.S. Geological Survey Field Form for Recording
+Sensor Calibrations and Field Measurements
+NOTE: U.S. Geological Survey personnel are advised to use the most recent available version of the form shown in
+figure 6.8–01.01 and other field forms.
+
+-- 20 of 24 --Appendix 6.8–1. 	Example of a U.S. Geological Survey Field Form for Recording Sensor Calibrations and Field Measurements 	13
+October 2023 	5 	GW Form version 9.1
+METER CALIBRATIONS and FIELD MEASUREMENTS
+Calibrated by:___________________________ Location:________________________
+Date:__________________ Time:______________
+Station No. ____________________
+TEMPERATURE Meter make/model __________________ S/N ________________ Thermistor S/N _____________ Thermometer ID _________
+Lab Tested against NIST Thermometer/Thermistor? 	Y 	N 	Date: ___________________ 	± 	°C
+Measurement Location: SINGLE POINT AT _______ ft DEEP STREAMSIDE _____ FT FROM LEFT RIGHT BANK 	VERTICAL AVG/MEDIAN OF _____ PTS
+Field Readings # 1 ______ #2 ______ #3 ______ #4 ______ #5 ______ MEDIAN:_______ ºC Method Code ______ Remark ___ ___ Qualifier __
+Calibration criteria: ± 0.2 ˚C for thermistors 	Local Meter
+Field readings #1______ #2_____ #3_____ #4_____ #5 _____ MEDIAN: _______ mg/L Method Code _______ Remark ___ ___ Qualifier ____
+Zero DO Check __________mg/lL Adj. to __________ mg/L Date: _______________
+Thermister Check? Y 	N Date__________
+Barometer Calibrated? N 	Y 	Date: _________________ Time: ________
+Phase Degrees/Slope/Gain/Scale Factor (100%)________________(Zero)_________
+Calibration Criteria: ± 0.2 mg/L DO saturation _______ %
+DISSOLVED OXYGEN Meter MAKE/MODEL ___________________________________ S/N _________________________
+Sensor Type: Amperometric Luminescent 	Spectrophotometer 	Sensor ID _____________________________Local Meter ID_______________
+Calibration Method: Air-Saturated Water 	Water-Saturated Air
+Sample: SINGLE POINT AT _______ ft DEEP 	VERTICAL AVG. OF _____ POINTS 	BOD BOTTLE 	OTHER______________ Stirrer Used? Y 	N
+Calibration
+Temperature
+ºC
+Barometric
+Pressure
+mm Hg
+DO Table
+Reading
+mg/L
+Salinity
+Correc-
+tion
+Factor
+DO
+Before
+Adjustment
+mg/L
+DO
+After
+Adjust-
+ment mg/L
+pH
+Buffer
+NWIS*
+Lot No.
+Expiration Date
+pH 7
+(99173)
+pH 10
+(99171)
+pH 4
+(99172)
+Vendor
+Lot No.
+pH
+BUFFER
+BUFFER
+TEMP
+THEO-
+RETICAL
+pH FROM
+TABLE
+pH
+BEFORE
+ADJ.
+pH
+AFTER
+ADJ.
+SLOPE 	MILLI-
+VOLTS
+pH 7
+pH ___
+CHECK
+pH ___
+Calibration Criteria: ± 0.1 pH units, ± 0.3 if SC <75us/cm 	*NWIS Lot Numbers are available at: http://wwwnwql.cr.usgs.gov/qas.shtml?Buffers_home
+Millivolts: pH 7 –10 to +10 , pH4 +165 to +195 mV, pH 10 –165 to –195 mV
+Slope Acceptance Criteria: 95% to 102%
+Field Readings #1_________ #2_________ #3_________ #4_________ #5 _________ MEDIAN: _______ Units Remark ___ ___ Qualifier ___
+pH Meter MAKE/MODEL ____________________ S/N _________________ Electrode ID _______________ Type: GEL LIQUID OTHER
+________
+Sample: FILTERED UNFILTERED 	CONE CHURN SPLITTER SINGLE POINT AT _______ ft DEEP 	VERTICAL AVG. OF 	POINTS
+Field readings #1_____ #2_____ #3_____ #4_____ #5 _____ MEDIAN: _______ mmS/cm Method Code _______ Remark ___ ___ Qualifier ___ ___
+Std Value
+mmS/cm
+Std
+Temp
+SC
+Before Adj.
+SC
+After Adj.
+Vendor
+Lot No.
+NWIS
+Parameter Code
+(see last page)
+Expiration Date	NWIS*
+Lot No.
+Calibration Criteria: ± 5 % for SC <100 mS/cm or 3% for SC >100 mS/cm *NWIS Lot Numbers are available at: http://wwwnwql.cr.usgs.gov/qas.shtml?ConductivityStds_home

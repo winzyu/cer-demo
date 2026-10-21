@@ -1,0 +1,135 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-28T02:58:21.524Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1330446,
+    "cachedPromptTokens": 1305752,
+    "completionTokens": 95086,
+    "usd": 0.129345912
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.9166666666666666,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.35,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.3333333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.125,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 0.875,
+            "servable": true,
+            "met": false
+          }
+        ],
+        "overall": 1.1555555555555554,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer misses all four must-contain points — it never says the two tables agree never notes A6.0 points multiparameter users to A6.8 never mentions accuracy varying by model/manufacturer and gives no persistent-variability procedure — and it resolves the raised conflict by directing use of the A6.8 numbers rather than stating the tables agree. Unmet: States plainly that the two tables give the same stabilisation criteria and do not conflict; States the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind; States the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer a separate matter; For persistent variability extends equilibration and records additional measurements then reports the median of the final five or more readings or selects a representative final reading using site knowledge and professional judgment documenting the decision"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer declines the A6.8 criteria the rubric asks for (no ±0.1 or ±0.3/75 µS/cm figures) and so makes no distinction withholding the requested facts even though it correctly reports A6.4's ±0.05 final-buffer check. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check (agreement within 0.05 pH unit of certified value at calibration temperature)"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that supplies none of the required values difference tolerance comparison or protocol advice so it misses every must-contain point. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; states the difference is 0.03 mg/L and assesses its significance against the applicable procedure; notes the USGS values are generated from the Benson and Krause equations; compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the requested factor (0.8235) and table 6.2-4 attribution declining because the value isn't in the excerpts so it is a refusal that misses the rubric's required figure. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm; Attributes the factor to the salinity-correction table in the USGS NFM dissolved-oxygen chapter (table 6.2-4)"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives no recommended sequence (no temperature-first no conductance-before-pH no DO-then-ORP ordering) and no ionic-strength/carryover rationale and it tells the operator the order is arbitrary for the other three violating a must-not item. Unmet: States that the order does matter and gives a recommended sequence; Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then oxidation-reduction potential after pH; Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next; Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        },
+        {
+          "fixtureId": "refusal-how-long-can-it-stay-in",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer is a bare refusal that makes none of the required points about the turbidity fouling check or the EPA field calibration SOP and withholds the supported content the rubric expects. Unmet: States the corpus gives no rule for deciding which part of a long record may be kept; States no source gives an allowable rate of drift (per-day/per-week); States it gives no procedure for correcting/adjusting a record after recovery; Notes the turbidity chapter's fouling check (calibrant before/after cleaning percent difference); States the fouling check quantifies one sensor's condition not an acceptance rule for the record; Notes the EPA field calibration SOP: calibrate before deployment check on recovery defer drift criteria to QA plan default post-calibration criteria only if plan silent; Declines to convert EPA post-calibration criteria into a keep-or-discard threshold supplies no drift tolerance beyond them; Notes EPA default post-calibration criteria are a pass/fail check on the instrument at recovery not a record-retention rule and failing data are qualified not discarded"
+        },
+        {
+          "fixtureId": "probecal-ph-slope-acceptance",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — All four must-contain points are made but the answer uses a working-life figure (12–18 months) as a criterion for whether the electrode is usable — 'two seasons of deployment is well past that typical span' — which has the same effect as the prohibited use of a stated working life as the usability criterion."
+        }
+      ]
+    }
+  ]
+}

@@ -1,21 +1,28 @@
 /* eslint-disable max-classes-per-file -- SensorQueryError is a one-line subclass that belongs
    with the module whose contract it is part of, not in utils/errors.ts, which holds the
    HTTP-shaped errors. Same exemption .eslintrc.js already grants that file. */
+import { createHash } from "crypto";
 import { config } from "../config";
 import { DeviceApiClient } from "../devices/DeviceApiClient";
-import { mergeByTimestamp, resolveChain } from "../devices/mergeChains";
+import {
+  mergeByTimestamp, resolveChain, isChainRefusal, withholdRefused,
+} from "../devices/mergeChains";
 import type { DeviceChain } from "../devices/mergeChains";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
 import { implausibilityReason, isPlausible } from "../devices/plausibility";
+import {
+  allChannelFailureRuns, inTimeOrder, qcReadings, readingGaps, stuckSensorNote, stuckSensorUserNote,
+} from "../devices/readingQc";
+import type { ReadingRun } from "../devices/readingQc";
 import { isAllZeroTurbidity, TURBIDITY_ALL_ZERO_CAVEAT } from "../report/referenceRanges";
 import type {
   DeviceReading,
   DeviceSummary,
   MetricKey,
-  PeriodUnit,
 } from "../types/device.types";
 import { codedError, resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import {
   AGGREGATIONS, aggregate, isAggregation,
@@ -23,14 +30,19 @@ import {
 import type { AggregateResult, Aggregation, Sample } from "./aggregate";
 import {
   TimeRangeError,
-  fetchWindowFor,
-  lookbackMsFor,
   parseTimeRange,
   resolveRange,
-  widerWindow,
 } from "./timeRange";
-import type { FetchWindow, ResolvedRange } from "./timeRange";
+import type { ResolvedRange } from "./timeRange";
 import { readingAge } from "./readingAge";
+import { provenSiteStart, siteNotesForPeriod } from "./currentSite";
+import { dailyCycle, solarOffsetHours, withLocalSolar } from "./dailyCycle";
+import {
+  DAY_MS, SITE_CACHE_MAX_ENTRIES, SITE_CACHE_MAX_ROWS, SITE_CACHE_RETENTION_MS,
+  SITE_CACHE_TTL_MS, SITE_RECENT_DAYS, snapshotSite,
+} from "./siteSnapshot";
+import type { SiteSnapshot } from "./siteSnapshot";
+import { metricVerdict } from "./metricVerdict";
 
 const log = createLogger("SensorTool");
 
@@ -44,10 +56,10 @@ const log = createLogger("SensorTool");
  *
  * - **Everything is computed from the raw period series.** `/water/average` is never called —
  *   it answers an empty window with zeros for all six metrics and drops whole rows when any one
- *   probe faults (`docs/migration/DEVICE_API.md` §12b, §6). See `aggregate.ts`.
- * - **The window is widened when it comes back empty**, because one of the two cleared pods has
- *   been silent for days and the reference instant has to be found before a relative range can
- *   be resolved at all.
+ *   probe faults (`docs/reference/DEVICE_API.md` §12b, §6). See `aggregate.ts`.
+ * - **Recent windows expand when they cannot establish the current site.** Empty windows
+ *   cannot establish the reference instant, and partial nonempty windows may lack the earlier
+ *   centroid context needed to distinguish visits.
  * - **A device has to be chosen.** The legacy service had exactly one deployment; this fleet has
  *   21 visible devices, three of which are duplicate registry rows for the same physical pod.
  */
@@ -85,6 +97,42 @@ export const SUPPORTED_METRICS: readonly MetricKey[] = METRICS.map((metric) => m
 /** §8 step 5 reports pH as "unitless" rather than omitting the field. */
 const unitFor = (key: MetricKey): string => METRIC_BY_KEY.get(key)?.unit ?? "unitless";
 
+/**
+ * How many implausible readings are listed individually per metric. The count and the range
+ * cover all of them; the list only has to let the model quote the readings a claim is about
+ * ("the pH crashed to 2 yesterday") without flooding the result on a probe that railed for days.
+ */
+const EXCLUDED_VALUES_LIMIT = 10;
+
+/**
+ * The readings `excluded_implausible` counts, so the model can tell them apart from the counted
+ * minimum. Before this the result said only "3 excluded" beside a `value` of 7.9, and a claim of
+ * pH 2 had nothing to be checked against. Newest last, the newest `EXCLUDED_VALUES_LIMIT` kept.
+ */
+const excludedImplausibleDetail = (samples: Sample[]): Record<string, unknown> => {
+  const excluded = samples
+    .filter((sample) => sample.valid && sample.plausible === false)
+    .sort((a, b) => a.atMs - b.atMs);
+  if (excluded.length === 0) {
+    return {};
+  }
+  let min = Infinity;
+  let max = -Infinity;
+  excluded.forEach((sample) => {
+    min = Math.min(min, sample.value);
+    max = Math.max(max, sample.value);
+  });
+  const listed = excluded.slice(-EXCLUDED_VALUES_LIMIT);
+  return {
+    excluded_implausible_min: min,
+    excluded_implausible_max: max,
+    excluded_implausible_values: listed.map((sample) => ({ at: sample.at, value: sample.value })),
+    ...(excluded.length > listed.length
+      ? { excluded_implausible_not_listed: excluded.length - listed.length }
+      : {}),
+  };
+};
+
 export interface SensorToolResult {
   [field: string]: unknown;
 }
@@ -92,12 +140,28 @@ export interface SensorToolResult {
 /** Everything the tool returns on failure. Fed back to the model, never thrown (§3). */
 const failure = (message: string): SensorToolResult => ({ error: message });
 
+/** The reader's version of the withheld-predecessor note (see `USER_NOTES_FIELD`). */
+const WITHHELD_USER_NOTE = "Earlier readings from this site are not available to this account, "
+  + "so the history shown may start later than the site's first reading.";
+
+/**
+ * Said when every channel failed at once on three or more consecutive readings (source-of-truth
+ * v2 §7.2 rule 1), in v2 §9.2's "data issue likely" wording; the count is provisional until CER
+ * confirms it (`docs/STAKEHOLDER_QUESTIONS.md` item 25).
+ */
+const TURBIDITY_CAVEAT = "Turbidity is derived from a raw voltage by a provisional, uncalibrated "
+  + "conversion. It is a relative index with no unit, not a calibrated measurement and not NTU.";
+
+const BOARD_FAULT_NOTE = "Every sensor on this pod failed at the same time on three or more "
+  + "consecutive readings. This pattern most likely reflects a sensor or data issue, such as the "
+  + "board not responding, rather than the water; those readings were left out.";
+
 /**
  * Initials of a device name — "Old Woman Creek 2026" → "owc".
  *
  * Exists because of a specific verified trap: the pod everyone calls "OWC" is registered as
  * "Old Woman Creek 2026", and the acronym appears nowhere in the registry
- * (`docs/migration/DEVICE_API.md` §2). Without this, asking about OWC matches nothing and the
+ * (`docs/reference/DEVICE_API.md` §2). Without this, asking about OWC matches nothing and the
  * tool reports "no such device" about a device that exists.
  */
 const initialsOf = (name: string): string => name
@@ -175,6 +239,9 @@ export interface SensorQueryParams {
    * hourly pattern classification. Defaults to `DEFAULT_MAX_BUCKETS`.
    */
   maxBuckets?: number;
+  /** Programmatic only: inspect in-window samples before aggregation or raw truncation.
+   * Includes fault/plausibility flags so the caller can use the same filtering as aggregate. */
+  onSamples?: (metric: string, samples: readonly Sample[]) => void;
 }
 
 export interface QuerySensorDataOptions {
@@ -183,21 +250,10 @@ export interface QuerySensorDataOptions {
   now?: () => number;
   rawLimit?: number;
   defaultDeviceLabel?: string;
-  /** Deployment water type, for the mismatch note. Defaults to `config.waterType`. */
-  waterType?: string;
 }
 
 /** How long a device list is reused. The registry changes on the order of weeks. */
 const DEVICE_CACHE_MS = 5 * 60_000;
-
-/** Empty-window escalations before giving up. Two rungs: day → week → month. */
-const MAX_ESCALATIONS = 2;
-
-/**
- * Floor on the window a query may ask for. Guards the "now" case and any range whose start is
- * in the future, either of which would otherwise compute a zero or negative look-back.
- */
-const MIN_LOOKBACK_MS = 60 * 60_000;
 
 /**
  * Bucket widths a caller may name for `series`.
@@ -221,23 +277,25 @@ export class QuerySensorData {
 
   private readonly defaultDeviceLabel?: string;
 
-  private readonly waterType: string;
-
   /**
    * Keyed by token, because the device API scopes `/devices` to the token holder's organization.
    * A single-slot cache on this shared singleton would serve one caller's fleet to the next.
-   * The empty-string key survives only for an injected `clientOverride`, whose scope is whatever
-   * that client was built with. A real request always carries a token now, so it always has a key
-   * of its own.
+   * Authorization is hashed with the API base URL; the null-token key is distinct and only
+   * usable with an injected client whose authentication scope is fixed by the caller.
    */
   private deviceCache = new Map<string, { at: number; devices: DeviceSummary[] }>();
+
+  private devicePending = new Map<string, Promise<DeviceSummary[]>>();
+
+  private siteCache = new Map<string, SiteSnapshot>();
+
+  private sitePending = new Map<string, Promise<SiteSnapshot>>();
 
   constructor(options: QuerySensorDataOptions = {}) {
     this.clientOverride = options.client;
     this.now = options.now ?? (() => Date.now());
     this.rawLimit = options.rawLimit ?? config.tools.rawLimit;
     this.defaultDeviceLabel = options.defaultDeviceLabel ?? config.deviceApi.defaultDeviceLabel;
-    this.waterType = options.waterType ?? config.waterType;
   }
 
   /**
@@ -272,14 +330,29 @@ export class QuerySensorData {
   }
 
   private async devices(token?: string): Promise<DeviceSummary[]> {
-    const key = token ?? "";
+    const key = createHash("sha256")
+      .update(JSON.stringify([token ?? null, config.deviceApi.baseUrl])).digest("hex");
+    this.deviceCache.forEach((entry, entryKey) => {
+      if (this.now() - entry.at >= DEVICE_CACHE_MS) this.deviceCache.delete(entryKey);
+    });
     const cached = this.deviceCache.get(key);
-    if (cached && this.now() - cached.at < DEVICE_CACHE_MS) {
-      return cached.devices;
+    if (cached) return cached.devices;
+    const pending = this.devicePending.get(key);
+    if (pending) return pending;
+    const read = this.client(token).listDevices().then((rows) => {
+      const devices = dedupeByLabel(rows);
+      this.deviceCache.set(key, { at: this.now(), devices });
+      while (this.deviceCache.size > SITE_CACHE_MAX_ENTRIES) {
+        this.deviceCache.delete(this.deviceCache.keys().next().value as string);
+      }
+      return devices;
+    });
+    this.devicePending.set(key, read);
+    try {
+      return await read;
+    } finally {
+      this.devicePending.delete(key);
     }
-    const devices = dedupeByLabel(await this.client(token).listDevices());
-    this.deviceCache.set(key, { at: this.now(), devices });
-    return devices;
   }
 
   /**
@@ -346,70 +419,99 @@ export class QuerySensorData {
     };
   }
 
-  /**
-   * One window, read across every label in the device's continuity chain.
-   *
-   * There is no fan-out endpoint: repeating `device=` on `/water/period` returns **0 rows**, the
-   * param is not a list there (`BACKEND_FIELDS.md` §4a). So it is one request per label, issued
-   * sequentially rather than in parallel because this is someone else's production API
-   * (`DEVICE_API.md` §9) and the chain is at most three labels long today.
-   *
-   * The survivor is queried first and `mergeByTimestamp` drops only what a *later* label
-   * repeats, so an unmerged pod's series is exactly what it was before chains existed.
-   */
-  private async getPeriodChain(
-    labels: string[],
-    duration: number,
-    unit: PeriodUnit,
-    token?: string,
-  ): Promise<DeviceReading[]> {
-    const client = this.client(token);
-    if (labels.length === 0) {
-      // Not reachable today — `execute` refuses a device with no label first — but an empty list
-      // here would call `/water/period` with no `device` at all, which is an *unfiltered* query
-      // across everything the token can see. Fail to nothing rather than to everything.
-      return [];
-    }
-    if (labels.length === 1) {
-      return client.getPeriod(duration, unit, labels[0]);
-    }
-
+  /** Each hidden predecessor is authorized separately; only its specific refusal is recoverable. */
+  private async readChain(chain: DeviceChain, days: number, token?: string): Promise<{
+    rows: DeviceReading[]; chain: DeviceChain;
+  }> {
+    let authorized = chain;
     const batches: DeviceReading[][] = [];
-    for (let index = 0; index < labels.length; index += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      batches.push(await client.getPeriod(duration, unit, labels[index]));
+    for (let i = 0; i < chain.labels.length; i += 1) {
+      const label = chain.labels[i];
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        batches.push(await this.client(token).getPeriod(days, "day", label));
+      } catch (error) {
+        if (!chain.unconfirmed.includes(label) || !isChainRefusal(error)) throw error;
+        authorized = withholdRefused(authorized, label);
+      }
     }
-    return mergeByTimestamp(batches);
+    return { rows: mergeByTimestamp(batches), chain: authorized };
   }
 
-  /**
-   * Fetches a raw window, widening it when it comes back empty.
-   *
-   * An empty window is not an answer: the reference instant that anchors every relative range
-   * lives inside the data, so a pod silent for six days needs a wider look-back before "the last
-   * day" can mean anything at all.
-   */
-  private async fetchWindow(
-    labels: string[],
-    lookbackMs: number,
-    token?: string,
-  ): Promise<{ readings: DeviceReading[]; window: FetchWindow }> {
-    let window = fetchWindowFor(lookbackMs);
-    let readings = await this.getPeriodChain(labels, window.duration, window.unit, token);
-    let escalations = 0;
-
-    while (readings.length === 0 && escalations < MAX_ESCALATIONS) {
-      const wider = widerWindow(window);
-      if (!wider) {
-        break;
-      }
-      window = wider;
-      // eslint-disable-next-line no-await-in-loop
-      readings = await this.getPeriodChain(labels, window.duration, window.unit, token);
-      escalations += 1;
+  private async loadSnapshot(chain: DeviceChain, token?: string, previous?: SiteSnapshot)
+    : Promise<SiteSnapshot> {
+    const at = this.now();
+    // An overlapping recent read replaces the cached tail, including deletions/corrections.
+    const days = Math.max(
+      SITE_RECENT_DAYS,
+      previous ? Math.ceil((at - previous.at) / DAY_MS) + 1 : 0,
+    );
+    let fromMs = at - days * DAY_MS;
+    let fetched = await this.readChain(chain, days, token);
+    let { rows } = fetched;
+    let contextAt = at;
+    if (previous && JSON.stringify(previous.chain) === JSON.stringify(fetched.chain)) {
+      rows = [...previous.rows.filter((row) => Date.parse(row.observedAt ?? "") < fromMs),
+        ...rows];
+      fromMs = previous.fromMs;
+      contextAt = previous.contextAt;
     }
+    if (fromMs > 0 && provenSiteStart(rows) === undefined) {
+      // The API accepts a duration in days. Reach the epoch when no recent reset is provable,
+      // instead of declaring the left edge of a week/month/year to be a site boundary.
+      fetched = await this.readChain(fetched.chain, Math.ceil(at / DAY_MS) + 1, token);
+      rows = fetched.rows;
+      fromMs = 0;
+      contextAt = at;
+    }
+    const lastReported = QuerySensorData.newestObservedAt(rows) === null
+      ? (await this.client(token).getLastReading(chain.labels[0]))?.observedAt : undefined;
+    return {
+      lastReported,
+      at,
+      contextAt,
+      rows,
+      fromMs,
+      chain: fetched.chain,
+      ...snapshotSite(rows, fromMs),
+    };
+  }
 
-    return { readings, window };
+  private async snapshot(
+    chain: DeviceChain,
+    token?: string,
+    scope?: Map<string, Promise<SiteSnapshot>>,
+  ): Promise<SiteSnapshot> {
+    const key = createHash("sha256").update(JSON.stringify([
+      token ?? null, config.deviceApi.baseUrl, chain,
+      config.tools.predecessorPeriodHandoff,
+    ])).digest("hex");
+    const pinned = scope?.get(key);
+    if (pinned) return pinned;
+    this.siteCache.forEach((entry, entryKey) => {
+      if (this.now() - entry.contextAt >= SITE_CACHE_RETENTION_MS) this.siteCache.delete(entryKey);
+    });
+    const cached = this.siteCache.get(key);
+    const pending = this.sitePending.get(key);
+    const read = pending ?? (cached && this.now() - cached.at < SITE_CACHE_TTL_MS
+      ? Promise.resolve(cached) : this.loadSnapshot(chain, token, cached));
+    scope?.set(key, read);
+    if (pending) return pending;
+    this.sitePending.set(key, read);
+    try {
+      const result = await read;
+      this.siteCache.delete(key);
+      if (result.rows.length <= SITE_CACHE_MAX_ROWS) this.siteCache.set(key, result);
+      let count = [...this.siteCache.values()].reduce((sum, entry) => sum + entry.rows.length, 0);
+      while (this.siteCache.size > SITE_CACHE_MAX_ENTRIES || count > SITE_CACHE_MAX_ROWS) {
+        const oldest = this.siteCache.keys().next().value as string;
+        count -= this.siteCache.get(oldest)!.rows.length;
+        this.siteCache.delete(oldest);
+      }
+      return result;
+    } finally {
+      this.sitePending.delete(key);
+    }
   }
 
   /**
@@ -463,19 +565,29 @@ export class QuerySensorData {
    * caller injected its own `client`, this throws a coded `caller_token_required` 401 rather than
    * quietly reading someone else's organization out of `DEVICE_API_TOKEN`.
    */
-  async query(params: SensorQueryParams, token?: string): Promise<SensorToolResult> {
+  async query(
+    params: SensorQueryParams,
+    token?: string,
+    scope?: Map<string, Promise<SiteSnapshot>>,
+  ): Promise<SensorToolResult> {
     const result = await this.execute({
       metric: params.metric,
       time_range: params.timeRange,
       aggregation: params.aggregation,
       ...(params.device !== undefined ? { device: params.device } : {}),
       ...(params.bucket !== undefined ? { bucket: params.bucket } : {}),
-    }, token, params.maxBuckets);
+    }, token, params.maxBuckets, scope, params.onSamples);
 
     if (typeof result.error === "string") {
       throw new SensorQueryError(result.error);
     }
     return result;
+  }
+
+  /** Pin all report aggregations to one snapshot even across TTL expiry or cache eviction. */
+  async queryBatch(params: SensorQueryParams[], token?: string): Promise<SensorToolResult[]> {
+    const scope = new Map<string, Promise<SiteSnapshot>>();
+    return Promise.all(params.map((param) => this.query(param, token, scope)));
   }
 
   /**
@@ -585,6 +697,8 @@ export class QuerySensorData {
     args: Record<string, unknown>,
     token?: string,
     maxBuckets?: number,
+    scope?: Map<string, Promise<SiteSnapshot>>,
+    onSamples?: SensorQueryParams["onSamples"],
   ): Promise<SensorToolResult> {
     const metricName = typeof args.metric === "string" ? normalize(args.metric) : "";
     // "all" fetches one window and reads every metric out of it — one API call, not six, and
@@ -649,7 +763,9 @@ export class QuerySensorData {
     // the readings behind under the old label, so a survivor can hold under 4 % of its own
     // site's record (`BACKEND_FIELDS.md` §4a). Resolved off the caller's own device list, which
     // `resolveDevice` has already fetched and cached, so this costs no extra request.
-    const chain = resolveChain(device, await this.devices(token));
+    const requestedChain = resolveChain(device, await this.devices(token));
+    const snapshot = await this.snapshot(requestedChain, token, scope);
+    const { chain, site } = snapshot;
 
     const single = metricKeys.length === 1 ? metricKeys[0] : undefined;
     const identity = {
@@ -667,31 +783,7 @@ export class QuerySensorData {
       aggregation,
     };
 
-    // Step 1: find the reference instant, cheaply.
-    //
-    // Every relative range is anchored to the device's newest reading (§8 step 2), and the API's
-    // period route is a rolling window ending at the *server's* now. Those differ by however
-    // stale the pod is, so a window sized from the phrase alone can start after the range does —
-    // "last week" on a six-day-silent pod fetches the last seven days from now, which reaches
-    // back only to the day before its final reading. That yields a real statistic over a
-    // fraction of the window it claims, with nothing in the result saying so.
-    //
-    // Asking `/water/last` first — one document — makes the window sizeable in one shot instead
-    // of fetching a series, discovering it was short, and fetching a wider one. Two calls either
-    // way, but the first is now tiny and the second is exactly the right size.
-    let referenceIso = await this.lastReportedAt(label, token);
-    let readings: DeviceReading[] = [];
-    let probeSpanMs = 0;
-
-    if (referenceIso === null) {
-      // `/water/last` drops readings with no GPS fix, so a null here is not proof of silence.
-      // Fall back to widening period windows, which do not filter, to find any data at all.
-      const probe = await this.fetchWindow(chain.labels, lookbackMsFor(parsed, this.now()), token);
-      readings = probe.readings;
-      probeSpanMs = probe.window.spanMs;
-      referenceIso = QuerySensorData.newestObservedAt(readings);
-    }
-
+    const referenceIso = QuerySensorData.newestObservedAt(snapshot.rows);
     if (referenceIso === null) {
       return {
         ...identity,
@@ -699,42 +791,57 @@ export class QuerySensorData {
         time_range_resolved: null,
         value: null,
         n_samples: 0,
+        reading_counts: { used: 0, excluded: 0 },
         excluded_faulted: 0,
-        device_last_reported: null,
-        note: "No readings found, and the device API has no last reading for this device either.",
+        device_last_reported: snapshot.lastReported ?? null,
+        ...(snapshot.lastReported ? this.lastReportedAge(snapshot.lastReported) : {}),
+        note: ["No readings found in available history.", site.note, ...(chain.notes ?? []),
+          snapshot.lastReported ? `This device last reported at ${snapshot.lastReported}.` : null,
+          chain.withheld.length ? "Earlier history was withheld for this account." : null]
+          .filter(Boolean).join(" "),
+        // "No readings" and the last report are derived by the page from the fields above.
+        ...QuerySensorData.userNotes([
+          ...(site.userNotes ?? []), ...(chain.notes ?? []),
+          chain.withheld.length ? WITHHELD_USER_NOTE : undefined,
+        ]),
       };
     }
-
     const referenceMs = Date.parse(referenceIso);
-    if (!Number.isFinite(referenceMs)) {
-      return failure("The device API returned a reading with no usable timestamp.");
-    }
     const range = resolveRange(parsed, referenceMs);
-
-    // Step 2: one window, sized to reach from now back to the start of the resolved range.
-    const neededLookback = Math.max(this.now() - range.startMs, MIN_LOOKBACK_MS);
-    const window = fetchWindowFor(neededLookback);
-    if (readings.length === 0 || window.spanMs > probeSpanMs) {
-      readings = await this.getPeriodChain(chain.labels, window.duration, window.unit, token);
-    }
-
-    if (readings.length === 0) {
-      return {
-        ...identity,
-        time_range_requested: timeRangeInput,
-        time_range_resolved: { start: range.start, end: range.end, label: range.label },
-        value: null,
-        n_samples: 0,
-        excluded_faulted: 0,
-        device_last_reported: referenceIso,
-        ...this.lastReportedAge(referenceIso),
-        note: `No readings found in this window. This device last reported at ${referenceIso}.`,
-      };
-    }
+    const { readings } = site;
+    // QC over the whole site history, so a flat line that began before the window is still
+    // recognised inside it (`devices/readingQc.ts`).
+    const ordered = inTimeOrder(readings);
+    const qc = qcReadings(ordered, metricKeys);
+    const isStuck = (key: MetricKey, row: DeviceReading): boolean => {
+      const result = qc.get(key)?.get(row);
+      return result?.flag === "fail"
+        && (result.reason === "flat-line" || result.reason === "stuck-turbidity");
+    };
+    const inRequestedRange = (row: DeviceReading): boolean => {
+      const time = Date.parse(row.observedAt!);
+      return time >= range.startMs
+        && (range.endInclusive ? time <= range.endMs : time < range.endMs);
+    };
+    const periodReadings = readings.filter(inRequestedRange);
+    const position = QuerySensorData.newestPosition(readings, range);
+    const siteNotes = siteNotesForPeriod(snapshot.rows, site, inRequestedRange);
+    const excludedStuck = new Map(metricKeys.map((key): [MetricKey, number] => [
+      key, periodReadings.filter((row) => isStuck(key, row)).length,
+    ]));
+    // A partly usable row still contributes to the report. Count it once, without making a
+    // fault in one probe discard the other probes or counting six values as six readings.
+    const usedReadings = periodReadings.filter((row) => metricKeys.some((key) => {
+      const metric = row.metrics[key];
+      return metric?.valid && metric.value !== undefined && isPlausible(key, metric.value)
+        && !isStuck(key, row);
+    })).length;
 
     // One fetched window, read once per requested metric. The device API is not touched again.
     const computed = metricKeys.map((key) => {
-      const samples = QuerySensorData.samplesInRange(readings, key, range);
+      const usable = readings.filter((row) => !isStuck(key, row));
+      const samples = QuerySensorData.samplesInRange(usable, key, range);
+      onSamples?.(NAME_BY_METRIC_KEY.get(key)!, samples);
       return {
         key,
         samples,
@@ -747,43 +854,94 @@ export class QuerySensorData {
       };
     });
 
-    const shape = (key: MetricKey, result: AggregateResult): Record<string, unknown> => ({
+    const shape = (
+      key: MetricKey,
+      result: AggregateResult,
+      samples: Sample[],
+    ): Record<string, unknown> => ({
       unit: unitFor(key),
+      ...((excludedStuck.get(key) ?? 0) > 0
+        ? { excluded_stuck: excludedStuck.get(key), sensor_quality: "likely failed sensor" } : {}),
       value: result.value,
       n_samples: result.nSamples,
       excluded_faulted: result.excludedFaulted,
       ...(result.excludedImplausible > 0
-        ? { excluded_implausible: result.excludedImplausible }
+        ? {
+          excluded_implausible: result.excludedImplausible,
+          ...excludedImplausibleDetail(samples),
+        }
         : {}),
       ...(result.observedAt ? { observed_at: result.observedAt } : {}),
       ...(result.samples ? { samples: result.samples } : {}),
-      ...(result.series ? { series: result.series, bucket_ms: result.bucketMs } : {}),
+      ...(result.series ? QuerySensorData.seriesFields(result, samples, position?.longitude) : {}),
       ...(result.truncated
         ? { truncated: true, truncated_to: this.rawLimit, truncated_kept: result.truncatedKept }
         : {}),
+      verdict: metricVerdict({
+        key,
+        wireName: NAME_BY_METRIC_KEY.get(key)!,
+        ordered,
+        flags: qc.get(key)!,
+        range,
+        device,
+      }),
     });
 
-    // The resolved range is what the phrase asked for; the fetched window is what the API's
-    // fixed unit ladder could actually reach (it tops out at one year). When the phrase reaches
-    // further back than the ladder, saying only "2016 to 2026" invites the reader to treat the
-    // window start as the first reading — which is exactly what a model did with "last 10 years".
-    const coveredFromMs = Math.max(range.startMs, this.now() - window.spanMs);
-    const partial = coveredFromMs > range.startMs;
-
-    const position = QuerySensorData.newestPosition(readings, range);
+    // Site readings are chronological. When location filtering removes history, the dates
+    // describe the retained readings inside the request, never the older requested boundary.
+    const siteStartMs = Date.parse(readings[0]?.observedAt ?? "");
+    const siteEndMs = Date.parse(readings[readings.length - 1]?.observedAt ?? "");
+    const siteLimited = readings.length === 0 || snapshot.rows.some((row) => {
+      const time = Date.parse(row.observedAt ?? "");
+      return time < siteStartMs || time > siteEndMs;
+    });
+    // Incomplete only when the location filter dropped readings inside the request. A first
+    // reading that lands a reporting interval after the window opens is ordinary spacing, and
+    // earlier-site history that ends before the window costs this answer nothing.
+    const sitePartial = siteLimited && snapshot.rows.some((row) => {
+      if (!inRequestedRange(row)) return false;
+      const time = Date.parse(row.observedAt ?? "");
+      return readings.length === 0 || time < siteStartMs || time > siteEndMs;
+    });
+    const firstAt = periodReadings[0]?.observedAt;
+    const lastAt = periodReadings[periodReadings.length - 1]?.observedAt;
+    let resolvedRange: { start: string; end: string; label: string } | null = {
+      start: range.start, end: range.end, label: range.label,
+    };
+    // Narrowed to the current-site readings only when the filter dropped some inside the request,
+    // so a week long after a move keeps the dates asked for.
+    if (sitePartial) {
+      resolvedRange = firstAt && lastAt ? {
+        start: firstAt, end: lastAt, label: `${firstAt} to ${lastAt} (current-site readings)`,
+      } : null;
+    }
+    const partial = snapshot.fromMs > range.startMs || sitePartial;
+    // The snapshot may reach back to the epoch to establish the site; that read is plumbing.
+    // Report the part of the request it covered, so no reader takes the epoch for the window.
+    const searchedStartMs = Math.max(snapshot.fromMs, range.startMs);
+    const searchedEndMs = Math.min(snapshot.at, range.endMs);
 
     const common = {
       ...identity,
+      current_site_last_reported: QuerySensorData.newestObservedAt(readings),
+      ...(siteNotes.note ? { site_note: siteNotes.note } : {}),
+      ...(siteNotes.historyNote ? { site_history_note: siteNotes.historyNote } : {}),
       time_range_requested: timeRangeInput,
-      time_range_resolved: { start: range.start, end: range.end, label: range.label },
+      time_range_resolved: resolvedRange,
+      reading_counts: { used: usedReadings, excluded: periodReadings.length - usedReadings },
       // Omitted rather than nulled when no reading carried a fix, so a consumer cannot mistake
       // an absent GPS lock for coordinates of 0,0 — the same rule metrics.ts applies to `lat`.
       ...(position ? { position } : {}),
       window_actually_searched: {
-        start: new Date(coveredFromMs).toISOString(),
-        end: range.end,
+        start: new Date(searchedStartMs).toISOString(),
+        end: new Date(searchedEndMs).toISOString(),
         ...(partial
-          ? { complete: false, reason: "The device API's longest window is one year." }
+          ? {
+            complete: false,
+            reason: sitePartial
+              ? "Only current-site readings inside the requested range are covered; see the site note."
+              : "Earlier history predates the established site context and is excluded.",
+          }
           : { complete: true }),
       },
       device_last_reported: new Date(referenceMs).toISOString(),
@@ -802,9 +960,8 @@ export class QuerySensorData {
       .map((sample) => sample.value) ?? [];
     const allZeroTurbidity = turbidityValues.length > 0
       && isAllZeroTurbidity(turbidityValues.reduce((max, v) => Math.max(max, v), 0));
-    const notes = this.notes(
+    const notes = QuerySensorData.notes(
       metricKeys,
-      device,
       chain,
       totalSamples,
       referenceMs,
@@ -813,10 +970,49 @@ export class QuerySensorData {
       allZeroTurbidity,
     );
 
+    const stuckLabels = metricKeys
+      .filter((key) => (excludedStuck.get(key) ?? 0) > 0)
+      .map((key) => METRIC_BY_KEY.get(key)?.label ?? key);
+    const overlaps = (run: ReadingRun): boolean => run.endMs >= range.startMs
+      && (range.endInclusive ? run.startMs <= range.endMs : run.startMs < range.endMs);
+    const boardFaults = metricKeys.length > 1
+      ? allChannelFailureRuns(ordered, metricKeys).filter(overlaps) : [];
+    const gaps = readingGaps(ordered).filter(overlaps);
+    const boardNote = boardFaults.length > 0 ? BOARD_FAULT_NOTE : undefined;
+    const extraNotes = [notes.note, siteNotes.note,
+      stuckLabels.length > 0 ? stuckSensorNote(stuckLabels) : undefined, boardNote]
+      .filter(Boolean);
+    if (extraNotes.length) notes.note = extraNotes.join(" ");
+    Object.assign(notes, QuerySensorData.userNotes([
+      ...(notes[USER_NOTES_FIELD] as string[] | undefined ?? []),
+      ...(siteNotes.userNotes ?? []),
+      stuckLabels.length > 0 ? stuckSensorUserNote(stuckLabels) : undefined,
+      boardNote,
+    ]));
+    const quality = {
+      ...(boardFaults.length > 0 ? {
+        board_fault: boardFaults.map((run) => ({
+          from: new Date(run.startMs).toISOString(),
+          to: new Date(run.endMs).toISOString(),
+          readings: run.readings,
+        })),
+      } : {}),
+      ...(gaps.length > 0 ? {
+        missing_data: {
+          gaps_over_3_hours: gaps.length,
+          longest_gap_hours: Math.round(
+            Math.max(...gaps.map((gap) => gap.endMs - gap.startMs)) / 360_000,
+          ) / 10,
+        },
+      } : {}),
+    };
+
     if (single) {
       // Flat shape for a single metric — unchanged from before multi-metric existed, so nothing
       // reading `result.value` had to learn a new shape.
-      return { ...common, ...shape(single, computed[0].result), ...notes };
+      return {
+        ...common, ...quality, ...shape(single, computed[0].result, computed[0].samples), ...notes,
+      };
     }
 
     // Every metric comes off the same rows, so for `latest`/`earliest` they all share one
@@ -831,12 +1027,32 @@ export class QuerySensorData {
 
     return {
       ...common,
+      ...quality,
       ...(observedAts.size === 1 ? { observed_at: [...observedAts][0] } : {}),
       metrics: Object.fromEntries(computed.map((entry) => [
         NAME_BY_METRIC_KEY.get(entry.key) as string,
-        shape(entry.key, entry.result),
+        shape(entry.key, entry.result, entry.samples),
       ])),
       ...notes,
+    };
+  }
+
+  /**
+   * A series with each bucket's start in local solar time beside UTC, and when in the day the
+   * metric peaks (`dailyCycle.ts`). Without a GPS fix there is no longitude, so UTC only.
+   */
+  private static seriesFields(
+    result: AggregateResult,
+    samples: Sample[],
+    longitude: number | undefined,
+  ): Record<string, unknown> {
+    if (longitude === undefined) return { series: result.series, bucket_ms: result.bucketMs };
+    const cycle = dailyCycle(samples, longitude);
+    return {
+      series: withLocalSolar(result.series ?? [], longitude),
+      bucket_ms: result.bucketMs,
+      local_solar_offset_hours: Math.round(solarOffsetHours(longitude) * 10) / 10,
+      ...(cycle ? { daily_cycle: cycle } : {}),
     };
   }
 
@@ -881,7 +1097,8 @@ export class QuerySensorData {
     const times = readings
       .map((reading) => (reading.observedAt ? Date.parse(reading.observedAt) : Number.NaN))
       .filter((ms) => Number.isFinite(ms));
-    return times.length === 0 ? null : new Date(Math.max(...times)).toISOString();
+    return times.length === 0 ? null
+      : new Date(times.reduce((latest, time) => Math.max(latest, time), -Infinity)).toISOString();
   }
 
   /** Extracts one metric from each reading that falls inside the resolved window. */
@@ -938,19 +1155,21 @@ export class QuerySensorData {
     }
   }
 
+  /** `USER_NOTES_FIELD` holding the given sentences once each, or nothing when there are none. */
+  private static userNotes(texts: Array<string | undefined>): Record<string, string[]> {
+    const unique = [...new Set(texts.filter((text): text is string => Boolean(text)))];
+    return unique.length > 0 ? { [USER_NOTES_FIELD]: unique } : {};
+  }
+
   /**
    * Caveats that belong with the number rather than in a doc nobody reads at answer time.
    *
-   * The water-type note is a **flag, not a fix**. `WATER_TYPE` is one global env var, while pods
-   * differ in water type — one deployment cannot describe both. The system prompt no longer carries
-   * ranges (deleted 2026-09-13; pod limits come from `get_pod_thresholds`), so the global value now
-   * only frames the answer. Reading water type per device in chat is unbuilt Phase N4 work, no
-   * longer gated by ◆G3, which resolved 2026-09-13 (`DEVICE_API.md` §12c). Surfacing the
-   * disagreement here at least stops the model describing a saltwater pod as freshwater in silence.
+   * No note compares the pod's water type with the deployment's `WATER_TYPE`: that one global
+   * value cannot describe a mixed fleet, and the comparison flagged nearly every salt-water pod.
+   * The pod's own `operating_environment` is in the result, and limits come from its registry.
    */
-  private notes(
+  private static notes(
     metricKeys: MetricKey[],
-    device: DeviceSummary,
     chain: DeviceChain,
     nSamples: number,
     referenceMs: number,
@@ -958,7 +1177,11 @@ export class QuerySensorData {
     implausible: Array<[MetricKey, number]> = [],
     allZeroTurbidity = false,
   ): Record<string, unknown> {
-    const notes: string[] = [];
+    const notes: string[] = [...(chain.notes ?? [])];
+    // The reader's version of the caveats a person needs, without instructions to the model;
+    // the page shows these, never `note` (see `USER_NOTES_FIELD`). Caveats the page already
+    // derives from structured fields (no readings, provisional turbidity) are not repeated.
+    const userNotes: string[] = [...(chain.notes ?? [])];
 
     if (chain.labels.length > 1) {
       // Said out loud because the alternative is a number whose provenance is invisible: these
@@ -969,6 +1192,9 @@ export class QuerySensorData {
         + "replaced Notecard mints a new label and the older readings keep the old one. This "
         + `answer covers all of them (${chain.labels.join(", ")}), de-duplicated where their `
         + "spans overlap.",
+      );
+      userNotes.push(
+        `Includes readings recorded under this site's earlier device labels (${chain.labels.join(", ")}).`,
       );
     }
 
@@ -981,26 +1207,33 @@ export class QuerySensorData {
         `Earlier readings from this site were NOT included: ${parts.join("; ")}. `
         + "Say that the history shown may start later than the site's first reading.",
       );
+      userNotes.push(WITHHELD_USER_NOTE);
     }
 
     if (chain.mergedInto) {
-      notes.push(
-        `This device was retired and merged into ${chain.mergedInto}, so its readings stop at `
-        + "the merge. Current data for the site is under that label.",
-      );
+      const merged = `This device was retired and merged into ${chain.mergedInto}, so its `
+        + "readings stop at the merge. Current data for the site is under that label.";
+      notes.push(merged);
+      userNotes.push(merged);
     }
 
     if (implausible.length > 0) {
       // Said out loud rather than silently dropped: a probe that rails without setting its
-      // error flag is a maintenance finding in its own right, and a reader comparing this
+      // error flag is worth knowing about, and a reader comparing this
       // answer against a raw export needs to know why the counts differ.
       const parts = implausible.map(([key, count]) => {
         const label = METRIC_BY_KEY.get(key)?.label ?? key;
         return `${count} ${label} reading(s) ${implausibilityReason(key)}`;
       });
       notes.push(
-        `Excluded as physically impossible despite no probe fault flag: ${parts.join("; ")}. `
-        + "These are sensor rails, not measurements, and are not counted in any statistic above.",
+        `Readings outside plausibility bounds: ${parts.join("; ")}. `
+        + "These may be sensor faults and were left out. Each metric's \"value\" and \"n_samples\" "
+        + "count only the remaining readings; the excluded ones are in "
+        + "\"excluded_implausible_values\", with their range in \"excluded_implausible_min\" and "
+        + "\"excluded_implausible_max\".",
+      );
+      userNotes.push(
+        `${parts.join("; ")} may be sensor faults and were left out.`,
       );
     }
 
@@ -1011,28 +1244,19 @@ export class QuerySensorData {
       );
     }
 
-    if (metricKeys.includes("turbidity")) {
-      notes.push(
-        "Turbidity is derived from a raw voltage by a provisional, uncalibrated conversion. "
-        + "It is a relative index with no unit, not a calibrated measurement and not NTU.",
-      );
-    }
-
     if (allZeroTurbidity) {
       notes.push(TURBIDITY_ALL_ZERO_CAVEAT);
+      userNotes.push(TURBIDITY_ALL_ZERO_CAVEAT);
     }
 
-    const environment = device.operatingEnvironment;
-    const deviceWaterType = environment?.includes("salt") ? "saltwater" : "freshwater";
-    if (environment && deviceWaterType !== this.waterType) {
-      notes.push(
-        `This device operates in ${environment}, but the deployment's configured water type is `
-        + `${this.waterType}. Your instructions carry no ranges; to judge this reading against `
-        + "limits, use this pod's configured thresholds from get_pod_thresholds.",
-      );
-    }
-
-    return notes.length > 0 ? { note: notes.join(" ") } : {};
+    return {
+      // Its own field rather than part of "note", so the prompt can ask for it once per
+      // conversation instead of in every answer that mentions turbidity (POST_LAUNCH_BACKLOG.md
+      // §1, item D3).
+      ...(metricKeys.includes("turbidity") ? { turbidity_caveat: TURBIDITY_CAVEAT } : {}),
+      ...(notes.length > 0 ? { note: notes.join(" ") } : {}),
+      ...(userNotes.length > 0 ? { [USER_NOTES_FIELD]: userNotes } : {}),
+    };
   }
 }
 
@@ -1052,7 +1276,9 @@ export const querySensorDataDefinition: ToolDefinition = {
       + "source of actual readings — the provided documents never contain them. Use it for any "
       + "question about current or past values, averages, minimums, maximums, or trends. "
       + "Returns value: null with n_samples: 0 when no reading exists in the window; that means "
-      + "no data, never a reading of zero.",
+      + "no data, never a reading of zero. Each metric also carries a verdict (in range, out of "
+      + "range, likely data issue, not assessed, not enough data) computed after quality checks; "
+      + "relay it rather than judging the readings yourself.",
     parameters: {
       type: "object",
       properties: {

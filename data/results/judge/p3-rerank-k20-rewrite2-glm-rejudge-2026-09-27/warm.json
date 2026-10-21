@@ -1,0 +1,128 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/gpt-oss-120b"
+  ],
+  "judgedAt": "2026-09-27T09:36:40.047Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1370554,
+    "cachedPromptTokens": 169484,
+    "completionTokens": 87780
+  },
+  "results": [
+    {
+      "arm": "local-rerank",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 1,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.2,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.3333333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.125,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.1666666666666667,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-cold-water-hot-day-turbidity",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer correctly states the subsample qualifier rule for turbidity temperature DO and Eh but it refuses the flow-cell-outlet question and omits the storage limits and the on-site/time-sensitivity point withholding facts the rubric expects a real answer for. Unmet: States plainly that a discrete turbidity sample must not be collected from the discharge passing through the flow-through chamber holding the other sensors; Gives storage limits if the sample cannot be read on site: clean amber bottle out of sunlight chilled at or below 4 C held no longer than 24 hours; Notes turbidity is time sensitive and should be measured on site preferably in situ"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer withholds the A6.8 field-form criteria (±0.1 pH unit ±0.3 below 75 µS/cm) that the rubric asks for declining that part as unavailable so it misses the two key points and cannot make the required contrast. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check (within 0.05 pH unit of certified value at calibration temperature)"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the core question and withholds both table values and the 0.03 mg/L comparison supplying only the Benson and Krause provenance so it fails the rubric's required figures and guidance. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; states the difference is 0.03 mg/L and assesses its significance against the applicable procedure; compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer never mentions flocculated suspensions and simply assumes any settled calibrant must be discarded missing both must-contain points (though it avoids the must-not violations). Unmet: States that calibrants with flocculated suspensions must not be used; Requires checking whether the settled layer is reversible settling or flocculation along with labeled expiry and storage compliance; rejects flocculated expired or compromised calibrant rather than assuming all settled calibrant must be discarded"
+        },
+        {
+          "fixtureId": "deepmanual-do-air-calibration",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer gives a 0.2 mg/L zero-point criterion and manufacturer-contact/zero-calibration steps instead of the rubric's 0.5 mg/L acceptance value probe-cleaning and membrane/electrolyte replacement and the accuracy-dependence caveat so none of the must-contain points are made. Unmet: States the instrument should read less than 0.5 mg/L in a 0.0 mg/L DO solution; States a reading above 0.5 mg/L or any negative reading calls for cleaning the probe and changing the membrane and electrolyte; Notes the 0.5 mg/L value assumes an instrument accuracy of about ±0.2 mg/L and may be adjusted to the project's or instrument's accuracy requirements"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer treats the order as arbitrary except for a two-point DO calibration and places pH before specific conductance violating two must-not items and it omits the temperature-first sequence and the ionic-strength rationale. Unmet: States that the order does matter and gives a recommended sequence; Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then oxidation-reduction potential after pH; Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next; Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        }
+      ]
+    }
+  ]
+}

@@ -74,9 +74,12 @@ export interface EvalTurn {
   content: string;
   /** Every turn produces a gradeable answer, so every turn carries its own rubric. */
   rubric: EvalRubric;
-  /** This turn's rubric admits no substantive answer, so the pinned refusal sentence is
-   * required. */
+  /** Decline the unsupported request with the pinned refusal sentence. Supported
+   * explanatory content may still be required by the rubric. */
   requires_refusal?: boolean;
+  /** Per-turn positive evidence, resolved from verbatim quotes against the current corpus.
+   * Overrides fixture-wide claim notes when present, including for partial refusals. */
+  retrieval_evidence?: Array<{ filename: string; quote: string }>;
 }
 
 export interface EvalFixture {

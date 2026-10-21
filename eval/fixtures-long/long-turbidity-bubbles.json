@@ -1,0 +1,223 @@
+{
+  "id": "long-turbidity-bubbles",
+  "class": "follow-up",
+  "expected_to_favor": "rag",
+  "answerable_from": [
+    "usgs-nfm-a6.7-turbidity.pdf",
+    "usgs-nfm-a6.5-orp.pdf",
+    "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+  ],
+  "requires": [],
+  "notes": "Tests whether preparation and acceptance of dynamic turbidity readings remain distinct from redox-standard handling after a topic switch.\nClaims: tby-dynamic-agitate-bubbles-01, tby-bubbles-positive-01, tby-dynamic-stability-3-or-5-01, tby-dynamic-2min-warmup-10-20-01, tby-dynamic-median-10pct-01, tby-dynamic-avoids-settling-01, tby-static-biased-low-coarse-01, tby-static-settling-3-5s-01, orp-zobells-storage-01, orp-zobells-shelf-life-01, orp-zobells-toxic-01, orp-zobells-iron-reactive-01, orp-fresh-zobells-troubleshoot-01, mp-t6-clean-replace-07, tby-designs-not-equivalent-01, tby-instrument-relations-site-specific-01, tby-store-by-design-units-01.\nTurn roles: 1=early; 2=early; 3=early; 4=on-topic; 5=switch; 6=on-topic; 7=return; 8=back-reference(2); 9=back-reference(3); 10=cross-document; 11=on-topic; 12=capped-back-reference(1).",
+  "turns": [
+    {
+      "role": "user",
+      "content": "Our submerged turbidity sensor has little bubbles stuck to its window after we lower it into the pond. What should I do before taking a reading?",
+      "rubric": {
+        "must_contain": [
+          "Agitates the sensor to remove bubbles from its optical surface.",
+          "Uses up-and-down or circular movement to dislodge the bubbles.",
+          "Activates the wiper mechanism if available.",
+          "Explains that bubbles can bias apparent turbidity upward."
+        ],
+        "must_not": [
+          "Treats bubbles as evidence of a real sediment increase."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Once the window is clear, what run of readings counts as steady enough here, and would that change in a pumped chamber?",
+      "rubric": {
+        "must_contain": [
+          "Requires at least three sequential readings for the in situ procedure.",
+          "Requires at least five sequential readings for the flow-through chamber procedure.",
+          "Takes readings at regular time increments.",
+          "Requires the sequence to be within 10 percent."
+        ],
+        "must_not": [
+          "Applies the three-reading in situ minimum to a flow-through chamber."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The screen lights up straight away. How soon can I start the sequence, and which number from the accepted set goes in the report?",
+      "rubric": {
+        "must_contain": [
+          "Allows at least 2 minutes before recording the required sequence.",
+          "Notes that some instruments need 10 to 20 minutes of warmup.",
+          "Reports the median of the sequential readings meeting the stability criterion."
+        ],
+        "must_not": [
+          "Treats an illuminated display as proof that sensor warmup is complete."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "A colleague wants to take a bottle back to a bench meter instead. Why might the reading change if the pond has sandy material in it?",
+      "rubric": {
+        "must_contain": [
+          "Explains that dynamic measurement avoids particle-settling problems in discrete samples.",
+          "Warns that static readings can be biased low when sand or coarse silt is present.",
+          "States that a sample settling within 3 to 5 seconds cannot be measured accurately with the static method."
+        ],
+        "must_not": [
+          "Promises that a bench result must match the submerged sensor result."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "Unrelated kit question: we've made up ZoBell's solution for the redox checks next week. What bottle and fridge conditions should we use, and how long is it reported to stay stable?",
+      "rubric": {
+        "must_contain": [
+          "Stores the solution in a dark bottle.",
+          "Keeps the solution chilled at 4 degrees Celsius.",
+          "States that stability is reported for at least 90 days under that chilled condition."
+        ],
+        "must_not": [
+          "Presents 90 days as an unconditional guarantee at room temperature."
+        ],
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The bench where we'll use it has rusty tools and dust on it. What should the crew watch out for, and what should we use if we need to repeat a suspect check?",
+      "rubric": {
+        "must_contain": [
+          "Warns that ZoBell's solution is toxic and must be handled with care.",
+          "Warns that ZoBell's reacts readily with minute iron particles and dust.",
+          "Uses a fresh aliquot of ZoBell's solution for troubleshooting the electrode reading."
+        ],
+        "must_not": [
+          "Suggests returning a used aliquot to the stock bottle."
+        ],
+        "cite": [
+          "usgs-nfm-a6.5-orp.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "OK, back to the turbidity sensor in the pond. We cleared the window but some bubbles have come back; how do we deal with them, and which way could they push the reading?",
+      "rubric": {
+        "must_contain": [
+          "Moves the sensor up and down or in a circular pattern to remove bubbles.",
+          "Activates the wiper if available.",
+          "Identifies bubbles as a source of positive turbidity bias."
+        ],
+        "must_not": [
+          "Answers about preparing ZoBell's solution instead of the pond sensor."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "That accepted run you described near the start - we're moving the same setup into a pumped chamber tomorrow. What changes about the number and spacing?",
+      "rubric": {
+        "must_contain": [
+          "Uses five or more sequential readings for the flow-through chamber.",
+          "Spaces the readings at regular time increments.",
+          "Requires the readings to be within 10 percent."
+        ],
+        "must_not": [
+          "Gives the redox-standard shelf life instead of the dynamic-reading acceptance criteria."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "And that wait before the sequence - is two minutes always enough, and do I report the highest reading once it settles?",
+      "rubric": {
+        "must_contain": [
+          "Treats 2 minutes as the minimum wait before the sequence.",
+          "Notes that some instruments require 10 to 20 minutes of warmup.",
+          "Reports the median of the accepted sequential readings rather than their maximum."
+        ],
+        "must_not": [
+          "Returns to redox-solution handling instead of the earlier measurement timing."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "The optical window also looks dirty, so bubbles might not be the whole problem. What should we do if cleaning reveals a damaged sensor?",
+      "rubric": {
+        "must_contain": [
+          "Identifies bubbles as a possible source of positive turbidity bias.",
+          "Cleans sensors according to the manufacturer's instructions.",
+          "Replaces a damaged sensor.",
+          "Recalibrates after replacing a damaged sensor."
+        ],
+        "must_not": [
+          "Keeps using a visibly damaged sensor after merely wiping it."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf",
+          "usgs-nfm-a6.8-multiparameter-instruments.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "We've got a replacement submerged meter with a different design. Can we just splice its values into the old series, or do we need to preserve that distinction?",
+      "rubric": {
+        "must_contain": [
+          "Warns that different turbidity instrument designs commonly do not yield equivalent results.",
+          "States that relations between instrument types are site specific.",
+          "Preserves instrument design and reporting units when storing turbidity data."
+        ],
+        "must_not": [
+          "Supplies a universal conversion factor between the two instruments."
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    },
+    {
+      "role": "user",
+      "content": "That window problem I opened with - what's the physical fix again, and could it make the number look too high?",
+      "rubric": {
+        "must_contain": [
+          "Moves the turbidity sensor up and down or in a circle to dislodge optical-surface bubbles.",
+          "Activates the wiper mechanism if available.",
+          "States that bubbles can produce positive turbidity bias."
+        ],
+        "must_not": [
+          "Answers about the redox-standard bottle rather than the submerged optical window.",
+          "presents a guess about which earlier instrument or procedure is meant as though it were certain"
+        ],
+        "cite": [
+          "usgs-nfm-a6.7-turbidity.pdf"
+        ]
+      }
+    }
+  ]
+}

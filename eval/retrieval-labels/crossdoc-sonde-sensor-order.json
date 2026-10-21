@@ -13,14 +13,8 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "The following order is recommended for performing\nparameter calibrations or checks of multiparameter\ninstruments.",
-          "locator": "Section 2.2 storage bullets and section 3.0 Calibration — \"The following order is recommended for performing parameter calibrations\"",
-          "claimIds": [
-            "mp-calibration-order-08",
-            "mp-ionic-strength-rationale-09",
-            "mp-triple-rinse-10",
-            "mp-calibrate-before-each-use-04",
-            "mp-a61-a67-definitive-06"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__75d13350deef",
@@ -28,10 +22,8 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "Note that generally standards are chosen\nthat bracket the expected measurement or deployment\nrange of measurements.",
-          "locator": "Section 3.0 Calibration, record-keeping bullets — \"Calibration records must be maintained\"",
-          "claimIds": [
-            "mp-bracket-standards-04"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__3082a6f1985a",
@@ -39,10 +31,8 @@
           "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
           "grade": 2,
           "evidence": "calibrate specific conduc-\ntance before pH.",
-          "locator": "Section 4.0 Measurement of Specific Conductance and 4.1 — \"In situ measurements generally are preferred\"",
-          "claimIds": [
-            "sc-calibrate-sc-before-ph-01"
-          ]
+          "locator": "usgs-nfm-a6.3-specific-conductance.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__d7462e09e17b",
@@ -50,10 +40,17 @@
           "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "grade": 2,
           "evidence": "install the pH sensor down-\nstream from the conductivity sensor",
-          "locator": "§3.2.2 Inline-Flow (Flow-Through Cell/Chamber) Procedure — 'All sensors must be calibrated'",
-          "claimIds": [
-            "fm-ph-downstream-of-conductivity-01"
-          ]
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__4da09f6619ce",
+          "contentHash": "4da09f6619ce",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "install the pH sensor down-\nstream from the conductivity sensor",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__630a36494d64",
@@ -61,11 +58,17 @@
           "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
           "grade": 2,
           "evidence": "upstream from the pH electrode.",
-          "locator": "Section 4.2.1 flow-cell and purging steps 2b-7 and Section 4.2.2 — \"For measurement with a pumped flow-cell system\"",
-          "claimIds": [
-            "sc-probe-upstream-of-ph-01",
-            "sc-flowcell-shield-sunlight-01"
-          ]
+          "locator": "usgs-nfm-a6.3-specific-conductance.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.2-dissolved-oxygen.pdf__25b8f6270fca",
+          "contentHash": "25b8f6270fca",
+          "filename": "usgs-nfm-a6.2-dissolved-oxygen.pdf",
+          "grade": 2,
+          "evidence": "• Before starting or planning for a two-point calibration,",
+          "locator": "usgs-nfm-a6.2-dissolved-oxygen.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         }
       ]
     },
@@ -79,14 +82,8 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "The following order is recommended for performing\nparameter calibrations or checks of multiparameter\ninstruments.",
-          "locator": "Section 2.2 storage bullets and section 3.0 Calibration — \"The following order is recommended for performing parameter calibrations\"",
-          "claimIds": [
-            "mp-calibration-order-08",
-            "mp-ionic-strength-rationale-09",
-            "mp-triple-rinse-10",
-            "mp-calibrate-before-each-use-04",
-            "mp-a61-a67-definitive-06"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.8-multiparameter-instruments.pdf__75d13350deef",
@@ -94,10 +91,8 @@
           "filename": "usgs-nfm-a6.8-multiparameter-instruments.pdf",
           "grade": 2,
           "evidence": "Note that generally standards are chosen\nthat bracket the expected measurement or deployment\nrange of measurements.",
-          "locator": "Section 3.0 Calibration, record-keeping bullets — \"Calibration records must be maintained\"",
-          "claimIds": [
-            "mp-bracket-standards-04"
-          ]
+          "locator": "usgs-nfm-a6.8-multiparameter-instruments.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__3082a6f1985a",
@@ -105,10 +100,8 @@
           "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
           "grade": 2,
           "evidence": "calibrate specific conduc-\ntance before pH.",
-          "locator": "Section 4.0 Measurement of Specific Conductance and 4.1 — \"In situ measurements generally are preferred\"",
-          "claimIds": [
-            "sc-calibrate-sc-before-ph-01"
-          ]
+          "locator": "usgs-nfm-a6.3-specific-conductance.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__d7462e09e17b",
@@ -116,10 +109,17 @@
           "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
           "grade": 2,
           "evidence": "install the pH sensor down-\nstream from the conductivity sensor",
-          "locator": "§3.2.2 Inline-Flow (Flow-Through Cell/Chamber) Procedure — 'All sensors must be calibrated'",
-          "claimIds": [
-            "fm-ph-downstream-of-conductivity-01"
-          ]
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.0-field-measurement-guidelines.pdf__4da09f6619ce",
+          "contentHash": "4da09f6619ce",
+          "filename": "usgs-nfm-a6.0-field-measurement-guidelines.pdf",
+          "grade": 2,
+          "evidence": "install the pH sensor down-\nstream from the conductivity sensor",
+          "locator": "usgs-nfm-a6.0-field-measurement-guidelines.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         },
         {
           "chunkId": "usgs-nfm-a6.3-specific-conductance.pdf__630a36494d64",
@@ -127,11 +127,26 @@
           "filename": "usgs-nfm-a6.3-specific-conductance.pdf",
           "grade": 2,
           "evidence": "upstream from the pH electrode.",
-          "locator": "Section 4.2.1 flow-cell and purging steps 2b-7 and Section 4.2.2 — \"For measurement with a pumped flow-cell system\"",
-          "claimIds": [
-            "sc-probe-upstream-of-ph-01",
-            "sc-flowcell-shield-sunlight-01"
-          ]
+          "locator": "usgs-nfm-a6.3-specific-conductance.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__833295123a5d",
+          "contentHash": "833295123a5d",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "— \tBailers are not recommended for collecting turbidity",
+          "locator": "usgs-nfm-a6.7-turbidity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
+        },
+        {
+          "chunkId": "usgs-nfm-a6.7-turbidity.pdf__2db3b29c7433",
+          "contentHash": "2db3b29c7433",
+          "filename": "usgs-nfm-a6.7-turbidity.pdf",
+          "grade": 2,
+          "evidence": "— \tBailers are not recommended for collecting turbidity",
+          "locator": "usgs-nfm-a6.7-turbidity.pdf: verbatim per-turn fixture evidence",
+          "claimIds": []
         }
       ]
     }

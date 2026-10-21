@@ -1,3 +1,6 @@
+import { stripCitationMarkers } from "../utils/citations";
+import { stripDeliveryLines } from "../report/delivery";
+import { stripCoverageLines } from "../tools/dataCoverage";
 import { config } from "../config";
 import type { ChatMessage } from "../types/chat.types";
 import type { Chunk } from "../types/retrieval.types";
@@ -44,7 +47,7 @@ export const formatSelectedDevice = (device: string): string => {
  *
  * Without it the model had no way to tell a ten-day-old reading from a current one: it called two
  * pods that had been silent for 10 and 12 days "likely online" and presented a 10-day-old
- * reading as the current temperature (`docs/migration/CONVERSATION_QA_2026-09-24.md` findings 1
+ * reading as the current temperature (`docs/records/CONVERSATION_QA_2026-09-24.md` findings 1
  * and 2). The tools state each reading's age as well (`src/tools/readingAge.ts`); this line
  * anchors "today", "yesterday" and "right now" in the user's own question.
  *
@@ -59,7 +62,7 @@ export const formatCurrentTime = (now: Date): string => (
 export interface BuildMessagesInput {
   query: string;
   chunks: Chunk[];
-  /** Prior turns, oldest first. Passed through unchanged. */
+  /** Prior turns, oldest first. Assistant citation markers are removed for this request. */
   history?: ChatMessage[];
   /** The pod chosen in the interface, if any (`device` on the chat request). */
   selectedDevice?: string;
@@ -109,7 +112,15 @@ export const buildMessages = ({
     messages.push({ role: "system", content: formatContext(chunks) });
   }
 
-  messages.push(...history);
+  // The server's "New PDF in this reply" lines are for the reader: shown to the model, an earlier
+  // report reads as a reason not to make the next one (`report/delivery.ts`). Its "Data covered"
+  // lines are kept out too, so the model never writes one itself (`tools/dataCoverage.ts`).
+  messages.push(...history.map((message) => (message.role === "assistant"
+    ? {
+      ...message,
+      content: stripCoverageLines(stripDeliveryLines(stripCitationMarkers(message.content))),
+    }
+    : message)));
   // Per request, so these go after everything cacheable and just before the question. Eval
   // captures send no device and run with the tools off, so their prompt is unchanged.
   if (toolsEnabled) {

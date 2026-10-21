@@ -3,10 +3,13 @@ import { RetrievalRegistry } from "./RetrievalRegistry";
 import { StubAdapter } from "./adapters/StubAdapter";
 import { DirectFeedAdapter } from "./adapters/DirectFeedAdapter";
 import { GoldContextAdapter } from "./adapters/GoldContextAdapter";
+import { GoldPlusRetrievedAdapter } from "./adapters/GoldPlusRetrievedAdapter";
 import { FirestoreVectorAdapter } from "./adapters/FirestoreVectorAdapter";
 import { HybridSliceVectorAdapter } from "./adapters/HybridSliceVectorAdapter";
 import { RrfHybridAdapter } from "./adapters/RrfHybridAdapter";
 import { LocalVectorAdapter } from "./adapters/LocalVectorAdapter";
+import { RerankAdapter } from "./adapters/RerankAdapter";
+import { RerankService } from "../services/RerankService";
 import { ArtifactCorpusSource } from "./sources/ArtifactCorpusSource";
 import { FirestoreCorpusSource } from "./sources/FirestoreCorpusSource";
 import type { CorpusSource } from "./sources/corpusSource";
@@ -32,6 +35,16 @@ retrievalRegistry.register(new DirectFeedAdapter(createCorpusSource()));
  * Reads only the label files and the ingestion artifact — no network, no embeddings.
  */
 retrievalRegistry.register(new GoldContextAdapter());
+
+/**
+ * Diagnostic: gold context plus what `local-vector` retrieved, which splits the gap between the
+ * two into missing passages and distracting ones (`GoldPlusRetrievedAdapter`). Evaluation only.
+ */
+retrievalRegistry.register(new GoldPlusRetrievedAdapter(
+  new GoldContextAdapter(),
+  new LocalVectorAdapter(),
+  "gold-plus-local-vector",
+));
 
 /**
  * Bake-off arm ◆G10. Unlike the pgvector arm — now archived under `archive/pgvector-rag/` — this
@@ -88,6 +101,18 @@ retrievalRegistry.register(new HybridSliceVectorAdapter(
 ));
 
 /**
+ * Dense retrieval reordered by a cross-encoder, alone and under the operator tier. The reranker
+ * is called per request, so these modes cost a Fireworks rerank call that the others do not.
+ */
+retrievalRegistry.register(new RerankAdapter(new LocalVectorAdapter(), new RerankService()));
+retrievalRegistry.register(new HybridSliceVectorAdapter(
+  new DirectFeedAdapter(createCorpusSource()),
+  new RerankAdapter(new LocalVectorAdapter(), new RerankService(), "local-rerank-inner"),
+  undefined,
+  "hybrid-slice-rerank",
+));
+
+/**
  * Fail fast if `DEFAULT_RETRIEVAL` names a mode nothing above registered, rather than deferring
  * the failure to the first request that falls through to the default.
  */
@@ -99,6 +124,7 @@ export { HybridSliceVectorAdapter } from "./adapters/HybridSliceVectorAdapter";
 export { RrfHybridAdapter, RRF_K, FUSION_DEPTH } from "./adapters/RrfHybridAdapter";
 export { DirectFeedAdapter } from "./adapters/DirectFeedAdapter";
 export { GoldContextAdapter } from "./adapters/GoldContextAdapter";
+export { GoldPlusRetrievedAdapter } from "./adapters/GoldPlusRetrievedAdapter";
 export {
   CHUNK_COLLECTION,
   DISTANCE_FIELD,

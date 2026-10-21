@@ -1,0 +1,82 @@
+{
+  "fixtureId": "followup-jumpy-temperature-trace",
+  "fixtureClass": "follow-up",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-26T22:14:35.387Z",
+    "gitSha": "cf5f0af35fed7ad51ebd8d169b464561fe950825",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "reasoningEffort": "default",
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8011/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "The water temperature on one of our pods has gone jumpy - it steps around by a degree or two between readings while everything else on the same instrument looks steady. Where do we start looking?",
+      "answer": "Erratic temperature readings like that point to a few likely causes. The USGS troubleshooting guide lists these for erratic sensor readings:\n\n- Bad or dirty connection at the meter or sensor connections — tighten or clean the connections 【1†\"Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\"】\n- A break in the cables — replace the cables, which may require recertification 【1†\"Break in the cables—replace cables, which may require recertification.\"】\n- Weak batteries — replace with new batteries 【1†\"Weak batteries—replace with new batteries.\"】\n\nSince your other parameters on the same instrument look steady, a connection or cable issue specific to the temperature sensor is a natural place to start. The guide also notes the best practice is to have new, verified water temperature sensors available to replace malfunctioning field sensors 【1†\"The best practice is to have new, verified water temperature sensors available to replace malfunctioning field sensors.\"】",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.1-temperature.pdf__c4c215ab7bd4",
+          "text": "d in\na field setting. The best practice is to have new, verified water\ntemperature sensors available to replace malfunctioning field\nsensors. Be sure to follow manufacturer’s recommendations\nfor cleaning and troubleshooting in general.\n• Check the voltage of the batteries.\n• Start with good batteries in instruments and carry\nspares.\n6.0. \tReporting\nUSGS temperature measurements should be stored inthe National Water Information System (NWIS) database\nTable 6.1–1. \tTroubleshooting guide for temperature measurements.\nSymptom \tPossible cause and corrective action\nThe sensor does not read accurately \t• Dirty sensor—remove dirt and oil film.\n• Weak batteries—replace with new batteries.\n• Calibration expired—verify or recertify.\nErratic sensor readings \t• Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\n• Break in the cables—replace cables, which may require recertification.\n• Weak batteries—replace with new batteries.\nReadings are slow to stabilize \t• Dirty sensor—clean the sensor to remove dirt and oily film.",
+          "source": "https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "Erratic temperature readings like that point to a few likely causes. The USGS troubleshooting guide lists these for erratic sensor readings:\n\n- Bad or dirty connection at the meter or sensor connections — tighten or clean the connections 【1†\"Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\"】\n- A break in the cables — replace the cables, which may require recertification 【1†\"Break in the cables—replace cables, which may require recertification.\"】\n- Weak batteries — replace with new batteries 【1†\"Weak batteries—replace with new batteries.\"】\n\nSince your other parameters on the same instrument look steady, a connection or cable issue specific to the temperature sensor is a natural place to start. The guide also notes the best practice is to have new, verified water temperature sensors available to replace malfunctioning field sensors 【1†\"The best practice is to have new, verified water temperature sensors available to replace malfunctioning field sensors.\"】",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 1460,
+        "completionTokens": 202,
+        "totalTokens": 1662,
+        "cachedPromptTokens": 0
+      },
+      "timing": {
+        "ttftMs": 446,
+        "wallMs": 1820
+      }
+    },
+    {
+      "index": 1,
+      "question": "If it turns out to be the cable, can we just swap it ourselves and carry on?",
+      "answer": "The guide's corrective action for a cable break is to replace the cables, but it adds a caveat: \"which may require recertification\" 【1†\"Break in the cables—replace cables, which may require recertification.\"】\n\nSo a swap may not be as simple as plug-and-play — depending on the situation, the sensor may need to be recertified before you can rely on its readings. The guide also notes that manufacturer's recommendations should be followed for cleaning and troubleshooting in general 【1†\"Be sure to follow manufacturer's recommendations for cleaning and troubleshooting in general.\"】",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.1-temperature.pdf__c4c215ab7bd4",
+          "text": "d in\na field setting. The best practice is to have new, verified water\ntemperature sensors available to replace malfunctioning field\nsensors. Be sure to follow manufacturer’s recommendations\nfor cleaning and troubleshooting in general.\n• Check the voltage of the batteries.\n• Start with good batteries in instruments and carry\nspares.\n6.0. \tReporting\nUSGS temperature measurements should be stored inthe National Water Information System (NWIS) database\nTable 6.1–1. \tTroubleshooting guide for temperature measurements.\nSymptom \tPossible cause and corrective action\nThe sensor does not read accurately \t• Dirty sensor—remove dirt and oil film.\n• Weak batteries—replace with new batteries.\n• Calibration expired—verify or recertify.\nErratic sensor readings \t• Bad or dirty connection at meter or sensor connections—tighten or clean the connections.\n• Break in the cables—replace cables, which may require recertification.\n• Weak batteries—replace with new batteries.\nReadings are slow to stabilize \t• Dirty sensor—clean the sensor to remove dirt and oily film.",
+          "source": "https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "The guide's corrective action for a cable break is to replace the cables, but it adds a caveat: \"which may require recertification\" 【1†\"Break in the cables—replace cables, which may require recertification.\"】\n\nSo a swap may not be as simple as plug-and-play — depending on the situation, the sensor may need to be recertified before you can rely on its readings. The guide also notes that manufacturer's recommendations should be followed for cleaning and troubleshooting in general 【1†\"Be sure to follow manufacturer's recommendations for cleaning and troubleshooting in general.\"】",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 1683,
+        "completionTokens": 135,
+        "totalTokens": 1818,
+        "cachedPromptTokens": 0
+      },
+      "timing": {
+        "ttftMs": 864,
+        "wallMs": 1765
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 3143,
+    "cachedPromptTokens": 0,
+    "completionTokens": 337,
+    "wallMs": 3585
+  }
+}

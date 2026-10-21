@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { config } from "../src/config";
 import {
-  GOLD_CONTEXT_ARM, USAGE, parseArgs, spotCheckQueriesFor,
+  USAGE, isGoldContextArm, parseArgs, spotCheckQueriesFor,
 } from "../src/eval/cli";
 import { loadFixtures, runnableFixtures } from "../src/eval/fixtures";
 import { loadLabels } from "../src/eval/retrieval/labels";
@@ -37,7 +37,7 @@ const gitSha = (): string => {
 const fmt = (n: number): string => n.toLocaleString("en-US");
 
 const spotCheck = async (ask: AskFn, arm: string): Promise<void> => {
-  const queries = spotCheckQueriesFor(arm, arm === GOLD_CONTEXT_ARM ? loadLabels().queries : []);
+  const queries = spotCheckQueriesFor(arm, isGoldContextArm(arm) ? loadLabels().queries : []);
   log.info(`Spot-checking "${arm}" on ${queries.length} queries.`);
 
   for (let i = 0; i < queries.length; i += 1) {
@@ -107,12 +107,24 @@ const main = async (): Promise<void> => {
     return;
   }
 
+  // Captured transcripts are never overwritten (CLAUDE.md): checked before the first paid call.
+  const outRoot = path.resolve(args.outDir);
+  const existing = selected
+    .map((fixture) => path.join(outRoot, transcriptPath(args.arm, args.pass, fixture.id)))
+    .filter((target) => fs.existsSync(target));
+  if (existing.length > 0) {
+    throw new Error(`${existing.length} transcript(s) already exist under ${path.join(args.outDir, args.pass, args.arm)}; `
+      + "name a new capture with --run=<id> instead of overwriting captured data.");
+  }
+
   const run: TranscriptRunMeta = {
     startedAt: new Date().toISOString(),
     gitSha: gitSha(),
     model: config.fireworks.chatModel ?? "unset",
     temperature: config.fireworks.temperature,
     maxTokens: config.fireworks.maxTokens,
+    reasoningEffort: config.fireworks.reasoningEffort,
+    cataloguePrompt: config.catalogue.prompt,
     corpusSource: config.retrieval.corpusSource,
     baseUrl: args.baseUrl,
     transport: args.transport,
@@ -135,7 +147,6 @@ const main = async (): Promise<void> => {
   const summary = summarize(transcripts, args.pass);
   const cacheReported = summary.cachedPromptTokens !== undefined;
 
-  const outRoot = path.resolve(args.outDir);
   transcripts.forEach((transcript) => {
     const target = path.join(outRoot, transcriptPath(args.arm, args.pass, transcript.fixtureId));
     fs.mkdirSync(path.dirname(target), { recursive: true });

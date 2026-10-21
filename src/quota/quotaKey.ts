@@ -3,11 +3,20 @@ import type { Request } from "express";
 import { config } from "../config";
 import type { QuotaScope } from "../config";
 import { callerToken } from "../utils/bearerToken";
+import { verifiedIdentity } from "../utils/serviceIdentity";
+import type { QuotaSubject } from "./QuotaStore";
 
 /**
  * Derives the bucket a request counts against.
  *
- * ## What this service can actually key on — and what it cannot
+ * ## The deployed case: the user the CER server vouched for
+ *
+ * With `CER_RAG_SERVICE_KEY` set, `requireServiceKey` admits only the CER server and records the
+ * user id it sends, which that server took from a JWT it verified. The key is then `user:<id>`,
+ * so a fresh login no longer brings a fresh allowance. Everything below describes the fallback
+ * when the check is off (local runs, the eval harness, the demo frontend).
+ *
+ * ## What this service can key on without that
  *
  * The upstream Gilligan backend counts against a **user id** and an **organization**, both of
  * which it has because its own middleware verified the JWT and loaded the user document. This
@@ -60,6 +69,11 @@ export const quotaKeyFor = (
     return "global";
   }
 
+  const identity = verifiedIdentity(req);
+  if (identity) {
+    return `user:${identity.userId}`;
+  }
+
   const token = callerToken(req);
   if (token) {
     return `token:${hashToken(token)}`;
@@ -69,4 +83,20 @@ export const quotaKeyFor = (
   // `anonymous` rather than a random per-request key: an unattributable caller must not get an
   // unlimited allowance by being unattributable. They all share one bucket.
   return ip ? `ip:${ip}` : "anonymous";
+};
+
+/**
+ * The key plus the labels a durable store writes beside it. The labels come only from the
+ * verified identity, and only when the key is that user's, so a `global` bucket is never
+ * attributed to whichever user happened to spend from it.
+ */
+export const quotaSubjectFor = (
+  req: Request,
+  scope: QuotaScope = config.quota.scope,
+): QuotaSubject => {
+  const key = quotaKeyFor(req, scope);
+  const identity = verifiedIdentity(req);
+  return identity && key === `user:${identity.userId}`
+    ? { key, userId: identity.userId, organizationId: identity.organizationId }
+    : { key };
 };

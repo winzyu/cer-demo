@@ -1,0 +1,141 @@
+{
+  "pass": "warm",
+  "judgeModel": "accounts/fireworks/models/deepseek-v4p1-flash",
+  "reasoningEffort": "default",
+  "modelsUnderTest": [
+    "accounts/fireworks/models/glm-5p3-flash"
+  ],
+  "judgedAt": "2026-09-27T21:14:01.080Z",
+  "budget": {
+    "calls": 90,
+    "promptTokens": 1357566,
+    "cachedPromptTokens": 1229374,
+    "completionTokens": 103282,
+    "usd": 0.169772244
+  },
+  "results": [
+    {
+      "arm": "local-vector",
+      "pass": "warm",
+      "turnsJudged": 90,
+      "correctness": {
+        "perClass": [
+          {
+            "class": "cross-document",
+            "turns": 24,
+            "mean": 0.875,
+            "servable": true,
+            "met": false
+          },
+          {
+            "class": "deep-in-manual",
+            "turns": 20,
+            "mean": 1.3,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "definitional",
+            "turns": 8,
+            "mean": 1.5,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "follow-up",
+            "turns": 8,
+            "mean": 1.375,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "precedence",
+            "turns": 6,
+            "mean": 1.3333333333333333,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "probe-calibration",
+            "turns": 16,
+            "mean": 1.1875,
+            "servable": true,
+            "met": true
+          },
+          {
+            "class": "refusal",
+            "turns": 8,
+            "mean": 1.25,
+            "servable": true,
+            "met": true
+          }
+        ],
+        "overall": 1.1888888888888889,
+        "coverage": 1,
+        "met": false
+      },
+      "ungrounded": {
+        "turnsWithClaims": 0,
+        "turns": 0,
+        "rate": 0,
+        "totalClaims": 0,
+        "met": true
+      },
+      "citationSupport": {
+        "turnsChecked": 0,
+        "unsupported": 0
+      },
+      "gatesMet": false,
+      "findings": [
+        {
+          "fixtureId": "crossdoc-how-steady-before-i-write-it-down",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer makes none of the must-contain points and instead resolves the question by declaring A6.8 takes precedence over general guidance which is picking a document rather than stating the two tables agree — a must-not violation. Unmet: States plainly that the two tables give the same stabilisation criteria and do not conflict; States the general field-measurement chapter itself points multiparameter users to the multiparameter chapter for criteria of the same kind; States the criteria are standard sensor stabilisation criteria and that actual sensor accuracy varies by model and manufacturer; For persistent variability extends equilibration and records additional measurements then reports the median of the final five or more readings or selects a representative final reading using site knowledge and professional judgment documenting the decision"
+        },
+        {
+          "fixtureId": "crossdoc-sonde-sensor-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the cross-sensor sequencing question outright so it makes none of the required ordering rationale rinse-count or pre-field-calibration points though it avoids the 'must not' violations. Unmet: states the order does matter and gives temperature first; gives specific conductance next before pH; gives the general remaining order as pH DO ORP turbidity then ion-selective and fluorescence sensors with A6.2's two-point DO exception requiring DO last; explains the rationale as working from low to high ionic strength so residual standard cannot bias the next calibration; states conductivity must be calibrated before pH because pH buffers and electrode filling solutions are high in ionic strength and a contamination source; states the sensors are rinsed three times with deionized water between different standards; states the sonde is calibrated or checked before each field use"
+        },
+        {
+          "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+          "turn": 2,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the A6.8 conductivity-dependent criteria (±0.1 pH unit ±0.3 pH unit below 75 µS/cm) that the rubric expects so it makes no distinction and withholds the figures the points ask for. Unmet: Attributes ±0.1 pH unit to the A6.8 example field form's calibration criterion; Attributes ±0.3 pH unit below 75 µS/cm to that example form; Distinguishes the form's conductivity-dependent criteria from A6.4's final-buffer check requiring agreement within 0.05 pH unit of the certified value at calibration temperature"
+        },
+        {
+          "fixtureId": "crossdoc-two-oxygen-tables-disagree",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer refuses the question outright giving none of the required values (9.09 9.06 0.03 mg/L) no Benson and Krause note no comparison of the difference to the ±0.2 mg/L tolerance and no advice on which table to use so it misses every must-contain point. Unmet: gives the USGS table value at 20.0 C and 760 mmHg as about 9.09 mg/L; gives the EPA chart value at 20 C and 760 mmHg as about 9.06 mg/L; States the difference is 0.03 mg/L and assesses its significance against the applicable procedure; notes the USGS values are generated from the Benson and Krause equations; Compares the 0.03 mg/L difference with the USGS saturation-check tolerance of ±0.2 mg/L; advises using the table belonging to whichever protocol the work is being done under consistently"
+        },
+        {
+          "fixtureId": "deepmanual-brackish-do-correction",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer states the multiply-by-factor method and cites table 6.2–4 but withholds the required factor 0.8235 saying it lacks the information which is a refusal of a figure the rubric expects. Unmet: Gives 0.8235 as the factor for 20.0 °C at 50 000 µS/cm"
+        },
+        {
+          "fixtureId": "deepmanual-diluting-clarity-standards",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer approves diluting commercial stabilized formazin (StablCal) as 'within the accepted options' violating the must-not item and makes none of the required points about not diluting commercial standards or buying them at the needed values. Unmet: states that commercial calibration solutions must not be diluted; gives 4 000-unit formazin as the one exception that may be diluted; explains that diluting changes the suspension matrix so the dilutions are no longer linear; recommends buying commercially prepared solutions at the values needed rather than preparing them by dilution"
+        },
+        {
+          "fixtureId": "deepmanual-zobell-check",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer discusses ZoBell's verification and cites an EPA ±10 mV post-check criterion but none of the four required points (pre-field ZoBell's check Eh within 5 mV of the table value 430 mV at 25 °C ±5 mV stabilization before recording) are made and no must-not item is violated. Unmet: States the check is made against ZoBell's solution before field measurements; States the calculated Eh of ZoBell's must come within 5 mV of the table value for the solution's temperature; Gives 430 mV as the theoretical Eh of ZoBell's at 25 °C; States the reading must stabilize to within ±5 mV before the temperature and millivolt value are recorded"
+        },
+        {
+          "fixtureId": "probecal-sonde-calibration-order",
+          "turn": 1,
+          "dimension": "correctness",
+          "detail": "scored 0 — The answer places pH before specific conductance and says no required sequence exists for the other parameters violating the must-not items and missing the temperature-first conductivity-before-pH DO-then-ORP ordering and the ionic-strength rationale. Unmet: Places temperature first in the sequence; Places specific conductance before pH; Places dissolved oxygen and then oxidation-reduction potential after pH; Explains that the sequence runs from lower to higher ionic strength so carryover from one standard does not bias the next; Notes specifically that pH buffers and electrode filling solutions are high in ionic strength and would contaminate a conductivity calibration"
+        }
+      ]
+    }
+  ]
+}

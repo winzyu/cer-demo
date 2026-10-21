@@ -1,0 +1,108 @@
+{
+  "fixtureId": "crossdoc-soft-water-ph-wont-settle",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "ph-low-sc-threshold-01",
+          "rubric": [
+            1
+          ],
+          "why": "Defines low-conductance pH measurement difficulty below 100 microsiemens/cm."
+        },
+        {
+          "claimId": "ph-table642-low-ionic-01",
+          "rubric": [
+            1,
+            2
+          ],
+          "why": "Connects low ionic strength to an incomplete circuit and unstable pH."
+        },
+        {
+          "claimId": "ph-low-sc-causes-01",
+          "rubric": [
+            2,
+            3
+          ],
+          "why": "Explains circuit, buffer ionic-strength and liquid-junction causes."
+        },
+        {
+          "claimId": "ph-table642-low-ionic-electrode-01",
+          "rubric": [
+            4
+          ],
+          "why": "Names suitable electrode types for low-ionic-strength water."
+        },
+        {
+          "claimId": "ph-kcl-method-01",
+          "rubric": [
+            5
+          ],
+          "why": "Recommends KCl treatment and the approximate conductance increase."
+        },
+        {
+          "claimId": "ph-kcl-procedure-01",
+          "rubric": [
+            8
+          ],
+          "why": "Permits gentle swirling specifically to dissolve added KCl."
+        },
+        {
+          "claimId": "ph-kcl-bias-01",
+          "rubric": [
+            5,
+            6
+          ],
+          "why": "Gives the conductance increase and resulting pH effect below 0.01 unit."
+        },
+        {
+          "claimId": "ph-kcl-trigger-01",
+          "rubric": [
+            7
+          ],
+          "why": "Limits KCl treatment to low-conductance samples that fail the normal procedure."
+        },
+        {
+          "claimId": "ph-kcl-other-salts-01",
+          "rubric": [
+            5
+          ],
+          "why": "Identifies KCl as the recommended salt for the treatment."
+        },
+        {
+          "claimId": "fm-no-stir-below-100-01",
+          "rubric": [
+            8
+          ],
+          "why": "Forbids stirring untreated water below 100 microsiemens/cm."
+        },
+        {
+          "claimId": "a60-xcut-ph-no-stir-below-100-01",
+          "rubric": [
+            8
+          ],
+          "why": "Forbids stirring untreated low-conductance subsamples."
+        }
+      ],
+      "uncovered": []
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "mp-form-ph-criteria-06",
+          "rubric": [
+            1,
+            2,
+            3
+          ],
+          "why": "Gives both conductivity-dependent example-form criteria; matches explicit evidence, but does not supply A6.4's check."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

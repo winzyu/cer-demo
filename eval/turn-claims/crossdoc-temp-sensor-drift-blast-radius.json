@@ -1,0 +1,100 @@
+{
+  "fixtureId": "crossdoc-temp-sensor-drift-blast-radius",
+  "fixtureClass": "cross-document",
+  "turns": [
+    {
+      "turn": 1,
+      "claims": [
+        {
+          "claimId": "epa-nist-temp-check-01",
+          "rubric": [
+            1
+          ],
+          "why": "Names the four temperature-dependent channels; matches explicit evidence."
+        },
+        {
+          "claimId": "t-verified-multiparam-accuracy-01",
+          "rubric": [
+            1
+          ],
+          "why": "Establishes conditional temperature correction of other channels; matches explicit evidence."
+        },
+        {
+          "claimId": "t-temp-master-variable-01",
+          "rubric": [
+            1
+          ],
+          "why": "Identifies DO, conductivity and pH as temperature-dependent; matches explicit evidence."
+        },
+        {
+          "claimId": "ph-sensor-location-difference-01",
+          "rubric": [
+            5
+          ],
+          "why": "Places the multiparameter temperature sensor apart from the pH electrode."
+        }
+      ],
+      "uncovered": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "turn": 2,
+      "claims": [
+        {
+          "claimId": "epa-nist-temp-check-01",
+          "rubric": [
+            2
+          ],
+          "why": "Requires checking each temperature sensor against a NIST-traceable thermometer."
+        },
+        {
+          "claimId": "epa-solution-volume-01",
+          "rubric": [
+            5
+          ],
+          "why": "Requires calibration solution to cover both sensors."
+        },
+        {
+          "claimId": "epa-do-dry-sensor-01",
+          "rubric": [
+            5
+          ],
+          "why": "Explains evaporation effects during DO air calibration."
+        },
+        {
+          "claimId": "t-verified-multiparam-accuracy-01",
+          "rubric": [
+            3
+          ],
+          "why": "Gives the conditional multiparameter accuracy requirement of 0.2 C."
+        },
+        {
+          "claimId": "t-temp-cal-differs-01",
+          "rubric": [
+            1
+          ],
+          "why": "Defines verification across the range of use rather than adjustment."
+        },
+        {
+          "claimId": "ph-temp-sensor-annual-cal-01",
+          "rubric": [
+            4
+          ],
+          "why": "Requires at least annual checking of the pH system's temperature sensor."
+        },
+        {
+          "claimId": "mp-t4-nist-thermometer-02",
+          "rubric": [
+            2
+          ],
+          "why": "Requires a NIST-certified or traceable calibration thermometer."
+        }
+      ],
+      "uncovered": []
+    }
+  ],
+  "neither": []
+}

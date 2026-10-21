@@ -55,7 +55,11 @@ const toolEvidenceBlock = (evidence: JudgeEvidence): string => (
     : ""
 );
 
-/** The evidence as its own section; empty without any, so tools-off prompts keep their bytes. */
+/**
+ * The tool evidence as a section of its own, for a correctness prompt that carries no grounding
+ * material. Empty on a tools-off turn, so that prompt stays byte-identical to one built before
+ * tool evidence existed.
+ */
 const toolEvidenceSection = (evidence: JudgeEvidence): string => {
   const block = toolEvidenceBlock(evidence);
   return block ? `${block.trimStart()}\n\n` : "";
@@ -121,6 +125,31 @@ const groupedContextBlock = (context: JudgeEvidence["context"]): string => {
 };
 
 /**
+ * The material an answer may be grounded on, placed **first** in every prompt that carries it.
+ *
+ * Fireworks caches prompt prefixes, and cached input on the judge model bills at about 3% of the
+ * uncached rate (`prices.ts`). The service rules are the same on every turn and the retrieved
+ * documents are the same for every dimension judged on one turn, so leading with them lets the
+ * second call of a turn - and the service-rules part of every call - read from cache instead of
+ * paying full input for ~5-15K tokens again. The dimension's instructions follow the material, and
+ * the answer comes last.
+ *
+ * The text must be byte-identical across dimensions or the prefixes stop matching; that is why
+ * both prompts take it from here rather than spelling their own headers. A turn's recorded tool
+ * evidence is per-turn material too, so it follows the documents here; tools-off turns add nothing.
+ */
+const groundingMaterial = (evidence: JudgeEvidence): string => `SERVICE RULES (the standing \
+instructions this answer was generated under):
+${evidence.systemPrompt}
+
+RETRIEVED DOCUMENTS (the retrieval context supplied for this turn):
+${contextBlock(evidence.context)}${toolEvidenceBlock(evidence)}
+
+=====
+
+`;
+
+/**
  * Does this turn's rubric ask whether the answer made something up?
  *
  * A `must_not` like *"invents a numeric range"* or *"answers from general knowledge"* is not
@@ -170,8 +199,20 @@ export const needsGroundingForCorrectness = (rubric: EvalRubric): boolean => (
  * invention check is *unjudgeable* without the material (see `needsGroundingForCorrectness`). For
  * those turns the source documents are supplied and the judge is told what they are for — deciding
  * that one rule, not re-grading the answer's truth.
+ *
+ * On those turns the service rules are supplied too (2026-09-24). The instruction below already
+ * counted them as grounding, but the judge was never shown them. Both now lead the prompt as
+ * `groundingMaterial`, which also makes the pair a cache hit behind the `ungrounded` call.
+ *
+ * The 2026-09-25 human calibration (`EVAL_REBUILD.md`, "Calibration packet (2c)") found the judge
+ * wrong both ways: it called points absent that the answer made, sometimes inside a quotation, and
+ * it let through a refusal where an answer was owed and a datasheet range recast as a normal
+ * water range. Hence the point-by-point list before the score, the refusal rule keyed on whether
+ * the rubric asks for a decline, and the must-not and invention rules applied to effect as well
+ * as wording.
  */
-export const correctnessPrompt = (evidence: JudgeEvidence): string => `You are grading one answer
+export const correctnessPrompt = (evidence: JudgeEvidence): string => `${
+  needsGroundingForCorrectness(evidence.rubric) ? groundingMaterial(evidence) : ""}You are grading one answer
 from a water-quality assistant against a fixed rubric. Grade only what the rubric asks for.
 
 SCALE:
@@ -179,29 +220,44 @@ SCALE:
 1 = partially there — some points made, or the right idea stated vaguely or incompletely.
 0 = misses the point, is wrong, or refuses when the rubric expected a real answer.
 
+POINTS:
+Before scoring, take the "must contain" list one point at a time and search the whole answer for
+it, including text inside quotations from a source. A point is met when the answer states its
+substance in any wording; quote the words that make it. Never mark a point unmet without having
+looked for it: a figure or condition inside a quoted passage counts as stated.
+
 RULES:
 - Score against the rubric, not against your own knowledge. A true answer that does not make the
   rubric's points is not a 2.
 - If any "must not" item appears in the answer, the score is 0 regardless of everything else.
 - Judge each "must not" item on its own terms. Do not invent additional ones.
-- A refusal scores 0 when the rubric expected content, and 2 when the rubric asked for a refusal.
+- A "must not" item is violated by any wording with the same effect, not only by its own words:
+  saying a value "falls within the normal range" declares it normal.
+- When no "must contain" point asks the answer to decline or to say information is unavailable,
+  the rubric expects a real answer. An answer that then withholds a fact or figure a point asks
+  for, saying it lacks the information, is a refusal even if it also gives a method, a source name
+  or other partial content, and it scores 0.
+- A refusal satisfies a rubric point asking to decline an unsupported answer.
+  If the rubric also requires supported explanations, grade those independently;
+  a bare refusal does not earn full credit for the whole answer.
+  When a point asks the answer to decline or to say information is unavailable, a correct refusal
+  that makes at least one "must contain" point scores at least 1.
 - Wording is not part of a refusal rubric. When a rubric asks for a refusal, an answer that
   declines and says what it lacks satisfies that point in full, whether or not it uses the
   service's standard refusal sentence.
 - Ignore style, tone, formatting and length. A blunt correct answer and an elegant correct answer
   score the same.
 
-${needsGroundingForCorrectness(evidence.rubric) ? `SOURCE DOCUMENTS SUPPLIED TO THE ANSWER
+${needsGroundingForCorrectness(evidence.rubric) ? `THE SERVICE RULES AND RETRIEVED DOCUMENTS ABOVE
 These are here for ONE purpose: this turn's "must not" list asks whether the answer made
 something up, and that cannot be decided without them. A figure, range, procedure or statement
-that appears anywhere below — or in the service rules the assistant was given —
-was NOT invented, even if the rubric does not mention it. Do not otherwise
-grade the answer against these documents: an answer can be entirely true and still miss the
-rubric's points, and that is still not a 2.
+that appears anywhere in them was NOT invented, even if the rubric does not mention it, unless
+the answer presents it as something they do not say it is: an instrument's operating or
+compensation range presented as the normal range of natural water is an invented criterion. Do not
+otherwise grade the answer against these documents: an answer can be entirely true and still miss
+the rubric's points, and that is still not a 2.
 
-${contextBlock(evidence.context)}
-
-` : ""}${toolEvidenceSection(evidence)}CONVERSATION SO FAR:
+` : toolEvidenceSection(evidence)}CONVERSATION SO FAR:
 ${historyBlock(evidence.history)}
 
 QUESTION BEING GRADED:
@@ -214,7 +270,7 @@ ANSWER:
 ${evidence.answer}
 
 ${JSON_ONLY}
-{"score": 0 | 1 | 2, "reason": "<one sentence, naming the rubric points made or missed>"}`;
+{"points": [{"point": "<a must-contain point, abbreviated>", "met": true | false, "quote": "<the answer's words that make it, or empty>"}], "score": 0 | 1 | 2, "reason": "<one sentence, naming the rubric points made or missed>"}`;
 
 /**
  * Ungrounded claims — enumerate, do not count.
@@ -228,11 +284,11 @@ ${JSON_ONLY}
  * Prior *assistant* answers are shown for pronoun resolution but excluded from grounding by an
  * explicit rule — otherwise a model that invented a number on turn 1 grounds itself on turn 2.
  */
-export const ungroundedPrompt = (evidence: JudgeEvidence): string => `You are auditing one answer
-from a water-quality assistant for claims it had no grounds to make.
+export const ungroundedPrompt = (evidence: JudgeEvidence): string => `${groundingMaterial(evidence)}\
+You are auditing one answer from a water-quality assistant for claims it had no grounds to make.
 
 List every specific factual claim in the answer that is NOT supported by the supplied material
-below. A claim is a number, threshold, range, unit, procedure, mechanism or attribution stated as
+above. A claim is a number, threshold, range, unit, procedure, mechanism or attribution stated as
 fact.
 
 WHAT COUNTS AS GROUNDED — any one of these three is enough:
@@ -251,12 +307,6 @@ DO NOT LIST:
 - A missing citation. That is a different dimension.
 - Something you believe is true but cannot find in the supplied material. The question is not
   "is this true" — it is "did the assistant have grounds to say it".
-
-SERVICE RULES (the standing instructions this answer was generated under):
-${evidence.systemPrompt}
-
-RETRIEVED DOCUMENTS (the retrieval context supplied for this turn):
-${contextBlock(evidence.context)}${toolEvidenceBlock(evidence)}
 
 CONVERSATION SO FAR:
 ${historyBlock(evidence.history)}
@@ -379,7 +429,14 @@ export const parseVerdict = (dimension: JudgeDimension, reply: string): JudgeVer
     if (!Number.isInteger(score) || score < 0 || score > 2) {
       throw new Error(`judge returned score ${JSON.stringify(parsed.score)}, expected 0, 1 or 2`);
     }
-    return { score, items: [], note: clean(parsed.reason) };
+    // The point list is how the judge shows its reading of the answer; the score stays its own
+    // verdict, and unmet points are kept in the note so a disagreement shows what was missed.
+    const unmet = (Array.isArray(parsed.points) ? parsed.points : [])
+      .map((entry) => (entry ?? {}) as Record<string, unknown>)
+      .filter((point) => point.met === false)
+      .map((point) => clean(point.point));
+    const reason = clean(parsed.reason);
+    return { score, items: [], note: unmet.length > 0 ? `${reason} Unmet: ${unmet.join("; ")}` : reason };
   }
 
   const listKey = dimension === "ungrounded" ? "claims" : "invalid";
@@ -414,6 +471,9 @@ export const parseVerdict = (dimension: JudgeDimension, reply: string): JudgeVer
  * the same defect from the other end: that model spent 3,350 completion tokens per call against
  * `gpt-oss-120b`'s 542, and the 6.2x verbosity cancelled its 3x cheaper rate exactly. Constraining
  * the shape therefore buys parse reliability *and* the cost saving the rate card advertised.
+ * It removes reasoning from the reply text only: on `deepseek-v4-flash-0731` the hidden
+ * reasoning is still billed as completion tokens, and `reasoning_effort` is what turns it off
+ * (2026-09-24, `EXPLORATORY_REASONING_EFFORT` in `runner.ts`).
  *
  * `parseVerdict` stays exactly as strict. A schema is enforced by the provider, so it is a claim
  * about the provider's behaviour, not a guarantee this code should lean on — and the checks it
@@ -423,11 +483,24 @@ export const parseVerdict = (dimension: JudgeDimension, reply: string): JudgeVer
 export const JUDGE_SCHEMAS: Record<JudgeDimension, Record<string, unknown>> = {
   correctness: {
     type: "object",
+    // `points` comes first so the judge reads the answer point by point before it scores.
     properties: {
+      points: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            point: { type: "string" },
+            met: { type: "boolean" },
+            quote: { type: "string" },
+          },
+          required: ["point", "met", "quote"],
+        },
+      },
       score: { type: "integer", enum: [0, 1, 2] },
       reason: { type: "string" },
     },
-    required: ["score", "reason"],
+    required: ["points", "score", "reason"],
   },
   ungrounded: {
     type: "object",

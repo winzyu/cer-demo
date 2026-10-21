@@ -1,5 +1,7 @@
 import {
   TEMPERATURE_BASELINE_RAIL_F,
+  fallbackLimitNote,
+  resolveLimit,
   temperatureThreshold,
   thresholdRejectionNote,
 } from "../../src/report/operatorThresholds";
@@ -186,5 +188,68 @@ describe("thresholdRejectionNote", () => {
       .map(thresholdRejectionNote);
 
     expect(notes.some((n) => n.includes("0-0"))).toBe(false);
+  });
+});
+
+/**
+ * Operator thresholds stay the source of truth; v2 §3's range is used only when the operator's is
+ * rejected, and only where v2 gives one for the pod's water class (docs/timeline.md, 2026-10-10
+ * and 2026-10-11).
+ */
+describe("resolveLimit", () => {
+  it("uses a usable operator threshold even when a v2 range exists", () => {
+    expect(resolveLimit({ minPH: "7.5", maxPH: "8.5" }, "ph", "Marine"))
+      .toEqual({ assessed: true, min: 7.5, max: 8.5, source: "operator-threshold" });
+  });
+
+  it("falls back to v2's coastal pH range when the operator's is a placeholder", () => {
+    // CER Conference Pod carries maxPH=100.
+    const limit = resolveLimit({ minPH: "0", maxPH: "100" }, "ph", "Marine");
+    expect(limit).toMatchObject({
+      assessed: true, min: 7.8, max: 8.3, source: "v2-fallback", rejection: "implausible",
+    });
+    expect(limit.assessed && limit.note).toMatch(/upwelling/);
+  });
+
+  it("falls back for an all-zero row, by water class", () => {
+    const zeros = { minDissolvedOxygen: "0", maxDissolvedOxygen: "0" };
+    expect(resolveLimit(zeros, "dissolvedOxygen", "Freshwater"))
+      .toMatchObject({ min: 6, max: 11, source: "v2-fallback", rejection: "unset" });
+    expect(resolveLimit(zeros, "dissolvedOxygen", "Estuarine"))
+      .toMatchObject({ min: 5, max: 9, source: "v2-fallback" });
+  });
+
+  it("falls back when the device has no thresholds at all", () => {
+    expect(resolveLimit(undefined, "orp", "Freshwater"))
+      .toMatchObject({ min: 100, max: 400, source: "v2-fallback", rejection: "no-thresholds" });
+  });
+
+  it("is not assessed where v2 has no usable range", () => {
+    expect(resolveLimit(undefined, "orp", "Marine"))
+      .toEqual({ assessed: false, reason: "no-thresholds" });
+    expect(resolveLimit(undefined, "conductivity", "Freshwater"))
+      .toEqual({ assessed: false, reason: "no-thresholds" });
+    expect(resolveLimit(undefined, "temperature", "Freshwater"))
+      .toEqual({ assessed: false, reason: "no-thresholds" });
+  });
+
+  it("is not assessed when the water type is unknown, rather than guessing a column", () => {
+    expect(resolveLimit(undefined, "ph", undefined))
+      .toEqual({ assessed: false, reason: "no-thresholds" });
+  });
+});
+
+describe("fallbackLimitNote", () => {
+  it("names the water class and range, and says it is generic", () => {
+    expect(fallbackLimitNote("dissolvedOxygen", "Freshwater", 6, 11)).toBe(
+      "This device has no usable dissolved oxygen threshold, so dissolved oxygen is judged against "
+      + "the general range for freshwater in the source-of-truth document (6-11 mg/L), a generic "
+      + "fallback rather than a limit set for this site.",
+    );
+  });
+
+  it("appends v2's qualification when there is one", () => {
+    expect(fallbackLimitNote("ph", "Marine", 7.8, 8.3, "Upwelling note."))
+      .toMatch(/coastal and harbor water .*\(7\.8-8\.3\), a generic fallback .* Upwelling note\.$/);
   });
 });

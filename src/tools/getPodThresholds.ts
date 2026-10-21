@@ -1,12 +1,14 @@
 /**
  * `get_pod_thresholds` -- reads the operator-configured alert thresholds off a pod's device
  * registry row: temperature, pH, dissolved oxygen, ORP and conductivity min/max, plus its water
- * type. No turbidity entry exists on any pod (`referenceRanges.ts`, `BACKEND_FIELDS.md` §3b);
- * `get_turbidity_info` is the pointer this result carries for that metric.
+ * type. The registry mapping exposes no numeric turbidity threshold; this does not
+ * establish configuration outside that mapping. `get_turbidity_info` explains its treatment.
  *
- * **The operator's source-of-truth document is vetoed as a source of ranges** (`timeline.md`).
- * Every number here comes from the registry, validated by `operatorThresholds.ts`'s
- * `metricThreshold`, or is refused with a reason -- there is no fallback to any reference table.
+ * **Operator thresholds first, source-of-truth v2 second** (`timeline.md`, 2026-10-10). Every
+ * number comes from the registry, validated by `operatorThresholds.ts`'s `metricThreshold`; a
+ * rejected metric falls back to v2 §3's general range for the pod's water class where v2 gives one
+ * (`resolveLimit`), returned with status "fallback" and labelled as generic, and is otherwise
+ * refused with a reason.
  * `metricThreshold` generalises what was originally temperature-only validation (`unset` for an
  * all-zero row, `inverted` for a transposed pair, `implausible` for a data-entry placeholder like
  * `maxPH=100`), one sanity rail per metric, documented next to `RAILS` in that file.
@@ -22,11 +24,16 @@
 import { METRIC_BY_KEY } from "../devices/metrics";
 import {
   type MetricThresholdKey,
-  metricThreshold,
+  type ThresholdRejection,
+  FIELD_KEYS,
+  fallbackLimitNote,
   metricThresholdRejectionReason,
+  resolveLimit,
 } from "../report/operatorThresholds";
+import { mapWaterType } from "../report/referenceRanges";
 import { resolveErrorCode } from "../utils/errors";
 import { createLogger } from "../utils/logger";
+import { USER_NOTES_FIELD } from "../types/tool.types";
 import type { ToolContext, ToolDefinition } from "../types/tool.types";
 import { QuerySensorData, type SensorToolResult } from "./querySensorData";
 
@@ -49,6 +56,41 @@ const METRIC_ORDER: ReadonlyArray<[string, MetricThresholdKey]> = [
 /** `MetricThresholdKey` values match `MetricKey` exactly, so this lookup is a direct hit. */
 const unitFor = (key: MetricThresholdKey): string => METRIC_BY_KEY.get(key)?.unit ?? "unitless";
 
+const isAbsent = (value: unknown): boolean => value === undefined || value === null;
+
+const NO_THRESHOLDS_USER_NOTE = "No limits are set for this pod, so no reading was checked against a limit.";
+
+/**
+ * The reader's sentence for a limit that was not used (see `USER_NOTES_FIELD`), named by the
+ * metric's user-facing label. Never echoes a registry value.
+ */
+const rejectionUserNote = (
+  reason: ThresholdRejection,
+  metric: MetricThresholdKey,
+  thresholds: Record<string, unknown> | null | undefined,
+): string => {
+  const label = METRIC_BY_KEY.get(metric)?.label ?? metric;
+  switch (reason) {
+    case "inverted":
+      return `${label} was not checked against its limits: the minimum is above the maximum.`;
+    case "non-numeric":
+    case "implausible":
+      return `${label} was not checked against its limits: they are not usable.`;
+    case "missing": {
+      const minAbsent = isAbsent(thresholds?.[FIELD_KEYS[metric].min]);
+      const maxAbsent = isAbsent(thresholds?.[FIELD_KEYS[metric].max]);
+      if (minAbsent !== maxAbsent) {
+        return `${label} was not checked against a limit: its ${minAbsent ? "minimum" : "maximum"} `
+          + "is not set.";
+      }
+      return `${label} was not checked against a limit: its limits are not set.`;
+    }
+    // "unset" (min === max): neither side is set. "no-thresholds" gets one note for the pod.
+    default:
+      return `${label} was not checked against a limit: its limits are not set.`;
+  }
+};
+
 export const getPodThresholdsDefinition: ToolDefinition = {
   type: "function",
   function: {
@@ -58,7 +100,7 @@ export const getPodThresholdsDefinition: ToolDefinition = {
       + "minimum and maximum for temperature (°F), pH, dissolved oxygen (mg/L), ORP (mV) and "
       + "conductivity (µS/cm), plus the pod's water type. These are configured alert limits, "
       + "not an ecological standard. Values that fail validation are returned as rejected with a "
-      + "reason — never quote a rejected value. There is no turbidity threshold; use "
+      + "reason - never quote a rejected value. This tool exposes no numeric turbidity threshold; use "
       + "get_turbidity_info for turbidity.",
     parameters: {
       type: "object",
@@ -117,18 +159,39 @@ export class GetPodThresholds {
     }
     const { device } = resolved;
 
+    const readerNotes = new Set<string>();
+    const water = mapWaterType(device.operatingEnvironment);
     const thresholds = Object.fromEntries(METRIC_ORDER.map(([wireName, metricKey]) => {
-      const verdict = metricThreshold(device.thresholds, metricKey);
-      const entry = verdict.usable
+      const limit = resolveLimit(device.thresholds, metricKey, water);
+      if (limit.assessed && limit.source === "v2-fallback" && water) {
+        const label = METRIC_BY_KEY.get(metricKey)?.label ?? metricKey;
+        readerNotes.add(`${label} is checked against a general range from the source-of-truth `
+          + "document, because this pod has no usable limit of its own.");
+        return [wireName, {
+          status: "fallback",
+          min: limit.min,
+          max: limit.max,
+          unit: unitFor(metricKey),
+          reason: metricThresholdRejectionReason(limit.rejection!, metricKey),
+          note: fallbackLimitNote(metricKey, water, limit.min, limit.max, limit.note),
+        }];
+      }
+      if (!limit.assessed) {
+        // A pod with no limits at all gets one note for the pod, not one per metric.
+        readerNotes.add(limit.reason === "no-thresholds"
+          ? NO_THRESHOLDS_USER_NOTE
+          : rejectionUserNote(limit.reason, metricKey, device.thresholds));
+      }
+      const entry = limit.assessed
         ? {
           status: "configured",
-          min: verdict.min,
-          max: verdict.max,
+          min: limit.min,
+          max: limit.max,
           unit: unitFor(metricKey),
         }
         : {
-          status: "rejected",
-          reason: metricThresholdRejectionReason(verdict.reason, metricKey),
+          status: limit.reason === "implausible" ? "not assessed" : "rejected",
+          reason: metricThresholdRejectionReason(limit.reason, metricKey),
         };
       return [wireName, entry];
     }));
@@ -141,13 +204,20 @@ export class GetPodThresholds {
       },
       thresholds,
       turbidity: {
-        status: "no_threshold",
-        note: "No operator-configured turbidity threshold exists on any pod. Call "
+        status: "unavailable",
+        note: "This tool does not expose a numeric turbidity threshold. Configuration outside this tool is unknown. Call "
           + "get_turbidity_info for how to interpret a turbidity reading.",
       },
-      source: "Device registry — operator-configured alert thresholds.",
+      source: "Device registry — operator-configured alert thresholds; a metric with status "
+        + "\"fallback\" uses the source-of-truth document's general range for this water type.",
       note: "These are configured alert limits an operator set for this pod, not an ecological "
-        + "water-quality standard.",
+        + "water-quality standard. A \"fallback\" range is a generic range for the water type, not "
+        + "a limit set for this site; say so whenever you use one.",
+      [USER_NOTES_FIELD]: [
+        "These limits are the alert thresholds set for this pod, not an ecological water-quality standard.",
+        // One per metric whose limit was not used; `reason` stays the model's version.
+        ...readerNotes,
+      ],
     };
   }
 }

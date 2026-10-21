@@ -1,0 +1,87 @@
+{
+  "fixtureId": "refusal-temperature-harm-threshold",
+  "fixtureClass": "refusal",
+  "arm": "gold-context",
+  "pass": "warm",
+  "run": {
+    "startedAt": "2026-09-26T00:07:27.290Z",
+    "gitSha": "d11d57738f7f3d844fba64bd10d33e3d73ddd60f",
+    "model": "accounts/fireworks/models/gpt-oss-120b",
+    "temperature": 0,
+    "maxTokens": 16384,
+    "reasoningEffort": "high",
+    "corpusSource": "artifact",
+    "baseUrl": "http://localhost:8011/api/v1",
+    "transport": "sse",
+    "cacheReportingAvailable": true
+  },
+  "turns": [
+    {
+      "index": 0,
+      "question": "We had a hot stretch and the creek sat around 24 degrees all week. Is that actually too warm for the fish? I need to know what number to flag on.",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The request requires a temperature threshold for fish, which is not provided in the loaded documents. I can provide information about how temperature is measured and its role in water-quality monitoring.",
+      "context": [
+        {
+          "id": "usgs-nfm-a6.1-temperature.pdf__b94bbf9a9ecf",
+          "text": "-- 9 of 23 --2 \tChapter A6.1. Temperature\ngeneral introduction to the NFM (USGS Techniques and\nMethods, book 9, chapter A0—U.S. Geological Survey,\n2018) at https://doi.org/10.3133/tm9A0. The authoritative\ncurrent versions of NFM chapters are available in the USGS\nPublications Warehouse at https://pubs.usgs.gov. Comments,\nquestions, and suggestions related to the NFM can be\naddressed to nfm@usgs.gov.\n1.1. \tOverview of Temperature\nTEMPERATURE: a measure of warmth or coldness of a\nsubstance with reference to a standard value.\nMeasurements of air and water temperature at a field\nsite are essential for water-quality data collection. Determina-\ntion of dissolved-oxygen concentrations, conductivity, pH,\nrate and equilibria of chemical reactions, biological activity,\nand fluid properties relies on accurate temperature measure-\nments. The USGS currently (2024) measures and publishes\nwater temperature data at more than 3,500 surface-water and\ngroundwater stations, including wells, springs, streams, lakes,\nrivers, estuaries, and marine environments (U.S. Geological\nSurvey, undated). Water temperature data are provided to\ncooperators, data managers, scientists, and the public. Water\ntemperature is often measured in conjunction with other water-\nquality parameters to support habitat assessment of threatened\nand endangered species and to evaluate changing climate con-\nditions. Accurate air- and water-temperature data are essential\nto document thermal alterations to the environment caused by\nnatural phenomena and by human activities. Water tempera-\nture can be subject to environmental regulation and monitoring\nby State and local agencies.\n• The U.S. Geological Survey (USGS) uses the\nCelsius (C) scale for measuring temperature.\n• The procedures in this chapter aim to bring trace-\nability standards of the National Institute of Standards\nand Technology (NIST), to all USGS measurements\nof temperature.\n2.0. \tEquipment and Supplies\nA temperature sensor is any device used to measure\ntemperature. In its simplest form, a temperature sensor can\ncontain a detector that creates a signal used to infer tempera-\nture according to a calibration. Standard procedures used in\nthe past by the USGS to measure temperature involved the use\nof liquid-in-glass thermometers. Since the 1990s, digital ther-\nmometers and other equipment utilizing integrated thermistors\nand thermocouples, such as multiparameter instruments, have\ncontinued to undergo improvements in accuracy, reliability,\nand cost. Digital thermometers have many advantages over\nliquid-in-glass thermometers, including smaller uncertain-\nties, faster response, ease of automation, and elimination of\nuncertainty related to lighting and viewing angle (Ripple and\nStrouse, 2005). Electronic temperature sensors vary voltage,\nresistance, current, or frequency outputs with temperature.\nCommon sensors include thermistors, an electrical resistor\nwith a resistance that varies sharply and predictably with tem-\nperature, and thermocouples, sensors containing two dissimilar\nmetals bonded to form a connection with a dielectric potential\nthat varies with temperature. To make a digital thermometer,",
+          "source": "https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The request requires a temperature threshold for fish, which is not provided in the loaded documents. I can provide information about how temperature is measured and its role in water-quality monitoring.",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 1974,
+        "completionTokens": 796,
+        "totalTokens": 2770,
+        "cachedPromptTokens": 1254
+      },
+      "timing": {
+        "ttftMs": 4729,
+        "wallMs": 5005
+      }
+    },
+    {
+      "index": 1,
+      "question": "If I want to put \"too warm\" in the report, is there anything in what we've got that I can point at, or am I going to the state for that?",
+      "answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The request asks for a temperature threshold for fish, which is not provided in the loaded documents. The USGS document notes that “Measurements of air and water temperature at a field site are essential for water-quality data collection”【2†\"Measurements of air and water temperature at a field site are essential for water-quality data collection.\"】, but it does not give a specific temperature limit for fish.",
+      "context": [
+        {
+          "id": "epa-sop-field-instrument-calibration-2010.pdf__443c31100934",
+          "text": "RECORDS MANAGEMENT «ccc csesees 15\n8.0 REFERENCES. cssssssscscsssesssssseesvssesesecevesssssesspeestssssesuvtsesstseessie 15\nTable 1 INSTRUMENT CALIBRATION LOG .......cesscseseeseeee cceavevettevevevecscanee 16\n\nOXYGEN SOLUBILITY\n\fEQASOP-FieldCalibrat\nRegion 1 Calibration of\nField Instruments\n\nRevision Number: 2\nDate: June 3, 1998\n\n' Revised January 19, 2010\nPage 4 of 18\n\n1.0 SCOPE AND APPLICATIONThe purpose of this standard operating procedure (SOP) is to provide a framework for calibrating\nfield instruments used to measure water quality parameters for groundwater and surface water.\nWater quality parameters include temperature, pH, dissolved oxygen, specific conductance,\noxidation/reduction potential [ORP], and turbidity. This SOP supplements, but does not replace,\nEPA analytical methods listed in 40 CFR 136 and 40 CFR 141 for temperature, dissolved\noxygen, conductivity/specific conductance, pH and turbidity.\n\nThis SOP is written for instruments that measure temperature, pH, dissolved oxygen, specific\nconductance, turbidity, and/or oxidation/reduction potential [ORP] and the probe readings for\npH, dissolved oxygen, and specific conductance are automatically corrected for temperature.\n\nFor groundwater monitoring, the instrument must be equipped with a flow-through-cell and the\ndisplay/logger or computer display screen needs to be large enough to simultaneously contain the\nreadouts of each probe in the instrument. Turbidity is measured using a separate instrument. It\nmust not be measured in a flow-through-cell because the flow-through-cell acts as a sediment\ntrap. This procedure is applicable for use with the EPA Region 1 Low Stress (low flow) Purging\nand Sampling Procedure for the Collection of Ground Water Samples from Monitoring Wells.\n\n2.0 HEALTH AND SAFETY WARNINGS\n\nRead all labels on the standards and note any warnings on the labels. Wear appropriate personal\nprotection equipment (e.g., gloves, eye shields, etc.) when handling the standards. Ifnecessary,\nconsult the Material Safety Data Sheets (MSDS) for additional safety information on the\nchemicals in the standards. .\n\n3.0 GENERAL\n\nAll monitoring instruments must be calibrated before they are used to measure environmental\nsamples. For instrument probes that rely on the temperature sensor (pH, dissolved oxygen,\nspecific conductance, and oxidation/reduction potential [ORP]), each temperature sensor needs to\nbe checked for accuracy against a thermometer that is traceable to the National Institute of\nStandards and Technology (NIST). Before any instrument is calibrated or used to perform\nenvironmental measurements, the instrument must stabilize (warm-up) according to\n\nmanufacturer's instructions and must have no air bubbles lodged between the probe and probe\nguard.\n\fEQASOP-FieldCalibrat\nRegion | Calibration of\n\nField Instruments\nRevision Number: 2\nDate: June 3, 1998\nRevised January 19, 2010\nPage 5 of 18\n\n_ Most projects will require at least two standards to bracket the expected measurement range.\n\nThis means that one standard is less than the expected value and one is higher. When an\nenvironmental sample measurement falls outside the calibration range, the instrument must be re-\ncalibrated to bracket the new range before continuing measurements. Otherwise, the\nmeasurements that are outside the calibration range will need to be qualified.\n\nThis SOP requires that the manufacturer’s instruction manual (including the instrument\nspecifications) accompany the instrument into the field.\n\n4.0 FREQUENCY OF CALIBRATION",
+          "source": "https://19january2017snapshot.epa.gov/sites/production/files/2015-06/documents/EQASOP-FieldCalibrat.pdf"
+        },
+        {
+          "id": "usgs-nfm-a6.1-temperature.pdf__b94bbf9a9ecf",
+          "text": "-- 9 of 23 --2 \tChapter A6.1. Temperature\ngeneral introduction to the NFM (USGS Techniques and\nMethods, book 9, chapter A0—U.S. Geological Survey,\n2018) at https://doi.org/10.3133/tm9A0. The authoritative\ncurrent versions of NFM chapters are available in the USGS\nPublications Warehouse at https://pubs.usgs.gov. Comments,\nquestions, and suggestions related to the NFM can be\naddressed to nfm@usgs.gov.\n1.1. \tOverview of Temperature\nTEMPERATURE: a measure of warmth or coldness of a\nsubstance with reference to a standard value.\nMeasurements of air and water temperature at a field\nsite are essential for water-quality data collection. Determina-\ntion of dissolved-oxygen concentrations, conductivity, pH,\nrate and equilibria of chemical reactions, biological activity,\nand fluid properties relies on accurate temperature measure-\nments. The USGS currently (2024) measures and publishes\nwater temperature data at more than 3,500 surface-water and\ngroundwater stations, including wells, springs, streams, lakes,\nrivers, estuaries, and marine environments (U.S. Geological\nSurvey, undated). Water temperature data are provided to\ncooperators, data managers, scientists, and the public. Water\ntemperature is often measured in conjunction with other water-\nquality parameters to support habitat assessment of threatened\nand endangered species and to evaluate changing climate con-\nditions. Accurate air- and water-temperature data are essential\nto document thermal alterations to the environment caused by\nnatural phenomena and by human activities. Water tempera-\nture can be subject to environmental regulation and monitoring\nby State and local agencies.\n• The U.S. Geological Survey (USGS) uses the\nCelsius (C) scale for measuring temperature.\n• The procedures in this chapter aim to bring trace-\nability standards of the National Institute of Standards\nand Technology (NIST), to all USGS measurements\nof temperature.\n2.0. \tEquipment and Supplies\nA temperature sensor is any device used to measure\ntemperature. In its simplest form, a temperature sensor can\ncontain a detector that creates a signal used to infer tempera-\nture according to a calibration. Standard procedures used in\nthe past by the USGS to measure temperature involved the use\nof liquid-in-glass thermometers. Since the 1990s, digital ther-\nmometers and other equipment utilizing integrated thermistors\nand thermocouples, such as multiparameter instruments, have\ncontinued to undergo improvements in accuracy, reliability,\nand cost. Digital thermometers have many advantages over\nliquid-in-glass thermometers, including smaller uncertain-\nties, faster response, ease of automation, and elimination of\nuncertainty related to lighting and viewing angle (Ripple and\nStrouse, 2005). Electronic temperature sensors vary voltage,\nresistance, current, or frequency outputs with temperature.\nCommon sensors include thermistors, an electrical resistor\nwith a resistance that varies sharply and predictably with tem-\nperature, and thermocouples, sensors containing two dissimilar\nmetals bonded to form a connection with a dielectric potential\nthat varies with temperature. To make a digital thermometer,",
+          "source": "https://pubs.usgs.gov/tm/09/a6.1/tm9a6.1.pdf"
+        }
+      ],
+      "audit": {
+        "original_answer": "I can only answer questions grounded in this sensor's readings or the loaded water-quality documents, and I don't have enough information to answer that. The request asks for a temperature threshold for fish, which is not provided in the loaded documents. The USGS document notes that “Measurements of air and water temperature at a field site are essential for water-quality data collection”【2†\"Measurements of air and water temperature at a field site are essential for water-quality data collection.\"】, but it does not give a specific temperature limit for fish.",
+        "corrections": [],
+        "invalid_citations": []
+      },
+      "mode": "gold-context",
+      "usage": {
+        "promptTokens": 2900,
+        "completionTokens": 2198,
+        "totalTokens": 5098,
+        "cachedPromptTokens": 1263
+      },
+      "timing": {
+        "ttftMs": 10993,
+        "wallMs": 11394
+      }
+    }
+  ],
+  "totals": {
+    "promptTokens": 4874,
+    "cachedPromptTokens": 2517,
+    "completionTokens": 2994,
+    "wallMs": 16399
+  }
+}

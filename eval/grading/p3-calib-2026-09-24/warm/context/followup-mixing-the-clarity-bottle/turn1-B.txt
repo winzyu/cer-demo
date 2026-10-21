@@ -1,0 +1,208 @@
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__449b5d2a0b80)
+
+inserting
+calibration turbidity solutions covering the FAU range needed.
+Accounting for a change in reporting units, calibration steps for
+spectrophotometric determination are identical to those for static
+measurement of turbidity, including the possible need for constructing a
+calibration curve (see instructions under Benchtop (static)
+turbidimeter calibration, steps 1 through 8).
+
+-- 32 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—33
+MEASUREMENT 	6.7.3
+Three methods for field-measurement determinations of turbidity are
+described in this section: static (or benchtop) determination (6.7.3.A);
+dynamic (submersible) determination (6.7.3.B); and
+spectrophotometric (absorptometric) determination (6.7.3.C).
+Procedures for the use of turbidity instruments are similar for various
+surface-water and ground-water applications. The sampling methods
+used and the considerations needed for accurate representation of the
+intended water conditions, however, depend on the objectives and
+intended data use of the study and on site type and conditions. Routine
+sampling of streams by the USGS typically involves isokinetic, depth-
+integrated sampling methods (NFM 4.1; NFM 6.0.2). Much of the
+routine sampling of ground water at wells by the USGS involves well
+purging (NFM 4.2; NFM 6.0.3).
+X 	Before making a turbidity determination, ensure that the
+instrument to be used has been cleaned and calibrated properly,
+and that the calibration process has been accurately documented
+(section 6.7.2).
+X 	Biased or erroneous readings can result from numerous factors,
+including unmatched cell orientation, colored sample solutions,
+gas bubbles, condensation, and scratched or dirty sample cells
+(see tables 6.7–1 and 6.7–2). Condensation on the sample cell
+commonly occurs when the water sample is much colder than
+the air temperature.
+X 	Turbidity measurement is time sensitive and therefore
+should be completed on-site (preferably in situ) to avoid
+effects from (a) biodegradation, growth, settling, or sorption of
+particulates in the sample; or (b) precipitation of humic acids
+and minerals (carbonates and hydroxides, for example) caused
+by changes in sample pH during transport and holding.
+X 	If temporary storage of samples is necessary, collect samples in
+clean amber bottles, keep out of sunlight, and chill at or below
+4°C to prevent biodegradation of solids or biological growth.
+The holding time must not exceed 24 hours (ASTM
+International, 2003a).
+
+-- 33 of 55 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__95357f36ac1b)
+
+ly settle to the bottom
+(within 3-5 seconds), then coarse materials are present and the
+sample cannot be measured accurately using the static method.
+Static measurements made on such samples therefore must be coded to
+indicate that accuracy is qualified when being entered into a database.
+In the USGS NWIS database, for example, the results should be entered
+with an “E” remark code.
+
+-- 34 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—35
+Preliminary steps for benchtop turbidity determination:
+1. 	Warm up the turbidimeter according to the manufacturer’s
+instructions. Put on powderless laboratory gloves.
+2. 	Rinse a clean, dry, scratch-free, index marked cell with a
+turbidity calibrant within the range of interest.
+3. 	Gently agitate the calibrant, pour the calibrant into the sample
+cell to the fill mark, and dry the cell exterior with a lint-free
+cloth.When using a meter recently calibrated with an acceptable
+calibrant turbidity solution (formazin or styrene-divinylbenzene
+polymer—see section 6.7.2), a verification calibrant may be
+used for this check measurement.
+4. 	Follow the manufacturer’s instructions for readout of turbidity
+value and record the turbidity of the calibrant used and the
+turbidity value measured in the calibration logbook. If readings
+are not within specifications for the indicated range, recalibrate
+the instrument for the turbidimeter using accepted calibration
+turbidity solutions.
+For samples with turbidity less than 40 turbidity units:
+1. Measure sample turbidity immediately or as soon as possible upon
+sample withdrawal.
+a. 	If discrete subsamples are to be taken from a churn splitter or
+other sample-compositing device, remove samples for
+turbidity measurement along with other whole water samples.
+Avoid pouring the sample into a cuvette from a bottle, if
+possible. If not possible, then invert the bottle 25 times using
+a 1-second inversion cycle and pour off the sample
+immediately to capture suspended particles.
+Most turbidimeters will correct initial sample readings
+directly into a final reading based on the stored
+calibration. If the meter does not have this capability,
+take the values from a previously constructed
+calibration curve.
+
+-- 35 of 55 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__deff04ad4ab8)
+
+sible. If not possible, then invert the bottle 25 times using
+a 1-second inversion cycle and pour off the sample
+immediately to capture suspended particles.
+Most turbidimeters will correct initial sample readings
+directly into a final reading based on the stored
+calibration. If the meter does not have this capability,
+take the values from a previously constructed
+calibration curve.
+
+-- 35 of 55 --Turbidity, Version 2.1 (9/2005) 	U.S. Geological Survey TWRI Book 9
+36—TBY
+b. 	For drinking water, use an instrument that complies with EPA
+Method 180.1 or GLI Method 2. Measurements are reported
+in NTU or NTRU for EPA 180.1, or in FNMU for GLI
+Method 2. (See table 6.7–4 to select the appropriate parameter
+code.)
+2. Rinse a freshly cleaned cell with the sample to be tested.
+3. For a discrete (static) sample, complete the following sequence of
+steps (through step 4a) without hesitation (skip to step 4 for
+flowthrough cell measurement).
+a. 	Gently invert—do not shake—the sample 25 times (ASTM,
+written commun., undated) to completely disperse the solids,
+taking care not to entrain air bubbles. Allow air bubbles to
+disappear before filling the sample cell.
+b. 	Rapidly pour the sample into a sample cell to the line marked
+(to the neck if there is no line). Do not touch cell walls with
+fingers.
+c. 	Remove condensation from the cell with a clean, soft, lint-
+free cloth or tissue. If condensation continues, apply a thin
+coating of silicon oil to the outside of the cell about every
+third time the cell is wiped dry of moisture. Allow samples to
+equilibrate to ambient temperature, if necessary, before
+subsampling to help minimize condensation problems. Note:
+warming the sample may change particle associations in the
+water matrix.
+d. 	Before inserting the sample cell into the meter, ensure that no
+air bubbles are present in the cell. If necessary, degas the
+sample according to the manufacturer’s instructions. Air
+bubbles can cause significant positive bias in turbidity
+measurements (table 6.7–1).
+e. 	Orient the calibration cell in the cell holder according to the
+index marks—the calibration cell and sample cell must have
+identical orientation when in the instrument measurement
+chamber.
+Be sure that sample cells are index marked to indicate
+orientation. Match orientation so that cells yield
+the same value when light passes through.
+
+-- 36 of 55 --
+
+---
+
+### https://pubs.usgs.gov/twri/twri9a6/twri9a67/twri9a_Section6.7_v2.1.pdf (chunk usgs-nfm-a6.7-turbidity.pdf__967bc8728d56)
+
+as in turbidity
+measurements (table 6.7–1).
+e. 	Orient the calibration cell in the cell holder according to the
+index marks—the calibration cell and sample cell must have
+identical orientation when in the instrument measurement
+chamber.
+Be sure that sample cells are index marked to indicate
+orientation. Match orientation so that cells yield
+the same value when light passes through.
+
+-- 36 of 55 --Chapter A6. Field Measurements 	Turbidity, Version 2.1 (9/2005)
+TBY—37
+4. Determine the measured turbidity value of the sample directly
+from the instrument scale or by using the instrument value and
+calibration curve, as is appropriate for the instrument being used.
+For samples with less than 1 turbidity unit, see TECHNICAL NOTE (6)
+under step 4d.
+a. 	Record the very first readings after placement of the sample
+cell in the measurement chamber. If readings are unstable,
+then particle settling may be occurring. If so, gently re-invert
+the cell 25 times and record at least three readings over a
+short, defined time interval (for example, 30 seconds to
+1 minute).
+b. 	Repeat at least twice with fresh sample, until three or more
+sample values fall within ±10 percent.
+c. 	Samples that contain significant color should be diluted if
+using EPA Method 180.1 (for samples with turbidity greater
+than 40 units see below "For samples, including drinking
+water, with turbidity greater than 40 turbidity units," step 3).
+Results of diluted samples must be qualified with a “d” in
+the “Value Qualifier Code” field for data entered into the
+USGS NWIS database.
+d. 	Report the median of the three or more sequential readings
+that fall within ±10 percent.
+TECHNICAL NOTE (6): When using low-level reporting
+scales, you may need to subtract a correction factor from the
+reading to correct for stray light. For example, the Hach
+Company reports the correction for the 0.2-NTU scale to be on
+the order of 0.04 NTU for the Hach 2100P. The stray-light
+correction is determined by reading turbidity from an empty
+instrument (without cuvette).
+5. Record the data in reporting units described in table 6.7–4, using
+the method code that describes the specific instrument in use:
+Consult table 6.7–3 and the turbidity parameter and methods
+codes spreadsheet
+(http://water.usgs.gov/owq/turbidity_codes.xls, accessed
+9/30/2005). If particle settling or instability in initial readings was
+a problem, the results must be qualified as an estimate by using an
+“E” remark code for data entered into NWIS QWDATA.
+
+-- 37 of 55 --

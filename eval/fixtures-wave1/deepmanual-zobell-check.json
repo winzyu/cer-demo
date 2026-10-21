@@ -6,7 +6,7 @@
     "usgs-nfm-a6.5-orp.pdf"
   ],
   "requires": [],
-  "notes": "Numeric acceptance criteria plus timing for the ORP equipment test, deep in NFM A6.5. Claims: orp-test-before-field-01 (tested against ZoBell's before field measurements), orp-pass-criterion-5mv-01 (calculated Eh of ZoBell's within 5 mV of the table 6.5-3 value), orp-table653-25c-430-01 (430 mV theoretical Eh at 25 °C), orp-stabilize-5mv-01 (reading allowed to stabilize to within ±5 mV before recording), orp-equilibrate-15-30-01 (15 to 30 minutes to equilibrate to ambient temperature), orp-stabilize-30min-01 (field reading should stabilize within about 30 minutes), orp-no-stabilize-30min-01 (record the potential and its drift and assume no single quantitative value). Table 6.5-1 and table 6.5-2 are avoided: A6.5's summary notes record 6.5-1 as control-character damaged and 6.5-2 as having its column headers printed after the body. Table 6.5-3 survives intact. Expected to favor rag: the Atlas ORP datasheet in the slice gives recalibration frequencies by application but no verification test and no tolerance, so the slice produces a confident answer to a different question.",
+  "notes": "Tests deepmanual zobell check. Corrected after the Wave 1 agent source review: questions and rubrics distinguish procedure scope, supported alternatives and missing deployment inputs. Claims: orp-test-before-field-01, orp-pass-criterion-5mv-01, orp-table653-25c-430-01, orp-stabilize-5mv-01, orp-equilibrate-15-30-01, orp-stabilize-30min-01, orp-no-stabilize-30min-01. These fixture-wide anchors are provisional retrieval labels unless a turn supplies explicit evidence; they are not human sign-off. The current direct-feed slice contains four probe datasheets, so its coverage does not establish the manual-specific requirements.",
   "turns": [
     {
       "role": "user",
@@ -30,7 +30,7 @@
     },
     {
       "role": "user",
-      "content": "How long should that take, and what do we do if the reading just never settles?",
+      "content": "How long should that ZoBell check take? Separately, once the equipment passes, how long should a field-sample Eh reading take to settle, and what if it never does?",
       "rubric": {
         "must_contain": [
           "States 15 to 30 minutes are allowed for the ZoBell's solution and the sensors to equilibrate to ambient temperature",
@@ -39,7 +39,7 @@
         ],
         "must_not": [
           "Invents a waiting time",
-          "Tells the operator to report a settled Eh value anyway",
+          "Reports an unstabilized field value as settled, or treats a drifting or failed ZoBell standard check as a pass merely because drift was recorded.",
           "Recommends discarding the measurement without recording the drift"
         ],
         "cite": [
