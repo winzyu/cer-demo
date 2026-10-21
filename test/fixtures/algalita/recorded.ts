@@ -1,6 +1,6 @@
 /**
  * Algalita Pod (`dev:351077454569099`) readings recorded in
- * `docs/migration/FLAGGING_OVERVIEW_2026-10-12.html` §2 from production Firestore (read-only,
+ * `docs/plans/FLAGGING_OVERVIEW_2026-10-12.html` §2 from production Firestore (read-only,
  * 2026-10-12), PDT converted to UTC. Each row: time, pH, ORP (mV), conductivity (µS/cm),
  * dissolved oxygen (mg/L), water temperature (°C), copied from that page's chart data.
  */

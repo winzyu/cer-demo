@@ -6,7 +6,7 @@
  *
  * The three recorded stretches (`recorded.ts`: Sep 25-26, Sep 29-30, Oct 7) are the real readings.
  * Everything else is **synthetic**: drawn to the shape of a read-only pull of the real month
- * (2026-10-13, docs/migration/FLAGGING_REWORK_HANDOFF_2026-10-13.md "Real-month check"), with its
+ * (2026-10-13, docs/plans/FLAGGING_REWORK_HANDOFF_2026-10-13.md "Real-month check"), with its
  * own values and times, so no other customer reading is committed. The shapes it keeps:
  * - Sep 12-24 sparse (a reading every 2 hours, with 8-hour overnight gaps every other night);
  * - a low pH stretch on Sep 13 whose first reading falls the night before a "last 30 days" window;
