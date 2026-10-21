@@ -52,9 +52,9 @@ All 26 records were checked on 2026-10-21; none is superseded, so none was archi
 2. Step 5 is done (above).
 3. Step 6 is done (above).
 4. Step 7, finished work only, keeping the list under "Approved".
-   Embedding cache: the copy plan is retracted (coordinator, 2026-10-21); copy nothing and keep `e7-corpus` and `e2e-dev` until the coordinator's release issue is settled.
-   The main checkout's corpus and cache are consistent at 446 chunks and match `release/artifacts.sha256`; this worktree's step-6 ingest had written a 457-chunk `corpus.json` beside the linked 446-chunk cache, so `data/corpus` is now a link to the main checkout's (the rebuilt file is in the session scratchpad, not kept).
-   The release mismatch and the adapter check are the `POST_LAUNCH_BACKLOG.md` §3 row.
+   Corpus, done 2026-10-21 with the user's approval: `release/artifacts.sha256` holds rc2's hashes (as `ddd6292`), the main checkout's `data/corpus/` and `data/embeddings/` are rc2's files from `release/rc2-artifacts/` (old 446-chunk pair in `data/pre-rc2-446/`), and every linked worktree matches; `timeline.md` has the row.
+   `e7-corpus` and `e2e-dev` hold the same 457 chunks and vectors under other build timestamps, so they can join the removals.
+   The adapter check is the `POST_LAUNCH_BACKLOG.md` §3 row, not done on this branch.
    Then: list merged remote branches (`git branch -r --merged origin/dev`), finished worktrees (`git worktree list`) and `wip-*` tags (`git tag -l 'wip-*'`), then run each deletion only after the user's yes to that exact command, and send the coordinator the final `git worktree list` and branch list.
 5. Checks before every commit: the link resolver over every tracked `docs/` `.md` and `.html` outside `captures/` (0 unresolved), `git grep` for each old path, `git diff --check`, `node --check` and `bash -n` on edited scripts, and `npm run typecheck` and `npm run lint` when `src/`, `scripts/` or `test/` change.
 
