@@ -28,29 +28,31 @@ Work happens only in the worktree `.claude/worktrees/docs-cleanup` on branch `do
 | Q10: decisions as a 2026-09-28 `timeline.md` row, T4+T11 and T9 backlog rows, `Q10_TASKS.md` archived, T11 as `STAKEHOLDER_QUESTIONS.md` item 36 | done `e5596e3`, `ba46ddd`, landed |
 | Test-doc merges M3, M2, M1: launch pages to `records/`; `E2E_CHECKLIST.md` is the manual guide's "Short run" plus `records/E2E_CHECKLIST_RESULTS_2026-09-26.md`; `MIRROR_RUNBOOK.md` is the one Mirror setup (dashboard on 3100) | done `fcf2eca`, `2dd024a`, `4b8da98`, landed; `runbooks/` is 7 files (`ls docs/runbooks`) |
 | `release/` leftovers in the deployment runbook and backlog item 9 | done `3efe302`, landed |
-| Step 5, superseded-records archive list | next, after the user says go |
-| Step 6, re-run the Mirror and local stack setups | waiting on the user |
-| Step 7, git tidy | waiting on the user |
+| Step 5, superseded-records archive list | done 2026-10-21, nothing archived: no file in `records/` is fully covered by a later record or a `timeline.md` row (see "Step 5 outcome") |
+| Step 6, re-run the local stack setup | approved 2026-10-21, next; the Mirror is verified at its next real use (report-omission or flagging), not by a separate run |
+| Step 7, git tidy of finished work | approved 2026-10-21, after step 6 |
 | Landing sweeps for `task/flagging-share-window`, `reflection`, `task/tide-tool`, `docs/firestore-testing-plan` | after each lands: their new `docs/migration/` files move to the right folder |
 
-## Waiting on the user
+## Step 5 outcome
 
-The user decided each of these in principle on 2026-10-20 and 2026-10-21; each still needs a go, asked as follows on 2026-10-21:
+All 26 records were checked on 2026-10-21; none is superseded, so none was archived (user approved).
+- `GILLIGAN_E2E_RESULTS_2026-09-25.md`: the 09-27 record reran only groups A, C, F and G and says the 09-25 results for B, D, E, H and I stand.
+- `REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`: the 2026-10-09 and 2026-10-11 `timeline.md` rows cite it for counts (3 of 8 false edit claims, 5 of 6 with the history marker) that the 10-16 record does not repeat.
+- The rest are cited as evidence by SPECS, the manual guide, `EVAL_REBUILD.md` 2c or a `timeline.md` row, hold what no later record restates (`DATA_SKEPTICISM_TESTS_2026-10-11.md`'s harness and baseline, `V2_CORPUS_DECISION.md`'s case against), or are reference rather than superseded results.
 
-- **Step 5**: "shall I draw up the list of superseded records for you to approve one file at a time?" Recommended: yes; nothing is archived without a per-file yes.
-- **Step 6**: "shall I re-run the Mirror and local stack setups? Expect roughly 2-3 hours and $0-0.02, and I'll announce each live read before it runs." Options chosen earlier: (a) Mirror and local stack, (b) Mirror only, (c) neither; the user chose (a).
-- **Step 7**: "shall I clean up the merged branches, worktrees and `wip-*` tags, with your yes for each command?" Recommended: yes, one command at a time.
+## Approved, 2026-10-21
+
+- **Step 6**: re-run the local stack only; leave the Mirror until its next real use, with its "not run end to end" note saying so (done).
+- **Step 7**: tidy finished work only; keep `dev`, `docs/cleanup`, `task/flagging-share-window`, `task/tide-tool`, the `omit-mirror` worktree, `reflection` and the report-omission export `~/code/work/clean-earth-rovers/worktrees/mirror-report-omit`; ask before each irreversible command; send the coordinator the final worktree and branch list.
 
 ## Next step
 
 1. `git fetch origin` and merge `origin/dev` into `docs/cleanup` (no rebase) if `dev` moved.
-2. Step 5, once the user says go: list each file in `docs/records/` (26 files: `ls docs/records | wc -l`) whose findings a later record or a `timeline.md` row fully covers, with that cover named, and send the list for per-file approval.
-   Known candidates: `GILLIGAN_E2E_RESULTS_2026-09-25.md` (followed by `-09-27`) and `REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md` (followed by `-10-16`; two `timeline.md` rows link it, so repoint them first: `git grep -n REPORT_OMIT_MIRROR_RESULTS_2026-10-10 -- docs`).
-   For each approved file: repoint every living link (`git grep -n <name>`), then archive as under "Standing decisions".
-3. Step 6, once approved: follow `docs/runbooks/MIRROR_RUNBOOK.md` §0-§6 exactly with the `run-local` skill, fix every step that differs, and record what ran; then `docs/runbooks/LOCAL_STACK.md`, announcing each read of the live API through its dev passthrough before it runs.
+2. Step 5 is done (above).
+3. Step 6: follow `docs/runbooks/LOCAL_STACK.md` exactly with the `run-local` skill, fix every step that differs, and record what ran, announcing each read of the live API through its dev passthrough before it runs.
    Also confirm or fix the manual guide's named-database check and legacy-fixture scripts, which still use the old emulator project `conductive-fold-343604` (`grep -n conductive-fold docs/runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md`).
-   Then remove the "unverified" or "not yet run" lines from both runbooks and STATUS's Mirror trap line.
-4. Step 7, once approved: list merged remote branches (`git branch -r --merged origin/dev`), finished worktrees (`git worktree list`) and `wip-*` tags (`git tag -l 'wip-*'`), then run each deletion only after the user's yes to that exact command.
+   Then remove LOCAL_STACK's "unverified" line.
+4. Step 7, finished work only, keeping the list under "Approved": list merged remote branches (`git branch -r --merged origin/dev`), finished worktrees (`git worktree list`) and `wip-*` tags (`git tag -l 'wip-*'`), then run each deletion only after the user's yes to that exact command, and send the coordinator the final `git worktree list` and branch list.
 5. Checks before every commit: the link resolver over every tracked `docs/` `.md` and `.html` outside `captures/` (0 unresolved), `git grep` for each old path, `git diff --check`, `node --check` and `bash -n` on edited scripts, and `npm run typecheck` and `npm run lint` when `src/`, `scripts/` or `test/` change.
 
 Resume with: `Read docs/plans/DOCS_OVERHAUL_HANDOFF.md on branch docs/cleanup (worktree .claude/worktrees/docs-cleanup), then continue the docs overhaul.`
