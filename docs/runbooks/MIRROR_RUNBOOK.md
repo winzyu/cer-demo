@@ -12,8 +12,8 @@ The Mirror setup last run as written is [`REPORT_OMIT_MIRROR_RUNBOOK.md`](REPORT
 | document | use it for |
 |---|---|
 | this runbook | starting, checking and stopping the stack; order, cost and rules of the test session |
-| [`LAUNCH_ISSUES_WALKTHROUGH.html`](LAUNCH_ISSUES_WALKTHROUGH.html) | the exact clicks and questions for each item |
-| [`LAUNCH_ISSUES_EXPLAINED.html`](LAUNCH_ISSUES_EXPLAINED.html) | what each item means, the account levels, and which fake pod covers which item |
+| [`LAUNCH_ISSUES_WALKTHROUGH.html`](../records/LAUNCH_ISSUES_WALKTHROUGH.html) | the exact clicks and questions for each item |
+| [`LAUNCH_ISSUES_EXPLAINED.html`](../records/LAUNCH_ISSUES_EXPLAINED.html) | what each item means, the account levels, and which fake pod covers which item |
 | [`LAUNCH_ISSUES_CHECKLIST.md`](../records/LAUNCH_ISSUES_CHECKLIST.md) | recording results, evidence and spend |
 | [`GILLIGAN_MANUAL_TEST_GUIDE.md`](GILLIGAN_MANUAL_TEST_GUIDE.md) | the full check list whose IDs (K6, M13 ...) the items cite |
 

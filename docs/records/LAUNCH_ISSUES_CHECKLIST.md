@@ -2,7 +2,7 @@
 
 Manual testing of the Gilligan launch issues for the release coordinator.
 Release Sep 30, freeze Sep 28.
-Step-by-step instructions for every item are in [`LAUNCH_ISSUES_WALKTHROUGH.html`](../runbooks/LAUNCH_ISSUES_WALKTHROUGH.html); this file records state and results.
+Step-by-step instructions for every item are in [`LAUNCH_ISSUES_WALKTHROUGH.html`](LAUNCH_ISSUES_WALKTHROUGH.html); this file records state and results.
 All testing uses fabricated data; nothing here reads production except the one safety check under "Safety record".
 
 ## Stacks
