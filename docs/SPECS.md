@@ -589,7 +589,9 @@ tests construct isolated instances instead of depending on import order.
 - **`local-vector`** (`LocalVectorAdapter`) — the same dense retrieval computed in process against
   the cache `npm run embed:cache` writes. No vector index and no Firestore reads; each query is
   still embedded through Fireworks (`EmbeddingService.embedQuery`), and the cache holds only the
-  corpus vectors. It began as the way to evaluate retrieval offline; `npm run compare:vector-arms`
+  corpus vectors.
+  On first load it refuses a cache whose chunk ids differ from `data/corpus/corpus.json`'s, naming the missing and extra ids
+  (added 2026-10-21, after a 457-chunk corpus beside a 446-chunk cache loaded without error; `timeline.md`, 2026-10-21). It began as the way to evaluate retrieval offline; `npm run compare:vector-arms`
   reports **30/30 queries ranked identically** to `firestore-vector`, drift ~1e-4, because
   Firestore's index is configured `flat` (exhaustive) rather than approximate.
   **It is the release's retrieval (user, 2026-09-27)** at `DEFAULT_TOP_K` 20 with the four probe

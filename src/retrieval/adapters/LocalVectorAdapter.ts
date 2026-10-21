@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { config } from "../../config";
+import { CORPUS_OUTPUT, readCorpus } from "../../ingestion/ingest";
+import type { Corpus } from "../../ingestion/ingest";
 import { EMBEDDING_DIMENSIONS, EmbeddingService } from "../../services/EmbeddingService";
 import type { Chunk, GetContextOptions, RetrievalAdapter } from "../../types/retrieval.types";
 import { createLogger } from "../../utils/logger";
@@ -181,6 +183,52 @@ export const validateEmbeddingCache = (
   }
 };
 
+/** How many ids a mismatch message names on each side before it summarises the rest. */
+const MISMATCH_SAMPLE = 3;
+
+/**
+ * Checks the cache holds exactly the chunks of the corpus it is served beside.
+ *
+ * `npm run embed:cache` embeds every chunk of `corpus.json` and nothing else, so the two id sets
+ * are equal by construction. A corpus re-ingested without a rebuilt cache breaks that silently:
+ * on 2026-10-21 a 457-chunk corpus sat beside a 446-chunk cache, and this arm searched without
+ * the 11 new chunks while every other check passed. Ids are content-derived (`chunk.ts`), so
+ * equal ids also mean equal text.
+ */
+export const checkCacheMatchesCorpus = (
+  cache: EmbeddingCache,
+  corpus: Corpus,
+  cachePath: string,
+  corpusPath: string,
+): void => {
+  const cached = new Set(cache.chunks.map((chunk) => chunk.id));
+  const wanted = new Set(
+    corpus.documents.flatMap((document) => document.chunks.map((chunk) => chunk.id)),
+  );
+  const missing = [...wanted].filter((id) => !cached.has(id));
+  const extra = [...cached].filter((id) => !wanted.has(id));
+  if (missing.length === 0 && extra.length === 0) {
+    return;
+  }
+
+  const sample = (ids: string[]) => ids.slice(0, MISMATCH_SAMPLE)
+    .map((id) => `"${id}"`)
+    .join(", ")
+    + (ids.length > MISMATCH_SAMPLE ? `, and ${ids.length - MISMATCH_SAMPLE} more` : "");
+  const problems: string[] = [];
+  if (missing.length > 0) {
+    problems.push(`has no vector for ${missing.length} chunk(s) of ${corpusPath}: ${sample(missing)}`);
+  }
+  if (extra.length > 0) {
+    problems.push(`holds ${extra.length} chunk(s) that ${corpusPath} no longer has: ${sample(extra)}`);
+  }
+  throw cacheError(
+    cachePath,
+    `does not match the corpus (${cached.size} cached, ${wanted.size} in the corpus):\n  - `
+    + `${problems.join("\n  - ")}\n `,
+  );
+};
+
 /** Reads and validates the cache. Throws — never returns an empty or partial index. */
 export const readEmbeddingCache = (
   cachePath: string = EMBEDDING_CACHE_PATH,
@@ -211,6 +259,8 @@ export class LocalVectorAdapter implements RetrievalAdapter {
 
   private readonly embeddings: EmbeddingService;
 
+  private readonly corpusPath: string;
+
   /**
    * The index is identical on every request, so it is read and normed once per process — the
    * same reason `DirectFeedAdapter` caches its slice. A failure is deliberately *not* cached:
@@ -218,9 +268,14 @@ export class LocalVectorAdapter implements RetrievalAdapter {
    */
   private index?: LocalVectorIndex;
 
-  constructor(cachePath: string = EMBEDDING_CACHE_PATH, embeddings = new EmbeddingService()) {
+  constructor(
+    cachePath: string = EMBEDDING_CACHE_PATH,
+    embeddings = new EmbeddingService(),
+    corpusPath: string = CORPUS_OUTPUT,
+  ) {
     this.cachePath = cachePath;
     this.embeddings = embeddings;
+    this.corpusPath = corpusPath;
   }
 
   async getContext(query: string, opts?: GetContextOptions): Promise<Chunk[]> {
@@ -276,6 +331,7 @@ export class LocalVectorAdapter implements RetrievalAdapter {
   private load(): LocalVectorIndex {
     if (!this.index) {
       const cache = readEmbeddingCache(this.cachePath, config.fireworks.embeddingModel);
+      checkCacheMatchesCorpus(cache, readCorpus(this.corpusPath), this.cachePath, this.corpusPath);
 
       const chunks = cache.chunks.map((chunk) => ({ ...chunk, norm: magnitude(chunk.embedding) }));
 

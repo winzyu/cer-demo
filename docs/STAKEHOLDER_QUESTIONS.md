@@ -35,6 +35,13 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   A "yes, the site transferred" for either chain would let its history be shown. Old Woman Creek 2026 was answered on 2026-09-24 (release plan Q3).
   *Answer:*
 
+- [ ] **36. Were `CWA 2025 testbed` and `CWA Old` ever in salt water?**
+  Not blocking. Both pods merged into `Old Woman Creek 2026`, a fresh-water pod on Lake Erie, but the registry lists them as `salt-water` (`docs/records/POD_RELOCATION_EVIDENCE.md` §3).
+  The water type sets which normal ranges a reading is judged against, so their history is withheld from Old Woman Creek's for now (`docs/timeline.md`, 2026-09-28, Q10).
+  A "no, the registry is wrong" would let their history be shown once the predecessor hand-off is enabled (`docs/plans/POST_LAUNCH_BACKLOG.md` §2).
+  Not among the questions already sent to Michael (items 28-35 and the follow-ups on flagging and learning normal patterns).
+  *Answer:*
+
 ---
 
 ## Supervisor
