@@ -54,7 +54,8 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Step 2, batches 7-8 with D7: 4 data-skepticism records and `GILLIGAN_RELEASE_PLAN.md`, `GILLIGAN_LANDING_2026-09-29.md` to `records/`; `data-skepticism-runs/` to `captures/`; `SECURITY_FINDINGS.md` to `reference/` (status note pointing at backlog §2); `COORDINATOR_HANDOFF_2026-10-15.md` to `plans/`; `catalogue.json` notes (D4, review page regenerated); `CLAUDE.md`/`AGENTS.md` wording (D2); README row, `.gitignore` exception and `docs/migration/` removed | done in the commit that records it here; SPECS lines in §10.7-§19 were rewritten too, so flagging's deletion of that range will conflict on landing (resolve deliberately: the deletion looks unintended) |
 | Step 3, Q10: decisions as a 2026-09-28 `timeline.md` row; backlog rows for T4+T11 (§2) and T9's remaining checks (§3; C2-C5 had passed 2026-09-28); `Q10_TASKS.md` archived (tag `docs-archive-2026-10-21b` at `ff51594`) | done in the commit that records it here; T11's stakeholder question waits for the Slack text |
 | Step 4 M3: both launch-issue pages to `records/`, unchanged | done in the commit that records it here |
-| Step 4 M2, then M1 | next |
+| Step 4 M2: `E2E_CHECKLIST.md`'s script is the manual guide's "Short run" (IDs prefixed `S`), its results are `records/E2E_CHECKLIST_RESULTS_2026-09-26.md`, the file is archived (tag `docs-archive-2026-10-21c` at `fcf2eca`) | done in the commit that records it here |
+| Step 4 M1, with the manual guide's setup section replaced by a pointer | next |
 | Landing sweeps for `reflection`, `task/tide-tool`, `docs/firestore-testing-plan`, `fix/window-note` | after each branch lands (proposal section 7) |
 
 ## Waiting on the user

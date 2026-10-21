@@ -25,6 +25,7 @@ Paths in sections written before 2026-10-17 predate the move of `docs/migration/
 | `docs-archive-2026-10-17b` | 2026-10-17 | the Task C verification record and the report download browser check - 2 files |
 | `docs-archive-2026-10-21` | 2026-10-21 | the report-omission Mirror test plan - 1 file |
 | `docs-archive-2026-10-21b` | 2026-10-21 | the Q10 Gilligan behaviour decisions and task list - 1 file |
+| `docs-archive-2026-10-21c` | 2026-10-21 | the end-to-end checklist, split into the manual guide's short run and a results record - 1 file |
 
 Retrieve one by path:
 
@@ -384,6 +385,22 @@ Retrieve:
 
 ```bash
 git show docs-archive-2026-10-21b:docs/plans/Q10_TASKS.md
+```
+
+## `docs-archive-2026-10-21c` - the end-to-end checklist
+
+Removed on 2026-10-21 by the test-doc merge M2 (`plans/DOCS_OVERHAUL_PROPOSAL.md` section 10), preserved under the tag `docs-archive-2026-10-21c`, which points at `fcf2eca`, the last commit that contains it.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/runbooks/E2E_CHECKLIST.md` | 263 | A 22-turn question script for one short run, with the 2026-09-26 baseline and the 2026-09-29 Mirror rerun | Merged: the script is the "Short run" section of `runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md` (IDs prefixed `S`, the near-limit and member-login expectations updated), and both result sets are `records/E2E_CHECKLIST_RESULTS_2026-09-26.md`. |
+
+**263 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-21c:docs/runbooks/E2E_CHECKLIST.md
 ```
 
 ## Rules
