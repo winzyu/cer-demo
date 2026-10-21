@@ -32,6 +32,7 @@ Work happens only in the worktree `.claude/worktrees/docs-cleanup` on branch `do
 | Step 6, re-run the local stack setup | done 2026-10-21: `LOCAL_STACK.md` ran from this worktree on 8011 and was corrected; the manual guide's three emulator scripts read `MIRROR_PROJECT_ID` (syntax-checked, not run); the Mirror and those scripts are verified at the Mirror's next real use (report-omission or flagging) |
 | Step 7, git tidy of finished work | done 2026-10-21 with the user's yes: removed worktrees `post-launch-land`, `skeptic-before`, `skeptic-evals-run`, `skeptic-repro`, `e7-corpus`, `e2e-dev`; deleted `land/post-launch` and `task/e7-corpus` locally and `land/post-launch`, `task/e7-corpus`, `task/report-html-option`, `task/skeptic-triage`, `rules/upstream-branches` on `origin` (all merged into `dev`); kept both `wip-*` tags |
 | Steps 5-6 landing | landed on `dev` as squash `2bf94a3` |
+| Propagating `dev` into the active branches (user, 2026-10-21: items 1-5, skip `fix/window-note`) | handed to a new chat: [`BRANCH_PROPAGATION_HANDOFF.md`](BRANCH_PROPAGATION_HANDOFF.md) |
 | Landing sweeps for `task/flagging-share-window`, `reflection`, `docs/firestore-testing-plan` | after each lands, its new `docs/migration/` files move to the right folder; none ready on 2026-10-21 (flagging waits on Michael, reflection on the user's OK to merge, firestore-plan on the user's keep-or-archive call); `task/tide-tool` re-homed its own (`36ef4a9`) |
 
 ## Step 5 outcome
