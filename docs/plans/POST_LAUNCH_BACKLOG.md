@@ -120,6 +120,7 @@ Not changed by this work: report event detection still reads bucket means; the s
 | A previous account's pod list survives logout and login in the same tab | Landing doc §7 item 19; `user-dashboard` `src/app/services/device-data.js:341`, `src/app/components/header.js` | Medium; shows a superadmin's pods to the next account on a shared computer |
 | Revoke the old Gemini API key and the old Gmail app password | Landing doc §7 item 10 | Michael |
 | `DEVICE_API_TOKEN` is superadmin with no expiry | [`MICHAEL_DEPLOY_BLOCKERS.md`](../people/MICHAEL_DEPLOY_BLOCKERS.md) §8 | The user chose not to raise it before launch |
+| Before anyone enables `PREDECESSOR_PERIOD_HANDOFF` (default off): write the server water-type check in `findInheritedLabels` (Q10 T4, never written), and get Michael's answer on whether `CWA 2025 testbed` and `CWA Old` were ever in salt water (Q10 T11; until then their history stays withheld from `Old Woman Creek 2026`) | [`POD_RELOCATION_EVIDENCE.md`](../records/POD_RELOCATION_EVIDENCE.md) §3; `src/devices/mergeChains.ts`; `timeline.md` 2026-09-28 (Q10) | Only when the hand-off is turned on |
 | Legacy unauthenticated `/water-data`, `/device`, `/duration/*` routes | Server `src/schemas/waterData.schema.ts` | Low; remove or authenticate |
 
 ## 3. Gilligan behaviour
@@ -132,7 +133,8 @@ Not changed by this work: report event detection still reads bucket means; the s
 | "How is the water this week?" answers with readings, actions and next steps and offers a report, instead of a plain weekly summary | Landing doc §7 item 17 (L8 C1) |
 | After a reload, a repeated summary request returns nearly the same answer | Landing doc §7 item 17 |
 | Asking about another organization's pod by name answers about the caller's own pod without saying the named pod is unavailable | Landing doc §7 item 17 (L8 D1) |
-| "My pod is broken" is declined instead of referred to sales@cleanearthrovers.com (finding 8); possibly an artifact of the catalogue being off, so recheck on production first | [`LAUNCH_ISSUES_CHECKLIST.md`](../records/LAUNCH_ISSUES_CHECKLIST.md) B3; [`Q10_TASKS.md`](Q10_TASKS.md) C1 |
+| "My pod is broken" is declined instead of referred to sales@cleanearthrovers.com (finding 8); possibly an artifact of the catalogue being off, so recheck on production first | [`LAUNCH_ISSUES_CHECKLIST.md`](../records/LAUNCH_ISSUES_CHECKLIST.md) B3; `Q10_TASKS.md` (archived, `docs-archive-2026-10-21b`) C1 |
+| Catalogue checks left from Q10 T9: C6 (a low dissolved-oxygen entry appears with its limitation, no document citation, and refers only through its entry), C5 on a pod with no sensor faults (no entry without a supporting reading), and K21b's 18-hour dissolved-oxygen drop after its fix `4cb15c8`; C2-C5 and the finding 7 and 8 rechecks passed on the mirror on 2026-09-28 | `Q10_TASKS.md` "Catalogue tests" and "Results" (archived, `docs-archive-2026-10-21b`); about $0.21 on the mirror, with spend approval |
 | Tools-on answers drop the withheld-history note, misparaphrase the water-type note, do not flag high dissolved oxygen (Q8), and called a pod silent for 30 hours active "in the last 24 hours" | Earlier mirror runs; recheck on production |
 
 Already live in the release (`ddd6292`), not backlog: Q9 (silent pods, pH 2.07, reading age, empty series), Q10 findings 6, 7 and 10, K21b, U7 and the stripping of earlier answers' citation markers.

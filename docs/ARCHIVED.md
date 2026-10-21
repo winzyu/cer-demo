@@ -24,6 +24,7 @@ Paths in sections written before 2026-10-17 predate the move of `docs/migration/
 | `docs-archive-2026-10-17` | 2026-10-17 | the corpus sourcing brief, the freeze-day chat reset roundup and the post-launch merge results - 3 files |
 | `docs-archive-2026-10-17b` | 2026-10-17 | the Task C verification record and the report download browser check - 2 files |
 | `docs-archive-2026-10-21` | 2026-10-21 | the report-omission Mirror test plan - 1 file |
+| `docs-archive-2026-10-21b` | 2026-10-21 | the Q10 Gilligan behaviour decisions and task list - 1 file |
 
 Retrieve one by path:
 
@@ -367,6 +368,22 @@ Retrieve:
 
 ```bash
 git show docs-archive-2026-10-21:docs/records/REPORT_OMIT_MIRROR_TEST.md
+```
+
+## `docs-archive-2026-10-21b` - the Q10 task list
+
+Removed on 2026-10-21 in the docs overhaul's content step, preserved under the tag `docs-archive-2026-10-21b`, which points at `ff51594`, the last commit that contains it.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/plans/Q10_TASKS.md` | 79 | The 2026-09-28 Gilligan behaviour decisions, tasks T1-T12, the catalogue and fallback-range test plans, and the catalogue results | Every task was settled with the user on 2026-10-20: T1-T3, T5, T8, T10 (wired; the production text is Michael's) and T12 are in the release, and T7's fallback ranges are on `dev` (`60e321b`), not yet released; T6 was dropped (T2 strips earlier markers, so its prompt lines guard nothing); T4 and T11 are one backlog row gated on `PREDECESSOR_PERIOD_HANDOFF`; T9's remaining checks are a backlog row. The decisions are now a 2026-09-28 row in `timeline.md`. |
+
+**79 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-21b:docs/plans/Q10_TASKS.md
 ```
 
 ## Rules

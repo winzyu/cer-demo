@@ -83,7 +83,7 @@ The docs chat left four docs for the coordinator:
 - `GILLIGAN_RESET_2026-09-28.md`: a finished freeze-day roundup, linked from `timeline.md`; a later batch can retire it with that link repointed.
 - `REPORT_OMIT_MIRROR_TEST.md`: superseded as a plan by `REPORT_OMIT_MIRROR_RUNBOOK.md`, but STATUS "Active traps" cites its path substitutions; keep until those move.
 - `P3_CALIBRATION_REVIEW_2026-09-24.md`: unlinked, but holds the AI review's per-answer conclusions that `EVAL_REBUILD.md` 2c cites by SHA; keep.
-- `Q10_TASKS.md`: unlinked, still has open or blocked tasks (T3-T9, T11); retire once closed.
+- `Q10_TASKS.md`: archived 2026-10-21 (`docs-archive-2026-10-21b`) after its open tasks went to the backlog.
 
 ## Facts, with their sources
 
