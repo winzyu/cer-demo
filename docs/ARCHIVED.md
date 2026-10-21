@@ -23,6 +23,7 @@ Paths in sections written before 2026-10-17 predate the move of `docs/migration/
 | `docs-archive-2026-10-16c` | 2026-10-17 | `docs/gilligan_v0.png`, a screenshot of the original Gilligan chat page - 1 file |
 | `docs-archive-2026-10-17` | 2026-10-17 | the corpus sourcing brief, the freeze-day chat reset roundup and the post-launch merge results - 3 files |
 | `docs-archive-2026-10-17b` | 2026-10-17 | the Task C verification record and the report download browser check - 2 files |
+| `docs-archive-2026-10-21` | 2026-10-21 | the report-omission Mirror test plan - 1 file |
 
 Retrieve one by path:
 
@@ -350,6 +351,22 @@ Retrieve:
 ```bash
 git show docs-archive-2026-10-17b:docs/records/TASK_C_VERIFICATION.md
 git show docs-archive-2026-10-17b:docs/records/REPORT_BROWSER_CHECK.md
+```
+
+## `docs-archive-2026-10-21` - the report-omission Mirror test plan
+
+Removed on 2026-10-21 in the docs overhaul's content step, preserved under the tag `docs-archive-2026-10-21`, which points at `7e7630f`, the last commit that contains it.
+
+| file | lines | what it was | why it went |
+|---|---:|---|---|
+| `docs/records/REPORT_OMIT_MIRROR_TEST.md` | 91 | The 2026-10-10 plan for testing the report `omit` option on the Mirror, with the path substitutions for the older Mirror runbook | Finished: its run is `REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`, its setup lives on in `REPORT_OMIT_MIRROR_RUNBOOK.md`, and `MIRROR_RUNBOOK.md` now carries the substitutions; `timeline.md` and STATUS no longer cite it. |
+
+**91 lines.**
+
+Retrieve:
+
+```bash
+git show docs-archive-2026-10-21:docs/records/REPORT_OMIT_MIRROR_TEST.md
 ```
 
 ## Rules

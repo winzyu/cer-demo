@@ -2,10 +2,10 @@
 
 A checklist of answers the project needs from people outside the codebase.
 When an item is answered, record the answer and any decision it settles in `docs/timeline.md` (or the document that owns it), then delete the item here.
-Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11 and remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
+Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11, and item 23 (approved 2026-09-25) on 2026-10-21; they remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
 Partly answered items keep only their open part.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-10-15.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-10-21.
 
 ---
 
@@ -87,12 +87,6 @@ Nothing more goes to him until he answers (user, 2026-10-15).
 - [ ] **35. Should report omission go live before the flagging rework?**
   The user offered to release it early; the plan is one release with the data-skepticism fix and the flagging rework (`docs/timeline.md`, 2026-10-15).
   *Unblocks:* an earlier, separate deploy of `dev` if he wants one.
-  *Answer:*
-
-- [ ] **23. Approve the Firestore data framework for Gilligan.**
-  On 2026-09-24 the supervisor allowed new Firestore collections for Gilligan, once they have seen a table of what they hold.
-  The table is `docs/reference/GILLIGAN_FIRESTORE_FRAMEWORK.md`.
-  *Unblocks:* the persistent usage store, and any Firestore-backed corpus.
   *Answer:*
 
 - [ ] **6. Is "configured thresholds" the right thing for users to hear?**

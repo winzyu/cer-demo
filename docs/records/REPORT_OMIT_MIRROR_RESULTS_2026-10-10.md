@@ -1,6 +1,6 @@
 # Report omit: Mirror results, 2026-10-10
 
-Results of [`REPORT_OMIT_MIRROR_TEST.md`](REPORT_OMIT_MIRROR_TEST.md), run on the Mirror with fabricated data; nothing touched production.
+Results of `REPORT_OMIT_MIRROR_TEST.md` (archived, `docs-archive-2026-10-21`), run on the Mirror with fabricated data; nothing touched production.
 Verdict: the `omit` mechanism works end to end, and the model picks the right groups on a first request, but on a second edit in the same chat it twice claimed a new copy without calling `generate_report`.
 That failure needs a decision before the feature ships (see "Open decision").
 

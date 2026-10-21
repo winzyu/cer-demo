@@ -75,7 +75,7 @@ Current state and next steps only; history is `git log -p docs/STATUS.md`; never
 
 - QC (`src/devices/readingQc.ts`) fails 24 identical consecutive readings on any metric: a test fixture with a constant value now reads as a stuck sensor, so vary fixture values.
 - `npm run lint` covers `src` only; `eslint --fix` on a test file reformats unrelated lines.
-- `MIRROR_RUNBOOK.md` predates the 2026-10-04 move: its paths are under `~/code/clean-earth-rovers/`, `server-release-mirror`'s `node_modules` link is broken, and port 3000 belonged to `cer-ui-l8-local` (live cer-api); `REPORT_OMIT_MIRROR_TEST.md` lists the substitutions.
+- `runbooks/MIRROR_RUNBOOK.md` is unverified since 2026-09-28; read its opening and §0 for the port 3000 and `node_modules` traps before starting the Mirror.
 - The auto-mode classifier refuses branch and worktree creation in the upstream server repository, and paid Mirror runs from the agent (as production reads), so the user runs those scripts with `!`; the Mirror seed stores turbidity as 0, so no Mirror report has a turbidity row; the seed can crash once on a WSL clock step ("Request time should not be before the last token refill time"), and a retry works.
 - Upstream history carries malware (tips are clean; it runs on `next dev`, `next build`, `npm test`): never check out `main`, `develop` or an old commit; scan with `grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .` after any clone, fetch, pull or switch.
 - Rollback targets are `cer-ui-00067-jid` and `cer-api-secrets-1005-1653`; the latter carries the revoked mail password and the Gemini-backed Gilligan, so roll back cer-ui first.

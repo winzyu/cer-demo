@@ -10,8 +10,8 @@ Firestore**.
 
 ## Where do I go?
 
-**If you read one thing first:** [`docs/STATUS.md`](docs/STATUS.md) - current state, open work,
-and the traps that cost time.
+**If you read one thing first:** [§1 Overview](#1-overview), then the table below; the companion
+docs are listed by folder after it.
 
 | I want to… | Go to |
 |---|---|
