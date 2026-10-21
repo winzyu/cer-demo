@@ -55,7 +55,8 @@ The original prompts are `~/code/work/clean-earth-rovers/handoff/2026-10-16/3-do
 | Step 3, Q10: decisions as a 2026-09-28 `timeline.md` row; backlog rows for T4+T11 (§2) and T9's remaining checks (§3; C2-C5 had passed 2026-09-28); `Q10_TASKS.md` archived (tag `docs-archive-2026-10-21b` at `ff51594`) | done in the commit that records it here; T11's stakeholder question waits for the Slack text |
 | Step 4 M3: both launch-issue pages to `records/`, unchanged | done in the commit that records it here |
 | Step 4 M2: `E2E_CHECKLIST.md`'s script is the manual guide's "Short run" (IDs prefixed `S`), its results are `records/E2E_CHECKLIST_RESULTS_2026-09-26.md`, the file is archived (tag `docs-archive-2026-10-21c` at `fcf2eca`) | done in the commit that records it here |
-| Step 4 M1, with the manual guide's setup section replaced by a pointer | next |
+| Step 4 M1: `MIRROR_RUNBOOK.md` rebuilt from the report-omission setup (same §2-§5 numbers, dashboard on 3100); the report-omission runbook and the manual guide point at it for setup; the September test order and known gaps moved to `records/LAUNCH_ISSUES_CHECKLIST.md` | done in the commit that records it here; not yet run (step 6) |
+| Steps 5-7 | each waits for the user's approval |
 | Landing sweeps for `reflection`, `task/tide-tool`, `docs/firestore-testing-plan`, `fix/window-note` | after each branch lands (proposal section 7) |
 
 ## Waiting on the user

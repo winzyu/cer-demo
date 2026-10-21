@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Writes the settings file for the report-omission Mirror stack
- * (docs/runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md §4) and prints its path.
+ * (docs/runbooks/MIRROR_RUNBOOK.md §4) and prints its path.
  *
  *   node scripts/mirror/reportOmitEnv.mjs [output-path]
  *

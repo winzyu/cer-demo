@@ -262,3 +262,32 @@ Everyday flows from the walkthrough's part 2; a failure is a regression.
 2. Before the Michael demo, compare the A1 and A3 functions on CER's `main` with `git show`, without checking it out.
 3. Ask the mirror chat before using :3000, :5101 or :8010; the B items and U5-U10 need its Gilligan ([`MIRROR_RUNBOOK.md`](../runbooks/MIRROR_RUNBOOK.md)).
 4. Optional: a Current and Release start-up section in `MIRROR_RUNBOOK.md`, which covers only the Mirror.
+
+## Mirror test order, 2026-09-28
+
+Moved on 2026-10-21 from `MIRROR_RUNBOOK.md` §8-§9 when that runbook was rebuilt for the current Mirror; the 2026-09-28 version is `git show 2dd024a:docs/runbooks/MIRROR_RUNBOOK.md`.
+
+### Test order
+
+Run each item exactly as the walkthrough describes, click **New chat** before every question, and record each result in the checklist as you go: the status code or count, the exact answer text, the PDF file name, and the question count.
+
+| order | items | cost | notes |
+|---|---|---|---|
+| 1 | smoke checks (that runbook's step 6) | $0 | |
+| 2 | A3 Mirror half, A6 Gilligan half | about $0.04 | one question each |
+| 3 | U5, U6, U9 | about $0.04 | U9 reads the allowance line around U5 |
+| 4 | U7, then U8 and U10 | about $0.07 | U8 and U10 reuse the chats from U5-U7 |
+| 5 | B3, B1, B2, B5 | about $0.25 | B1, B2 and B5 each include a report |
+| 6 | A4 | about $0.10 | needs Gilligan restarted with `PREDECESSOR_PERIOD_HANDOFF=true`, then `false`; restart only Gilligan, never the emulator |
+| 7 | B4, B6, B7 | blocked | see "Known gaps" |
+
+Items A1, A2, A5 and U1-U4 belong to the Current and Release stacks, not the Mirror.
+
+### Known gaps
+
+- **B4** needs Gilligan at cer-demo `dev` `5922109` or later; `77cd4c9` predates it, so a run today only records "before".
+- **B6** needs cer-demo `task/q9-land`, which doesn't exist yet.
+  Its D1 part also needs a pod with pH below 3, and #4 needs sparse 30-minute data; the seed has neither.
+  C1 needs a current pod that has stopped reporting; the seed has none built for it.
+- **B7** needs the dashboard branch that adds the document caveat (U7), which doesn't exist yet.
+- **B1-B3** after-fix checks wait for the Q10 fix round.
