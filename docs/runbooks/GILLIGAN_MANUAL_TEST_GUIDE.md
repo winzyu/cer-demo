@@ -1,6 +1,6 @@
 # Gilligan manual test guide
 
-Use this guide to run the dashboard, CER server and Gilligan on this machine with fabricated Firestore data.
+Use this guide to test the dashboard, CER server and Gilligan on the Mirror, with fabricated Firestore data.
 Nothing here requires a production login or a production device token.
 Record the date, three Git commit IDs, seed time, settings profile, approved model budget and your initials before testing.
 This is a checklist to execute, not a claim that the release passes.
@@ -15,256 +15,22 @@ A question can cause several provider requests, so a question count is not a dol
 Logins, pod lists, page loads, health checks and deterministic PDF downloads do not call the model.
 Getting a report offer by asking Gilligan does cost a model call.
 
-The recorded working stack is server `mirror/e2e-p3` at `37fec03`, Gilligan `feat/service-release` at `cc8a300`, and dashboard `local` at `fd103a0`.
-The server already includes P3/P4 and the shared service key change.
-Do not switch to upstream `main` or `develop`, install dependencies there, or run their code.
-Do not merge fixes or change upstream branches as part of this procedure.
-These older commits do not contain every later release fix, so record a known failure instead of assuming a newer requirement already works.
+## The stack
 
-**Setup below is the 2026-09-26 stack and is no longer maintained.**
-The 2026-09-27 stack differs: the mirror server (`mirror/e2e-p3` `1ef21a7` or the release candidate's `mirror/release-rc1`) runs under a `demo-` project (`demo-cer-mirror`) and refuses production project ids, `mirror:seed -- --fixtures` adds the moved pod, the no-GPS pod and the missing- and empty-organization predecessors, and the dashboard's `local` ancestry check no longer holds after the malware cleanup rewrote `local`.
-For the current stack, follow [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) instead of the setup below.
-
-In the setup terminal, check branches, ancestry and malware before starting either upstream checkout:
-
-```bash
-export CER_REPOS=/home/winsy/code/work/clean-earth-rovers/repo
-export MIRROR_SERVER="$CER_REPOS/clean-earth-rovers-server/.worktrees/mirror"
-export GILLIGAN_DIR="$CER_REPOS/cer-demo/.claude/worktrees/feat+service-release"   # removed; see REPORT_OMIT_MIRROR_RUNBOOK.md §3.2
-export DASHBOARD_DIR="$CER_REPOS/user-dashboard"
-
-git -C "$MIRROR_SERVER" branch --show-current
-git -C "$MIRROR_SERVER" rev-parse --short HEAD
-git -C "$MIRROR_SERVER" merge-base --is-ancestor local HEAD
-git -C "$DASHBOARD_DIR" branch --show-current
-git -C "$DASHBOARD_DIR" rev-parse --short HEAD
-git -C "$DASHBOARD_DIR" merge-base --is-ancestor local HEAD
-git -C "$GILLIGAN_DIR" branch --show-current
-git -C "$GILLIGAN_DIR" rev-parse --short HEAD
-(cd "$MIRROR_SERVER" && grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .)
-(cd "$DASHBOARD_DIR" && grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git .)
-ss -ltnp '( sport = :3000 or sport = :5101 or sport = :8010 or sport = :8080 or sport = :4400 or sport = :4500 or sport = :9150 )'
-```
-
-Expect `mirror/e2e-p3`, `local`, and `feat/service-release`, respectively, and success from both ancestry checks.
-The malware searches must print nothing; grep exit 1 means no matches, while exit 2 means the scan failed.
-Stop on an unexpected branch, a failed ancestry check, a match, or a scan error.
-Repeat the malware scan after any later clone, fetch, pull or branch switch in either upstream repository.
-If a port is occupied, identify its owner and checkout before doing anything else.
-Stop only a test process you own, using its original terminal, and do not reseed an emulator another session is using.
-If port inspection is denied, stop here rather than assume port 3000 is free.
-
-Java 21 or newer, Firebase CLI, Node and the existing dependencies must be available.
-The recorded machine uses Java `~/.local/opt/jdk-21.0.12.1+1` and Firebase CLI 15.31.0.
-The Gilligan worktree needs its ignored `.env`, `node_modules`, `data/corpus` and `data/embeddings/cache.json` from the local setup.
-Do not regenerate embeddings or ingest data for this test.
-Do not open a service-account key or the gcloud credentials directory.
-
-## Start every service
-
-### 1. Make one temporary settings file
-
-Run this in the setup terminal only after the ports are free.
-It makes new mirror-only secrets without displaying them and does not change repository env files.
-The existing Gilligan `.env` supplies the model key; never paste that key into this guide or test evidence.
-
-```bash
-test -d "$MIRROR_SERVER/node_modules"
-test -d "$GILLIGAN_DIR/node_modules"
-test -d "$DASHBOARD_DIR/node_modules"
-test -f "$GILLIGAN_DIR/.env"
-test -d "$GILLIGAN_DIR/data/corpus"
-test -f "$GILLIGAN_DIR/data/embeddings/cache.json"
-export GILLIGAN_MANUAL_ENV=$(mktemp /tmp/gilligan-manual-env.XXXXXX)
-chmod 600 "$GILLIGAN_MANUAL_ENV"
-node - "$GILLIGAN_MANUAL_ENV" <<'NODE'
-const fs = require('node:fs');
-const crypto = require('node:crypto');
-const settings = {
-  CER_REPOS: '/home/winsy/code/work/clean-earth-rovers/repo',
-  MIRROR_SERVER: '/home/winsy/code/work/clean-earth-rovers/repo/clean-earth-rovers-server/.worktrees/mirror',
-  GILLIGAN_DIR: '/home/winsy/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/feat+service-release', // removed
-  DASHBOARD_DIR: '/home/winsy/code/work/clean-earth-rovers/repo/user-dashboard',
-  JAVA_HOME: '/home/winsy/.local/opt/jdk-21.0.12.1+1',
-  FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080',
-  FIRESTORE_PROJECT_ID: 'conductive-fold-343604',
-  FIRESTORE_DATABASE_ID: '(default)',
-  DB_ENVIRONMENT: 'main',
-  NODE_ENV: 'development',
-  ACCESS_TOKEN_SECRET: crypto.randomBytes(32).toString('hex'),
-  CER_RAG_SERVICE_KEY: crypto.randomBytes(32).toString('hex'),
-  DEV_UPSTREAM_BASE_URL: '',
-  DEV_LOCAL_PATHS: '',
-  DEV_CHAT_STORE: '',
-  DEV_UNVERIFIED_AUTH: '',
-  NODEMAILER_APP_EMAIL: 'mirror@example.invalid',
-  NODEMAILER_APP_PASSWORD: 'mirror-only-placeholder',
-  STRIPE_SECRET_KEY: 'sk_test_mirror_only',
-  GILLIGAN_BACKEND: 'rag',
-  CER_RAG_BASE_URL: 'http://localhost:8010',
-  CER_RAG_TIMEOUT_MS: '120000',
-  FRONTEND_URL: 'http://localhost:3000',
-  DEV_FRONTEND_URL: 'http://localhost:3000',
-  DEV_BASE_URL: 'http://localhost:5101',
-  DEVICE_API_BASE_URL: 'http://localhost:5101/api/v1',
-  DEVICE_API_TOKEN: '',
-  SENSOR_TOOL: 'true',
-  REPORT_TOOL: 'true',
-  CORPUS_SOURCE: 'artifact',
-  DEFAULT_RETRIEVAL: 'hybrid-slice-vector',
-  AUDIT_LOG: 'false',
-  QUERY_QUOTA: 'true',
-  QUERY_QUOTA_STORE: 'firestore',
-  QUERY_QUOTA_WINDOW: '1d',
-  QUERY_QUOTA_SCOPE: 'caller',
-  QUERY_QUOTA_REQUESTS: '20',
-  QUERY_QUOTA_REPORTS: '5',
-  QUERY_QUOTA_TOKENS: '1000000',
-  NEXT_PUBLIC_API_BASE_URL: 'http://localhost:5101',
-  API_PROXY_TARGET: 'http://localhost:5101',
-  NEXT_TELEMETRY_DISABLED: '1'
-};
-fs.writeFileSync(process.argv[2], Object.entries(settings)
-  .map(([k,v]) => `export ${k}='${v}'`).join('\n') + '\n');
-NODE
-printf 'Settings file: %s\n' "$GILLIGAN_MANUAL_ENV"
-```
-
-Stop if any prerequisite command fails.
-Copy the printed file path, not its contents, into each service terminal:
-
-```bash
-source /tmp/gilligan-manual-env.REPLACE_WITH_PRINTED_SUFFIX
-export PATH="$JAVA_HOME/bin:$PATH"
-test "$FIRESTORE_EMULATOR_HOST" = 127.0.0.1:8080
-test -z "$DEVICE_API_TOKEN"
-```
-
-Stop if either test fails.
-Exported values override dotenv files, including an old production token or proxy URL.
-The server launcher still loads `.env.mirror.local` if it exists, but every routing, auth and database setting above takes precedence.
-The empty development switches disable the proxy, memory chat store and unverified authentication.
-Do not use the passthrough recipe elsewhere in `LOCAL_STACK.md` for this test.
-
-The settings reproduce the results document's routing, tools, auth, database and Firestore quota configuration.
-The deliberate changes are production allowances of 20 messages, 5 reports and 1,000,000 tokens per user per day, plus explicit defaults and local placeholder credentials.
-The September 25 run initially had unlimited quotas and later tested 5 messages and 3 reports.
-`CORPUS_SOURCE=artifact` and `DEFAULT_RETRIEVAL=hybrid-slice-vector` use the local corpus and cache; a different retrieval mode needs a separately recorded run.
-The results document does not record every model parameter inherited from `.env`, so this is not a byte-for-byte reconstruction of the model configuration.
-
-### 2. Start Firestore, then seed it
-
-In the emulator terminal after loading the settings:
-
-```bash
-cd "$MIRROR_SERVER"
-java -version
-firebase --version
-npm run mirror:emulator
-```
-
-Wait for `All emulators ready` and Firestore listening on `127.0.0.1:8080`.
-The Firebase UI is disabled; a blank browser page at 8080 is not a failure.
-This mirror must use `conductive-fold-343604` because the recorded server hard-codes that project ID.
-Do not substitute `demo-cer` from the standalone quota-test recipe: the mirror seed and server would use a different project.
-The local emulator host is mandatory even though the project ID resembles production.
-
-In the setup terminal, load the same settings and run:
-
-```bash
-source "$GILLIGAN_MANUAL_ENV"
-cd "$MIRROR_SERVER"
-FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 npm run mirror:seed
-```
-
-This wipes the emulator's `(default)` database, including previous chats and counters, before seeding.
-Expect `[Mirror] Seeded (default) on 127.0.0.1:8080: 9 organizations, 27 users, 15 devices, 52 chats, 8640 readings (30 days).`
-The current seed makes 30 days of hourly readings for each reporting label, with predecessor histories ending 30 days ago.
-It does not continuously produce new readings, so record the seed time when judging freshness.
-Do not continue on a seed error.
-
-### 3. Start the CER server on 5101
-
-In the server terminal after loading the settings:
-
-```bash
-cd "$MIRROR_SERVER"
-PORT=5101 npm run dev:mirror
-```
-
-Expect `[Mirror] Firestore emulator at 127.0.0.1:8080.`, database `(default)` in project `conductive-fold-343604`, and `Listening: http://localhost:5101`.
-The ADC fallback log is expected on this old server; it does not prove a live connection when the emulator host is set.
-Do not run `gcloud auth` to fix that message.
-In the setup terminal, check:
-
-```bash
-curl --noproxy '*' -sS -o /dev/null -w '%{http_code}\n' http://localhost:5101/api/v1/
-curl --noproxy '*' -sS -o /dev/null -w '%{http_code}\n' http://localhost:5101/api/v1/devices
-```
-
-Expect 200 for the root and 401 for devices without a login.
-
-### 4. Start Gilligan on 8010
-
-In the Gilligan terminal after loading the settings:
-
-```bash
-cd "$GILLIGAN_DIR"
-PORT=8010 npm run dev
-```
-
-Allow roughly 80 seconds for a cold start.
-Check from the setup terminal:
-
-```bash
-curl --noproxy '*' -sS http://localhost:8010/health
-```
-
-Expect HTTP 200 and check `fireworksConfigured` without displaying any key.
-Also read the startup log: sensor and report tools must be on, quota must use Firestore with a one-day window, and limits must be 20 requests, 5 reports and 1,000,000 tokens.
-The quota identity must come from the CER server's user identity, not from the bearer token or client IP.
-The shared service key must be configured on both services.
-Health alone does not report all these settings and does not prove that a model call or Firestore transaction will succeed.
-
-### 5. Start the dashboard on 3000
-
-In the dashboard terminal after loading the settings, inspect port 3000 again before starting:
-
-```bash
-ss -ltnp '( sport = :3000 )'
-cd "$DASHBOARD_DIR"
-NEXT_PUBLIC_API_BASE_URL=http://localhost:5101 \
-API_PROXY_TARGET=http://localhost:5101 \
-NEXT_TELEMETRY_DISABLED=1 npm run dev -- -p 3000 -H 127.0.0.1
-```
-
-Proceed only if the port is free.
-Wait for Next.js to report ready, then open `http://localhost:3000` in a browser.
-Keep using `localhost` consistently so login storage is not split between it and `127.0.0.1`.
-Do not open a Gilligan URL that already contains a `question` parameter during free checks.
-Log in through the form and open Gilligan from the menu or `http://localhost:3000/gilligan`.
-
-Open browser Developer Tools, enable Preserve log in Network, and block `*run.app*` before login.
-Any attempted `run.app` request is a stop condition, including one blocked by the browser.
-Stop the test services and record the requesting page, route and hostname without tokens.
-Browser blocking does not cover server traffic: check the server terminal and `ss -tpn` during free preflight too.
-Server Firestore connections should go only to local port 8080; Gilligan's device requests must go to local port 5101.
-Model-provider traffic is allowed only during an approved paid run.
-Maps and billing are not part of this test; do not supply production map, Stripe or mail credentials.
+Start the stack with [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) §0-§6 first; its settings file sets `$MIRROR_SERVER`, `$GILLIGAN_DIR` and `$DASHBOARD_DIR`, which the checks below use.
+The dashboard now runs on port 3100: read every `:3000` below as `:3100`.
+This guide's own setup, for the 2026-09-26 stack, was removed on 2026-10-21 (`git show 2dd024a:docs/runbooks/GILLIGAN_MANUAL_TEST_GUIDE.md`).
+The named-database check, the legacy replay and the large-chat fixtures below were written for that stack, whose emulator used project `conductive-fold-343604`; the current Mirror uses `demo-cer-mirror`, so their scripts are unverified there.
 
 ### Stop or restart
 
-Stop the dashboard, Gilligan, server and emulator in that order with Ctrl-C in their own terminals.
-Confirm their test ports are released with the same `ss` command used above.
-Never use broad `pkill` commands and never stop port 8000.
+Stop and reset as in [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) §8.
 For E5 and G2, restart only the server and Gilligan with the same settings file; leave the emulator running.
 Stopping the emulator loses all its data, and reseeding also destroys previous test evidence and quota counts.
-Retain the temporary settings file until restart checks finish, then delete that exact file with `rm -- "$GILLIGAN_MANUAL_ENV"` in the setup terminal.
-Do not reuse its secrets for production.
 
 ### Named database repeat
 
-The baseline above deliberately matches the historical `(default)` quota database.
+The baseline deliberately matches the historical `(default)` quota database.
 For the production-shaped database check, restart only Gilligan with `FIRESTORE_DATABASE_ID=gilligan PORT=8010 npm run dev` after loading the same settings.
 Keep the server on `DB_ENVIRONMENT=main`, which still means `(default)` for customer data.
 Repeat G1-G3 and record this as a separate run with fresh counters.

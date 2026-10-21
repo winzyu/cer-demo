@@ -1,9 +1,10 @@
 # Report omission: Mirror runbook
 
-How to stand up the Mirror (a local copy of production with fabricated data) for the release's report omission, and test every part of it by hand with expected results.
+How to test the release's report omission on the Mirror (a local copy of production with fabricated data) by hand, with expected results.
 Nothing here reads or writes production: Firestore is a local emulator, the CER server and dashboard are local, and the only outside call is the model provider during the paid steps.
 
-Written 2026-10-15 and dry-run the same night: the setup in §3-§5 and the free checks in §6.1-§6.2 ran as written (53 of 53 automated checks passed); the browser checks in §6.3 and the paid chat steps in §7 have not run on this build.
+Written 2026-10-15 and dry-run the same night: the setup and the free checks in §6.1-§6.2 ran as written (53 of 53 automated checks passed); the paid chat steps in §7 ran on 2026-10-16 ([`REPORT_OMIT_MIRROR_RESULTS_2026-10-16.md`](../records/REPORT_OMIT_MIRROR_RESULTS_2026-10-16.md)).
+The setup moved to [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) on 2026-10-21 with the same section numbers (§2-§5); its stop steps are that runbook's §8.
 Earlier results for the same feature: [`REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md`](../records/REPORT_OMIT_MIRROR_RESULTS_2026-10-10.md); the design is [`SPECS.md`](../SPECS.md) §10.7.
 
 ## 1. What is tested
@@ -25,147 +26,15 @@ Not covered here:
   The removed text is covered by `test/unit/reportRenderPdf.test.ts` and the offline sample `report-omit-samples/offline-S3-no-turbidity-or-fault-notes.pdf` that Michael approved.
 - The rest of what `dev` carries (v2 flagging, the data-skepticism fix, the coverage line) runs on this stack but has its own checks; the flagging rework is not on `dev` yet.
 
-## 2. The stack
+## 2-5. Stack, setup, settings and start
 
-```text
-browser -> dashboard :3100 -> cer-api :5101 -> Firestore emulator :8080 (project demo-cer-mirror)
-                                  \-> Gilligan :8010 -> model provider (paid steps only)
-                                         \-> pod data from cer-api :5101, as the caller
-```
-
-| piece | directory | code | why this code |
-|---|---|---|---|
-| Firestore emulator and seed | `~/code/work/clean-earth-rovers/worktrees/mirror-report-omit` | server `mirror/release-rc1` `8594338` plus three patches (§3.1) | `8594338` is live cer-api's release `122136d` plus the Mirror fixtures |
-| cer-api | same directory | same | the release plus the report-omit relay `ddcddc5` and the `report_retried` relay patch, which is what the server PR will carry |
-| Gilligan (cer-gilligan) | `~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/omit-mirror` | cer-demo `dev`, detached (`f0cb4d2` for the 2026-10-16 run, `acb9d7d` for its rerun) | everything the next release ships from `dev`; detached so coordinator commits do not change it mid-test |
-| Dashboard | `~/code/work/clean-earth-rovers/worktrees/dashboard-land` | dashboard `fc13d16`, detached | the live cer-ui build; it needs no change, since it posts back the request each answer offers |
-
-Ports: 3100 (dashboard), 5101 (cer-api), 8010 (Gilligan), 8080 (emulator), plus the emulator's 4400, 4500 and 9150.
-Port 3000 is avoided on purpose: Docker container `cer-ui-l8-local`, when running, serves a dashboard that proxies to the **live** cer-api.
-
-## 3. One-time setup
-
-All three directories exist on this machine as of 2026-10-15; skip to §4 unless one is missing or a newer build is to be tested.
-
-### 3.1 Server tree
-
-```bash
-bash ~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/dev/scripts/mirror/reportOmitTree.sh
-```
-
-Expected output ends with:
-
-```text
-base: mirror/release-rc1 8594338
-omit: task/gilligan-report-omit ddcddc5
-tree ready: /home/winsy/code/work/clean-earth-rovers/worktrees/mirror-report-omit
-```
-
-The script exports `mirror/release-rc1` with `git archive` and applies three patches with `git apply`; nothing is committed, merged or checked out in the server repository, so none of the upstream Git rules is touched.
-
-1. `git diff local task/gilligan-report-omit`: cer-api accepts and relays `omit`.
-2. `~/code/work/clean-earth-rovers/handoff/2026-10-15/report-retried.patch`: cer-api relays `report_retried`.
-3. `scripts/mirror/mirror-seed-turbidity.patch`: the seed stores the turbidity index in field 72, as production rows do, so Mirror reports get a turbidity row (before this, every Mirror pod read turbidity 0 and the turbidity notes could not be tested).
-
-It refuses an existing target, links the server's `node_modules`, copies `.env.mirror.local` from `server-release-mirror` without printing it, and runs the malware scan; it stops if the scan finds anything.
-
-Optional check of the two relay patches (free, about 20 seconds):
-
-```bash
-cd ~/code/work/clean-earth-rovers/worktrees/mirror-report-omit
-FIRESTORE_EMULATOR_HOST=127.0.0.1:1 npx jest --runInBand "$PWD/test/unit/services/CerRagService.test.ts" "$PWD/test/unit/services/provenance.test.ts"
-```
-
-Expected: `PASS test/unit/services/CerRagService.test.ts` and `PASS test/unit/services/provenance.test.ts`.
-Jest also finds the same suites in sibling server worktrees and reports many of them as failed; ignore every line that does not start with `PASS test/` or `FAIL test/`.
-
-### 3.2 Gilligan worktree
-
-```bash
-cd ~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/dev
-git worktree add --detach ../omit-mirror dev
-cd ../omit-mirror
-ln -s ~/code/work/clean-earth-rovers/repo/cer-demo/node_modules node_modules
-ln -s ~/code/work/clean-earth-rovers/repo/cer-demo/data/corpus data/corpus
-ln -s ~/code/work/clean-earth-rovers/repo/cer-demo/data/embeddings data/embeddings
-(umask 077 && cp ../dev/.env .env)
-git rev-parse --short HEAD
-```
-
-The `.env` supplies only the model provider key; the settings file in §4 overrides every other setting in it.
-To test a newer `dev`, run `git -C ~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/omit-mirror checkout --detach dev` with Gilligan stopped.
-
-### 3.3 Dashboard
-
-`dashboard-land` is a clean, detached checkout of `fc13d16` with its own `node_modules`; check it before use:
-
-```bash
-cd ~/code/work/clean-earth-rovers/worktrees/dashboard-land
-git rev-parse --short HEAD          # fc13d16
-git status --short                  # nothing
-grep -rlE ' {200,}' --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.next .   # nothing
-```
-
-Stop if any of the three differs.
-
-## 4. Settings file
-
-Run in a setup terminal:
-
-```bash
-cd ~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/dev
-node scripts/mirror/reportOmitEnv.mjs
-```
-
-It prints a path such as `/tmp/report-omit-mirror-env.1a2b3c4d`: a mode-600 file of `export` lines with fresh random secrets for this run, production's Gilligan model settings (`glm-5p3-flash`, reasoning low, 16 tool rounds, `local-vector` retrieval, the catalogue prompt, `WATER_TYPE=freshwater`, 20 questions and 5 reports a day), and every Firestore and device-API setting pointed at the emulator and the local cer-api.
-
-In each of the five terminals, load it and check the guards (use the printed path):
-
-```bash
-source /tmp/report-omit-mirror-env.REPLACE
-export PATH="$JAVA_HOME/bin:$PATH"
-test "$FIRESTORE_EMULATOR_HOST" = 127.0.0.1:8080 && test -z "$DEVICE_API_TOKEN" && test "$DEVICE_API_BASE_URL" = http://localhost:5101/api/v1 && echo "guards ok"
-```
-
-Stop if `guards ok` does not print.
-
-## 5. Start
-
-Check the ports are free first:
-
-```bash
-ss -ltnp '( sport = :3100 or sport = :5101 or sport = :8010 or sport = :8080 or sport = :4400 or sport = :4500 or sport = :9150 )'
-```
-
-Expected: only the header line.
-If a port is taken, find out whose it is before going on; never stop the service on port 8000.
-
-| step | terminal | command | expected |
-|---|---|---|---|
-| 1 | emulator | `cd "$MIRROR_SERVER" && npm run mirror:emulator` | `All emulators ready!` and `Firestore │ 127.0.0.1:8080` |
-| 2 | setup | `cd "$MIRROR_SERVER" && npm run mirror:seed -- --fixtures && date -u` | `[Mirror] Seeded (default) on 127.0.0.1:8080: 9 organizations, 27 users, 22 devices, 52 chats, 13680 readings (30 days).`; write down the time |
-| 3 | cer-api | `cd "$MIRROR_SERVER" && PORT=5101 npm run dev:mirror` | `[Mirror] Firestore emulator at 127.0.0.1:8080, project demo-cer-mirror.`; a line about Application Default Credentials is expected, do not run `gcloud auth` |
-| 4 | Gilligan | `cd "$GILLIGAN_DIR" && PORT=8010 npm run dev` | within a minute or two: `SENSOR_TOOL is ON`, `REPORT_TOOL is ON`, `CATALOGUE_PROMPT is ON`, `QUERY_QUOTA is ON — requests=20, tokens=1000000, reports=5 per 1d per caller`, `Listening on http://localhost:8010` |
-| 5 | dashboard | `cd "$DASHBOARD_DIR" && npm run dev -- -p 3100 -H 127.0.0.1` | `Ready`; a Browserslist warning is harmless |
-
-The emulator keeps nothing on disk: every start needs a seed, and a seed wipes every chat and allowance count.
-If the seed crashes with "Request time should not be before the last token refill time" (a WSL clock step), run it again.
-Readings end at the seed time and do not grow, so "last 7 days" means the 7 days before the seed.
+Follow [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) §2-§5; its server tree (§3.1) carries the cer-api `omit` relay and `report_retried` patches this test needs, and its seed patch gives Mirror reports a turbidity row.
 
 ## 6. Free checks (no model calls)
 
 ### 6.1 Smoke
 
-From the setup terminal:
-
-```bash
-curl --noproxy '*' -s -o /dev/null -w '%{http_code}\n' http://localhost:5101/api/v1/devices     # 401
-curl --noproxy '*' -s http://localhost:8010/health; echo                                         # "status":"ok", "fireworksConfigured":true
-curl --noproxy '*' -s -o /dev/null -w '%{http_code}\n' http://localhost:3100/api/v1/devices     # 401, proxied to the local cer-api
-ss -tnp | grep -E 'node|java' | awk '{print $5}' | sort -u | grep -vE '^(127\.0\.0\.1|\[::1\]|\[::ffff:127)'   # nothing
-```
-
-The last line must print nothing outside a paid step; during one, only the model provider appears.
+Run [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) §6's four command-line checks.
 
 ### 6.2 Automated route checks
 
@@ -252,7 +121,7 @@ Pass:
 - No answer's delivery line or text claims a copy that was not made, and the fallback `That copy was not regenerated; please ask again.` never appears (if it does, record it: the retry made no report).
 - A4, C1 and D1 pass no `omit` the user did not ask for, A4 removes no numbers and makes no report, and A4's `report_retried` is false.
 - A5 and E2 download the copy each button's answer described.
-- Nothing in the Network tab or the `ss` line in §6.1 reaches anything but localhost and the model provider.
+- Nothing in the Network tab or the `ss` line in `MIRROR_RUNBOOK.md` §6 reaches anything but localhost and the model provider.
 
 Record, but do not fail on: A2 adding `sensor_fault_notes`; C1 not listing the groups; A3 leaving out `threshold_notes` when its delivery line and Omitted row both say so (the 2026-10-11 run saw this once); the wording of A4, C1 and D1.
 A wrong pick or a delivery line that disagrees with the call is a cer-demo prompt or tool-description fix; rerun only the failed steps after a new budget approval.
@@ -267,12 +136,12 @@ The pass rules are §7.2's; nothing else changes.
 
 | check | how | expected |
 |---|---|---|
-| the stack is up | the four lines in §6.1 | 401, `"status":"ok"`, 401, nothing printed |
-| the seed is less than 7 days old | `cat` the seed time you wrote down in §5 | otherwise every report says "no readings in that window" |
+| the stack is up | the four lines in `MIRROR_RUNBOOK.md` §6 | 401, `"status":"ok"`, 401, nothing printed |
+| the seed is less than 7 days old | `cat` the seed time you wrote down at `MIRROR_RUNBOOK.md` §5 | otherwise every report says "no readings in that window" |
 | the personas have reports left | a persona has 5 a day; chat A downloads 6 copies (A1-A4 and two in A5) if A4 makes one, 5 otherwise | if a persona has used any today, reseed first |
 | the budget is approved | §7 | 8 questions |
 
-To reseed (free; it wipes every chat and allowance, so save anything you want from earlier runs first), in a terminal that has sourced the settings file (§4):
+To reseed (free; it wipes every chat and allowance, so save anything you want from earlier runs first), in a terminal that has sourced the settings file (`MIRROR_RUNBOOK.md` §4):
 
 ```bash
 cd "$MIRROR_SERVER" && npm run mirror:seed -- --fixtures && date -u
@@ -338,11 +207,7 @@ Mirror PDFs hold only fabricated data, so they may be kept in `docs/captures/rep
 
 ## 9. Stop and reset
 
-- Stop with Ctrl-C in each terminal, in this order: dashboard, Gilligan, cer-api, emulator; then rerun the `ss -ltnp` line from §5 and expect only the header.
-- To change a Gilligan or cer-api setting, restart only that service with the same settings file; leave the emulator running.
-- To start the day's allowances over, rerun the seed (§5 step 2); it also erases every chat.
-- When finished, delete the settings file: `rm -- /tmp/report-omit-mirror-env.REPLACE`.
-- The three directories may stay for the next run; `mirror-report-omit` is an export with no Git history and can be deleted with `rm -r` once it is no longer wanted.
+See [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md) §8.
 
 ## 10. After the test: the server PR
 
@@ -356,11 +221,4 @@ Once the results are recorded, the PR goes ahead in this order; each Git or GitH
 
 ## Troubleshooting
 
-| symptom | cause and fix |
-|---|---|
-| cer-api exits with `FIRESTORE_EMULATOR_HOST must point at a local emulator` or `MIRROR_PROJECT_ID must name a demo- project` | the settings file was not sourced in that terminal; source it and check `guards ok` |
-| Gilligan answers 401 or "service key" errors to cer-api | the two services were started from different settings files; restart both from the same one |
-| a report says "no readings in that window" | more than 7 days have passed since the seed; reseed |
-| a download button reads `Report limit reached - try again later` | the persona used its 5 reports; use another persona from §7 or reseed |
-| the dashboard shows real CER pods or the login fails for a Mirror account | it is proxying to the live cer-api: stop it, check `API_PROXY_TARGET` is `http://localhost:5101` in that terminal, and restart |
-| the seed crashes with "Request time should not be before the last token refill time" | WSL clock step; run the seed again |
+See [`MIRROR_RUNBOOK.md`](MIRROR_RUNBOOK.md), "Troubleshooting".
