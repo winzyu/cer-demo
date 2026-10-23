@@ -1,5 +1,3 @@
-import type { PeriodUnit } from "../types/device.types";
-
 /**
  * Natural-language time-range parsing for `query_sensor_data` (`MIGRATION_SPEC.md` §4.3, §8).
  *
@@ -27,7 +25,7 @@ const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 const WEEK_MS = 7 * DAY_MS;
 
-/** Approximations, used only to size a fetch window — never to bound a reported range. */
+/** Approximations for "last N months/years"; calendar phrases never use them. */
 const MONTH_MS = 30 * DAY_MS;
 const YEAR_MS = 365 * DAY_MS;
 
@@ -251,65 +249,4 @@ export const resolveRange = (parsed: ParsedRange, referenceMs: number): Resolved
     label: parsed.label,
     endInclusive: parsed.kind === "relative" || parsed.kind === "latest",
   };
-};
-
-/**
- * How far back a fetch must reach, measured from *wall-clock* now.
- *
- * The device API's period route is a rolling window ending at the server's now, so the window
- * has to cover the gap between now and the oldest instant the phrase could possibly need —
- * which, for a relative phrase on a stale pod, is further back than the phrase's own span.
- */
-export const lookbackMsFor = (parsed: ParsedRange, nowMs: number): number => {
-  switch (parsed.kind) {
-    case "relative":
-      return parsed.spanMs;
-    case "latest":
-      return HOUR_MS;
-    case "absolute":
-      return Math.max(nowMs - parsed.startMs, HOUR_MS);
-    case "calendar":
-      return (parsed.unit === "day" ? DAY_MS : WEEK_MS) * (Math.abs(parsed.offsetUnits) + 1);
-    default: {
-      const unreachable: never = parsed;
-      throw new TimeRangeError(`Unhandled range ${JSON.stringify(unreachable)}`);
-    }
-  }
-};
-
-/**
- * The API's period route takes a whole number of fixed units, so an arbitrary lookback has to be
- * rounded up onto that ladder. Rounding **up** is the only safe direction: a window one rung too
- * small returns fewer readings than the question asked for and the shortfall is invisible in the
- * result.
- */
-const LADDER: ReadonlyArray<{ duration: number; unit: PeriodUnit; spanMs: number }> = [
-  { duration: 1, unit: "hour", spanMs: HOUR_MS },
-  { duration: 1, unit: "day", spanMs: DAY_MS },
-  { duration: 1, unit: "week", spanMs: WEEK_MS },
-  { duration: 1, unit: "month", spanMs: MONTH_MS },
-  { duration: 1, unit: "year", spanMs: YEAR_MS },
-];
-
-export interface FetchWindow {
-  duration: number;
-  unit: PeriodUnit;
-  spanMs: number;
-}
-
-/** Smallest ladder rung covering `lookbackMs`; the widest rung when nothing covers it. */
-export const fetchWindowFor = (lookbackMs: number): FetchWindow => (
-  LADDER.find((rung) => rung.spanMs >= lookbackMs) ?? LADDER[LADDER.length - 1]
-);
-
-/**
- * The next rung up, or `undefined` at the top.
- *
- * Used to widen a window that came back empty: a pod silent for six days returns nothing for
- * "1 day", and the honest recovery is to look further back for the reading that anchors the
- * range — not to report zeros. Escalation is bounded by the caller.
- */
-export const widerWindow = (window: FetchWindow): FetchWindow | undefined => {
-  const index = LADDER.findIndex((rung) => rung.unit === window.unit);
-  return index >= 0 && index + 1 < LADDER.length ? LADDER[index + 1] : undefined;
 };

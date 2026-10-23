@@ -1,7 +1,11 @@
 # Slop audit pilot: `src/tools` (2026-10-23)
 
-Steps 1 (inventory) and 3 (pilot one module) of the phased slop audit. Read-only: no source was changed.
-The aim is to calibrate the rubric before running it over the rest of the repo.
+Origin: started by the user in a single cloud session (2026-10-23) as an ad hoc question, not part of any existing plan or handoff.
+"Phased" refers to the seven steps proposed in that chat: 1 inventory, 2 deterministic tools (`knip`, `jscpd`), 3 pilot one module,
+4 fan out per module, 5 verify and merge, 6 report, 7 fix in separate changes. Step 2 was skipped because it needs `npx` to fetch packages,
+which cloud sessions may not do without approval. No separate audit prompt exists beyond this record.
+
+Steps 1 and 3 were read-only. The aim is to calibrate the rubric before running it over the rest of the repo.
 
 ## Step 1: inventory
 
@@ -121,3 +125,13 @@ Calibration matters as much as the findings. The module is mostly the opposite o
 3. M3: delete the orphaned fetch-ladder helpers and their tests.
 4. M4, M5, L6: trivial doc and dead-field cleanups.
 5. L1, L2: extract `inRange` and a shared tool-error wrapper.
+
+## Decisions and status (2026-10-23, after review)
+
+- **Fixed on `cloud/slop-audit`:** H1 (example changed to `last month`, which the parser accepts), M3 (fetch-ladder helpers and their tests removed),
+  M5 (`SiteSnapshot.visits` removed). None of these overlap the flagging rework.
+- **Held until the flagging rework lands:** M1, M2, M4, L6, L1, L2. They touch `generateReport.ts`, `querySensorData.ts`, `aggregate.ts` and `metricVerdict.ts`,
+  which that branch also changes. L5 overlaps the tide branch only in `dailyCycle.ts`.
+- **M6 open:** `docs/SPECS.md:1065` keeps coded device failures unflattened on purpose for the last-reported field. Check SPECS for report error handling before changing anything.
+- **Rubric for the full run:** flag doc citations that don't resolve to a current (non-archived) doc, and "used to…" history narration (it belongs in `docs/timeline.md`).
+  Keep comments that explain why. Check every folder for exports that only tests use.

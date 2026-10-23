@@ -1,7 +1,7 @@
 import type { DeviceChain } from "../devices/mergeChains";
 import type { DeviceReading } from "../types/device.types";
-import { currentSite, provenSiteStart, siteVisits } from "./currentSite";
-import type { CurrentSite, SiteVisit } from "./currentSite";
+import { currentSite, provenSiteStart } from "./currentSite";
+import type { CurrentSite } from "./currentSite";
 
 export const SITE_CACHE_TTL_MS = 5 * 60_000;
 export const SITE_CACHE_RETENTION_MS = 30 * 60_000;
@@ -19,17 +19,15 @@ export interface SiteSnapshot {
   fromMs: number;
   chain: DeviceChain;
   site: CurrentSite;
-  visits: SiteVisit[];
 }
 
 export const snapshotSite = (
   rows: DeviceReading[],
   fromMs: number,
-): { site: CurrentSite; visits: SiteVisit[] } => {
+): { site: CurrentSite } => {
   const anchor = fromMs <= 0 ? 0 : provenSiteStart(rows);
   if (anchor === undefined) {
     return {
-      visits: [],
       site: {
         readings: [],
         note: "Current site not assessed: available history "
@@ -54,5 +52,5 @@ export const snapshotSite = (
       ...(site.userNotes ?? []),
     ];
   }
-  return { site, visits: siteVisits(context) };
+  return { site };
 };

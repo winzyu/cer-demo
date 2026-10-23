@@ -63,7 +63,7 @@ export const generateReportDefinition: ToolDefinition = {
           type: "string",
           description:
             "Natural-language reporting period, same grammar query_sensor_data accepts "
-            + "(e.g. \"last 7 days\", \"last 30 days\", \"this month\").",
+            + "(e.g. \"last 7 days\", \"last 30 days\", \"last month\").",
         },
         device: {
           type: "string",

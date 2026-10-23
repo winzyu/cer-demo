@@ -1,10 +1,7 @@
 import {
   TimeRangeError,
-  fetchWindowFor,
-  lookbackMsFor,
   parseTimeRange,
   resolveRange,
-  widerWindow,
 } from "../../src/tools/timeRange";
 
 const HOUR = 60 * 60 * 1000;
@@ -173,63 +170,5 @@ describe("resolveRange", () => {
       expect(resolveRange(parseTimeRange("2026-08-07"), ALGALITA_LATEST).endInclusive).toBe(false);
       expect(resolveRange(parseTimeRange("this week"), ALGALITA_LATEST).endInclusive).toBe(false);
     });
-  });
-});
-
-describe("fetchWindowFor", () => {
-  it("rounds up onto the API's fixed unit ladder", () => {
-    // Rounding down would return fewer readings than asked for, with nothing in the result
-    // showing the shortfall.
-    expect(fetchWindowFor(30 * 60 * 1000)).toMatchObject({ duration: 1, unit: "hour" });
-    expect(fetchWindowFor(2 * HOUR)).toMatchObject({ duration: 1, unit: "day" });
-    expect(fetchWindowFor(3 * DAY)).toMatchObject({ duration: 1, unit: "week" });
-    expect(fetchWindowFor(3 * WEEK)).toMatchObject({ duration: 1, unit: "month" });
-  });
-
-  it("never returns a window smaller than the lookback", () => {
-    [1, HOUR, DAY - 1, DAY, WEEK + 1, 200 * DAY].forEach((lookback) => {
-      expect(fetchWindowFor(lookback).spanMs).toBeGreaterThanOrEqual(lookback);
-    });
-  });
-
-  it("tops out at a year rather than failing", () => {
-    expect(fetchWindowFor(10 * 365 * DAY)).toMatchObject({ unit: "year" });
-  });
-});
-
-describe("lookbackMsFor", () => {
-  const now = Date.parse("2026-08-13T00:00:00.000Z");
-
-  it("uses the phrase's own span for a relative range", () => {
-    expect(lookbackMsFor(parseTimeRange("last 3 days"), now)).toBe(3 * DAY);
-  });
-
-  it("reaches back to the start of an absolute range", () => {
-    // The API window ends at the server's now, so an old date range needs a window measured
-    // from now — not the width of the range itself.
-    expect(lookbackMsFor(parseTimeRange("2026-08-05"), now)).toBe(
-      now - Date.parse("2026-08-05T00:00:00.000Z"),
-    );
-  });
-
-  it("covers both days for 'yesterday'", () => {
-    expect(lookbackMsFor(parseTimeRange("yesterday"), now)).toBe(2 * DAY);
-  });
-
-  it("never returns a non-positive lookback for a future-dated range", () => {
-    // A model that asks about tomorrow should get an empty answer, not a negative window
-    // that rounds to the smallest rung and quietly returns the last hour instead.
-    expect(lookbackMsFor(parseTimeRange("2026-09-01"), now)).toBeGreaterThan(0);
-  });
-});
-
-describe("widerWindow", () => {
-  it("steps one rung up the ladder", () => {
-    expect(widerWindow({ duration: 1, unit: "day", spanMs: DAY })).toMatchObject({ unit: "week" });
-    expect(widerWindow({ duration: 1, unit: "week", spanMs: WEEK })).toMatchObject({ unit: "month" });
-  });
-
-  it("stops at the top", () => {
-    expect(widerWindow({ duration: 1, unit: "year", spanMs: 365 * DAY })).toBeUndefined();
   });
 });
