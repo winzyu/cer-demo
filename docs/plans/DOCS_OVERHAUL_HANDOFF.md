@@ -1,7 +1,7 @@
 # Docs overhaul - handoff
 
 Current as of 2026-10-21 at `docs/cleanup`, the commit that adds this version (`git log -1 docs/cleanup`); `dev` holds everything before it (`a6352c6`).
-A fresh session reads this file, then [`BRANCH_PROPAGATION_HANDOFF.md`](BRANCH_PROPAGATION_HANDOFF.md) only if it is asked about the branch merges, then follows "Next step".
+A fresh session reads this file, then follows "Next step".
 
 ## What this is
 
@@ -29,7 +29,7 @@ Work happens only in the worktree `.claude/worktrees/docs-cleanup` on branch `do
 | Step 6, local stack re-run | done 2026-10-21, landed `2bf94a3`; `LOCAL_STACK.md` corrected; the Mirror runbook and the manual guide's three emulator scripts are verified at the Mirror's next real use, which the user does not plan (2026-10-21) |
 | Corpus aligned to the live rc2 release (457 chunks) | done and landed `981c76e` (pin) and `79c0f5a` (the `local-vector` check against `corpus.json`); `timeline.md` 2026-10-21 row; old 446-chunk pair kept in the main checkout's `data/pre-rc2-446/` |
 | Step 7, git tidy | done and landed `be2199d`; remaining worktrees and branches are in STATUS's worktree line |
-| Merging `dev` into `task/tide-tool`, `docs/firestore-testing-plan`, `task/swell-rule`, `reflection`, `task/flagging-share-window` (user approved; `fix/window-note` skipped) | handed to a new chat the user starts: [`BRANCH_PROPAGATION_HANDOFF.md`](BRANCH_PROPAGATION_HANDOFF.md) (landed `f8cb491`, with the coordinator's branch 4 correction `a6352c6`) |
+| Merging `dev` into `task/tide-tool`, `docs/firestore-testing-plan`, `task/swell-rule`, `reflection`, `task/flagging-share-window` (user approved; `fix/window-note` skipped) | done 2026-10-21 per [`BRANCH_PROPAGATION_HANDOFF.md`](BRANCH_PROPAGATION_HANDOFF.md), at `dev` `feec091`: merges `ef044ee`, `ed3c06a`, `05ae58e`, `fad217a`, `dd2d650`, all pushed; each branch's `docs/migration/` files moved to `plans/` or `captures/` and relinked; SPECS §10.7-§19 intact on the flagging branch; the `swell-rule` worktree is removed again |
 | Landing sweeps for `task/flagging-share-window`, `reflection`, `docs/firestore-testing-plan` | after each lands on `dev`, move or relink whatever it still brings under old paths; none landed (`git log --first-parent --oneline origin/dev -5`) |
 
 ## Waiting on the user

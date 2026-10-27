@@ -41,3 +41,4 @@ Keep small edits inline; use worktrees for multi-step or overlapping work and al
 Before delegating, use `delegate`; delegate only when parallel work materially helps.
 Subagents must not spawn subagents, and their actual diffs require review.
 Use `handoff` only when explicitly requested.
+For `handoff`, the status file is `docs/STATUS.md` and only the coordinator on `dev` writes it; durable docs are `docs/SPECS.md` (behavior), `docs/timeline.md` (decisions), `docs/EVAL_REBUILD.md` (evaluation) and `README.md` (commands and setup).
