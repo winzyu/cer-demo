@@ -7,15 +7,38 @@ Rules as built: [`../SPECS.md`](../SPECS.md), "The flag rule", "Reading labels" 
 
 ## Start here (next chat)
 
-The work is built, tested, replayed and pushed; what remains is Michael's review and anything he reverses.
-Read this file, then the timeline's two 2026-10-13 flagging rows; open the overview only for a case's detail.
-Rules carried over: STATUS.md is the coordinator's, so edit only this workstream's lines, and only at a handoff; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; commit and push the task branch when a verified unit is done; never merge into `dev` without asking.
+Michael answered on 2026-10-23 and the user decided on 2026-10-27; the servicing rule and the coordinator's landing checklist are built on the branch (see "Michael's answers and the servicing rule" below).
+What remains: the user's call on the Sep 25-29 pH swings (question 28), the replay record, and the coordinator's squash landing.
+Read this file, then the timeline's 2026-10-13 and 2026-10-27 flagging rows; open the overview only for a case's detail.
+Rules carried over: STATUS.md is the coordinator's and is not edited on this branch; merge `origin/dev` before each commit; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; keep real readings out of git; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; push the task branch when a verified unit is done and send the coordinator the commit IDs; the coordinator lands it on `dev` by squash.
 
 Next steps, in order:
-1. The user sends "Summary for Michael" below to Michael; record his answers in `STAKEHOLDER_QUESTIONS.md` items 27-29 and a timeline row.
-2. Revert or adjust any rule he rejects, using "Where each rule lives" below; rerun the suites listed under "Tests run".
-3. Done 2026-10-13: the real month is checked and the fixture is reshaped on it (see "Real-month check"); its findings for Michael are under "Addendum for Michael".
-4. Ask the user before merging into `dev`; deployment (F16) is a separate decision.
+1. If the user reclassifies the Sep 25-29 swings as device issues, build that rule and rerun the suites under "Tests run".
+2. Ask the coordinator to land the branch; deployment (F16) is a separate decision.
+
+## Michael's answers and the servicing rule (2026-10-23 to 2026-10-27)
+
+| Question | Michael | On the branch |
+|---|---|---|
+| 28, Algalita pH swings | No service until about Oct 13; the swings were "likely device issues" | Kept unusual, as built, pending the user's call |
+| 29, wording | Yes | Approved as built |
+| 30, 15% Action Required bar | Yes | Approved as built |
+| 27, alert emails | They are binary and need a grey area | Out of scope; the coordinator's post-release backlog |
+| 31, hot-afternoon dips | Board heat should not affect readings | Dips stay water; whole-board failures stay device faults |
+| 32, Sep 24 | Probably a service: out of water reads near-0 conductivity, bleach sends pH up, the buoy keeps reporting | The servicing rule below |
+
+The servicing rule (user, 2026-10-27; `servicingWindows` in `src/devices/readingQc.ts`; SPECS "Reading labels"):
+- On marine pods only, conductivity below half its 24-hour median within 2 hours of a reading at the usual level, together with a pH rail or a sudden pH jump, starts a servicing window.
+- Every channel's readings from the first signal until conductivity recovers fail as `servicing`: left out, never a likely data issue, listed by the sensor tool as `servicing` and named in the report's Data Quality.
+- On Algalita, Sep 24 22:45 to Sep 25 00:25 UTC is left out and the Sep 24-25 conductivity flag is gone; the 30-day report keeps only the pH flags and stays Watch.
+- Left alone, by design: a marine conductivity drop with pH steady (the skepticism fixture's Marina Dock cleaning is one), and the same pattern on brackish or freshwater pods.
+
+Also built with it, from the coordinator's landing checklist:
+- The persistent-offset wording names a threshold that does not fit the site and a calibration check, not "sensor fouling or calibration" (`narrative.ts`, `systemPrompt.ts`).
+- `daily_cycle` gives each day's low (`daily_lows_local_solar`) and the prompt takes times of day from it, for data-skepticism item 3.
+- The G1 guard in `scripts/skepticism/replay.ts` grades the four 2.07s as unusual: passing when they go unmentioned or are described as unusual, failing on fault wording or an acidification claim.
+- The fixture's Sep 24 follows the service's real timing with rounded synthetic values.
+- Stale since the real month: "the dips stopped after Oct 9" below holds for the fixture only; the real dips returned Oct 13-14.
 
 ## Summary for Michael
 

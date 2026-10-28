@@ -32,6 +32,11 @@ export interface DailyCycle {
   timing: CycleTiming;
   /** Each full local day's highest reading, as "YYYY-MM-DD HH:MM" local solar time. */
   daily_peaks_local_solar: string[];
+  /**
+   * Each full local day's lowest reading, the same way. Without it the model guessed when the lows
+   * fell and put an afternoon pH low in "the early-to-mid morning" (data-skepticism item 3).
+   */
+  daily_lows_local_solar: string[];
   /** Fitted change in the peak's hour from one day to the next, in minutes. */
   peak_drift_minutes_per_day: number;
 }
@@ -75,10 +80,12 @@ export const dailyCycle = (samples: Sample[], longitude: number): DailyCycle | u
   // Only days the window covers end to end: a partial day has a false peak at its edge.
   const first = dayOf(usable[0]);
   const last = dayOf(usable[usable.length - 1]);
-  const peaks = [...days.entries()]
+  const fullDays = [...days.entries()]
     .filter(([day, rows]) => day > first && day < last && rows.length >= 8)
     .sort(([a], [b]) => a - b)
-    .map(([, rows]) => rows.reduce((best, s) => (s.value > best.value ? s : best)));
+    .map(([, rows]) => rows);
+  const peaks = fullDays.map((rows) => rows.reduce((best, s) => (s.value > best.value ? s : best)));
+  const lows = fullDays.map((rows) => rows.reduce((best, s) => (s.value < best.value ? s : best)));
   if (peaks.length < MIN_CYCLE_DAYS) return undefined;
 
   // Unwrap each peak's hour against the previous one, so a peak drifting past midnight keeps going.
@@ -102,6 +109,7 @@ export const dailyCycle = (samples: Sample[], longitude: number): DailyCycle | u
   return {
     timing,
     daily_peaks_local_solar: peaks.map((s) => localSolar(s.atMs, longitude)),
+    daily_lows_local_solar: lows.map((s) => localSolar(s.atMs, longitude)),
     peak_drift_minutes_per_day: Math.round(slope * 60),
   };
 };

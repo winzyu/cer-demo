@@ -616,6 +616,15 @@ export const buildReportInput = async (
   if (typeof seriesResult.site_note === "string") {
     dataQuality.completenessNotes += ` ${seriesResult.site_note}`;
   }
+  // Servicing is maintenance, not water and not a likely data issue (`readingQc.ts`).
+  if (Array.isArray(seriesResult.servicing)) {
+    const at = (iso: unknown): string => String(iso).slice(0, 16).replace("T", " ");
+    const spans = (seriesResult.servicing as Array<Record<string, unknown>>)
+      .map((run) => `${at(run.from)} to ${at(run.to)} UTC`);
+    dataQuality.completenessNotes += ` Readings from ${spans.join(", ")} were left out: `
+      + "conductivity collapsed while pH read at its limit or jumped, the pattern of the pod "
+      + "being serviced or out of the water.";
+  }
   const report: ReportInput = {
     generatedAt,
     site,

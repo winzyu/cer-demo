@@ -11,7 +11,8 @@ import type { DeviceChain } from "../devices/mergeChains";
 import { METRIC_BY_KEY, METRICS } from "../devices/metrics";
 import { implausibilityReason, isPlausible } from "../devices/plausibility";
 import {
-  allChannelFailureRuns, inTimeOrder, qcReadings, readingGaps, stuckSensorNote, stuckSensorUserNote,
+  allChannelFailureRuns, inTimeOrder, qcReadings, readingGaps, servicingRuns, stuckSensorNote,
+  stuckSensorUserNote,
   unusualKind,
 } from "../devices/readingQc";
 import type { ReadingRun } from "../devices/readingQc";
@@ -155,6 +156,9 @@ const WITHHELD_USER_NOTE = "Earlier readings from this site are not available to
  */
 const TURBIDITY_CAVEAT = "Turbidity is derived from a raw voltage by a provisional, uncalibrated "
   + "conversion. It is a relative index with no unit, not a calibrated measurement and not NTU.";
+
+const SERVICING_NOTE = "Conductivity collapsed while pH read at its limit or jumped, the pattern "
+  + "of the pod being serviced or out of the water; those readings were left out of every metric.";
 
 const BOARD_FAULT_NOTE = "Every sensor on this pod failed at the same time on three or more "
   + "consecutive readings. This pattern most likely reflects a sensor or data issue, such as the "
@@ -825,6 +829,9 @@ export class QuerySensorData {
       return result?.flag === "fail"
         && (result.reason === "flat-line" || result.reason === "stuck-turbidity");
     };
+    // Servicing fails every channel of its readings (`readingQc.ts` `servicingWindows`).
+    const isServiced = (row: DeviceReading): boolean => metricKeys
+      .some((key) => qc.get(key)?.get(row)?.reason === "servicing");
     const inRequestedRange = (row: DeviceReading): boolean => {
       const time = Date.parse(row.observedAt!);
       return time >= range.startMs
@@ -841,12 +848,12 @@ export class QuerySensorData {
     const usedReadings = periodReadings.filter((row) => metricKeys.some((key) => {
       const metric = row.metrics[key];
       return metric?.valid && metric.value !== undefined && isPlausible(key, metric.value)
-        && !isStuck(key, row);
+        && !isStuck(key, row) && !isServiced(row);
     })).length;
 
     // One fetched window, read once per requested metric. The device API is not touched again.
     const computed = metricKeys.map((key) => {
-      const usable = readings.filter((row) => !isStuck(key, row));
+      const usable = readings.filter((row) => !isStuck(key, row) && !isServiced(row));
       const unusualAt = new Map(usable.flatMap((row): Array<[string, UnusualKind]> => {
         const kind = unusualKind(qc.get(key)?.get(row));
         return kind && row.observedAt ? [[row.observedAt, kind]] : [];
@@ -1006,8 +1013,10 @@ export class QuerySensorData {
       ? allChannelFailureRuns(ordered, metricKeys).filter(overlaps) : [];
     const gaps = readingGaps(ordered).filter(overlaps);
     const boardNote = boardFaults.length > 0 ? BOARD_FAULT_NOTE : undefined;
+    const servicing = servicingRuns(ordered, qc).filter(overlaps);
+    const servicingNote = servicing.length > 0 ? SERVICING_NOTE : undefined;
     const extraNotes = [notes.note, siteNotes.note,
-      stuckLabels.length > 0 ? stuckSensorNote(stuckLabels) : undefined, boardNote]
+      stuckLabels.length > 0 ? stuckSensorNote(stuckLabels) : undefined, boardNote, servicingNote]
       .filter(Boolean);
     if (extraNotes.length) notes.note = extraNotes.join(" ");
     Object.assign(notes, QuerySensorData.userNotes([
@@ -1015,8 +1024,16 @@ export class QuerySensorData {
       ...(siteNotes.userNotes ?? []),
       stuckLabels.length > 0 ? stuckSensorUserNote(stuckLabels) : undefined,
       boardNote,
+      servicingNote,
     ]));
     const quality = {
+      ...(servicing.length > 0 ? {
+        servicing: servicing.map((run) => ({
+          from: new Date(run.startMs).toISOString(),
+          to: new Date(run.endMs).toISOString(),
+          readings: run.readings,
+        })),
+      } : {}),
       ...(boardFaults.length > 0 ? {
         board_fault: boardFaults.map((run) => ({
           from: new Date(run.startMs).toISOString(),

@@ -50,13 +50,14 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   Between Sep 25 and 29, Algalita pH jumped by 4-5 units within half an hour four times (to 11.8, then 6.4, 2.7 and back), and again on Oct 7 (7.2 to 10.9), while ORP, conductivity, oxygen and temperature followed the same daily curve as on normal nights and the probe's own error flag stayed 0.
   Readings returned to normal around Sep 29-30, when the registry's next calibration date fell; the data alone cannot show whether the probe or the water changed (`docs/timeline.md`, 2026-10-12).
   *Unblocks:* whether Gilligan may describe these readings as "very unusual, a calibration check would confirm", and the manual test expectations for the customer's Sep 26 question.
-  *Answer:*
+  *Answer:* Michael, 2026-10-23: "The probe wasnt recalibrated or serviced until October 13th I believe. I'm not sure what those pH swings were but likely device issues."
+  Open: whether the swings stay labelled unusual, as built, is the user's call.
 
 - [ ] **29. May Gilligan tell customers a reading is "very unusual; a calibration check would confirm" instead of calling it a sensor fault?**
   The proposal keeps readings the device did not flag, including pH outside 3-12 and half-hour jumps faster than v2 §8.2's rate-of-change guide, and describes them as unusual rather than faulty; "sensor fault" and "inspect" stay for faults the device reports (error flags, read failures, flat lines, stuck turbidity).
   Options and walkthroughs: `docs/plans/FLAGGING_OVERVIEW_2026-10-12.html` §5-7.
   *Unblocks:* the wording rule and the pH plausibility change in the flagging rework.
-  *Answer:*
+  *Answer:* Michael, 2026-10-23: "Yes on bullet #2" (approved as built).
 
 - [ ] **26. Should natural-variation notes, such as coastal upwelling, live in the guidance catalogue?**
   v2 §3 says coastal dissolved oxygen can dip to 4-5 mg/L and pH to about 7.6 during upwelling, both below its fallback ranges.

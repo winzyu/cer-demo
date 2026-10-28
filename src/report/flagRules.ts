@@ -47,8 +47,9 @@ export const MIN_FLAG_READINGS = 3;
 export const EXCEEDANCE_MARGIN = 0.15;
 /**
  * Flagged readings making up at least this share of the kept readings are a persistent offset:
- * the likelier cause is a threshold that does not fit the site, fouling or calibration (v2 §7.2
- * rule 7), the same share `events.ts` uses for a persistent event window.
+ * the likelier cause is a threshold that does not fit the site (v2 §7.2 rule 7, which also names
+ * fouling and calibration; customers hear "a calibration check would confirm", Michael's wording of
+ * 2026-10-23), the same share `events.ts` uses for a persistent event window.
  */
 export const PERSISTENT_SHARE = 0.8;
 /** Edge rule: a streak this long at the edge, in a row, is an extended period on its own. */

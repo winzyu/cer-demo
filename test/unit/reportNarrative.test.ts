@@ -220,7 +220,9 @@ describe("deterministicNarrative — parameter analysis", () => {
     });
     const text = deterministicNarrative(report([ph]), noAccuracy, "Watch").parameterAnalysis.get("pH")!;
     expect(text).toContain("for most of the period, from 2026-08-01 00:00");
-    expect(text).toContain("threshold that does not fit the site, sensor fouling or calibration");
+    expect(text).toContain("threshold that does not fit the site than a change in the water; "
+      + "a calibration check would confirm the readings");
+    expect(text).not.toMatch(/fouling/);
     expect(text.match(/most of the period/g)).toHaveLength(1);
   });
 

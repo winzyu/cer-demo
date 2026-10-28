@@ -10,14 +10,15 @@
  * own values and times, so no other customer reading is committed. The shapes it keeps:
  * - Sep 12-24 sparse (a reading every 2 hours, with 8-hour overnight gaps every other night);
  * - a low pH stretch on Sep 13 whose first reading falls the night before a "last 30 days" window;
- * - Sep 24's afternoon out of the water: pH 0 (a probe rail), then conductivity falling to about
- *   1,400 µS/cm over four readings;
+ * - Sep 24's afternoon service (Michael, 2026-10-23): pH 0 (a probe rail) beside conductivity
+ *   off its scale, then conductivity falling to about 1,400 µS/cm over four readings, the last
+ *   with pH 12.6 (bleach), then straight back to seawater;
  * - pH 3-5.8 from the evening of Sep 26 until Sep 29 17:28 PDT, dipping below 3 for three readings
  *   on Sep 27;
  * - afternoon dips to about 6.0 against a minimum of 6 on Oct 3-9, shallower on Oct 8;
  * - whole-board read failures (every channel at the read-failure value with its error flag) on
  *   Oct 3-8 afternoons, three in a row on Oct 8.
- * Readings every 30 minutes from Sep 25, ending Oct 13 18:30 UTC.
+ * Readings every 30 minutes from the end of that service, ending Oct 13 18:30 UTC.
  */
 import { SENSOR_READ_FAILURE_VALUE } from "../../../src/devices/readingQc";
 import type { Fleet, RawReading } from "../skepticism/fleet";
@@ -30,7 +31,7 @@ export const NOW = Date.parse("2026-10-13T18:30:00.000Z");
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 const START = Date.parse("2026-09-12T06:00:00.000Z");
-/** Sparse readings until here, then every 30 minutes. */
+/** Sparse readings until here, then every 30 minutes; the first is the service's recovery. */
 const DENSE_FROM = Date.parse("2026-09-25T00:30:00.000Z");
 /** Sep 26 18:56 PDT, the last recorded reading of the drop (5.07). */
 const LOW_FROM = Date.parse("2026-09-27T01:56:00.000Z");
@@ -50,14 +51,15 @@ const SEP_13_LOW: ReadonlyMap<number, number> = new Map([
   [Date.parse("2026-09-13T22:00:00.000Z"), 5.7],
   [Date.parse("2026-09-14T00:00:00.000Z"), 6.0],
 ]);
-/** Sep 24 PDT afternoon: pH at its 0 rail, then conductivity falling as the pod leaves the water. */
-const SEP_24_PH_RAIL = Date.parse("2026-09-24T22:00:00.000Z");
-const SEP_24_CONDUCTIVITY: ReadonlyMap<number, number> = new Map([
-  [Date.parse("2026-09-24T22:30:00.000Z"), 7_400],
-  [Date.parse("2026-09-24T22:50:00.000Z"), 5_100],
-  [Date.parse("2026-09-24T23:10:00.000Z"), 2_900],
-  [Date.parse("2026-09-24T23:30:00.000Z"), 1_400],
+/** Sep 24 PDT afternoon, the service: pH, ORP and conductivity at each reading. */
+const SEP_24_SERVICE: ReadonlyMap<number, Pick<Water, "ph" | "orp" | "conductivity">> = new Map([
+  [Date.parse("2026-09-24T22:45:00.000Z"), { ph: 0, orp: 470, conductivity: 177_000 }],
+  [Date.parse("2026-09-24T23:35:00.000Z"), { ph: 10.3, orp: 345, conductivity: 7_600 }],
+  [Date.parse("2026-09-24T23:50:00.000Z"), { ph: 7.5, orp: 375, conductivity: 5_000 }],
+  [Date.parse("2026-09-25T00:10:00.000Z"), { ph: 7.1, orp: 390, conductivity: 2_900 }],
+  [Date.parse("2026-09-25T00:25:00.000Z"), { ph: 12.6, orp: 400, conductivity: 1_400 }],
 ]);
+const SERVICE_FROM = Date.parse("2026-09-24T22:45:00.000Z");
 /** Sep 27 PDT late morning: three readings below pH 3 inside the low days. */
 const SEP_27_BELOW_3: ReadonlyMap<number, number> = new Map([
   [Date.parse("2026-09-27T17:30:00.000Z"), 2.3],
@@ -141,9 +143,12 @@ const times = (): number[] => {
   const out: number[] = [];
   for (let ms = START; ms < DENSE_FROM; ms += 2 * HOUR) {
     const night = new Date(ms).getUTCHours() >= 1 && new Date(ms).getUTCHours() < 8;
-    if (!(night && new Date(ms).getUTCDate() % 2 === 1) || SEP_13_LOW.has(ms)) out.push(ms);
+    const inService = ms >= SERVICE_FROM;
+    if ((!(night && new Date(ms).getUTCDate() % 2 === 1) || SEP_13_LOW.has(ms)) && !inService) {
+      out.push(ms);
+    }
   }
-  out.push(SEP_24_PH_RAIL, ...SEP_24_CONDUCTIVITY.keys());
+  out.push(...SEP_24_SERVICE.keys());
   for (let ms = DENSE_FROM; ms <= NOW; ms += 30 * MINUTE) out.push(ms);
   return [...new Set(out)].sort((a, b) => a - b);
 };
@@ -160,8 +165,7 @@ export const algalitaMonth = (): Fleet => {
     const water = ordinary(ms);
     if (ms > LOW_FROM && ms < LOW_UNTIL) water.ph = SEP_27_BELOW_3.get(ms) ?? lowPh(ms);
     water.ph = SEP_13_LOW.get(ms) ?? water.ph;
-    if (ms === SEP_24_PH_RAIL) water.ph = 0;
-    water.conductivity = SEP_24_CONDUCTIVITY.get(ms) ?? water.conductivity;
+    Object.assign(water, SEP_24_SERVICE.get(ms));
     // After the recorded Oct 7 rows end at 8.41, ease back to the ordinary night over two hours,
     // so the synthetic resume is not a jump of its own.
     const sinceOct7 = ms - Date.parse(OCT_7[OCT_7.length - 1][0]);

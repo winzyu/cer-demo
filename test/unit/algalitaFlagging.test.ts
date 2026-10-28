@@ -122,6 +122,29 @@ describe("Algalita: Michael's afternoon dips to about 6 (Oct 3-9)", () => {
   });
 });
 
+describe("Algalita: the Sep 24 service (Michael, 2026-10-23)", () => {
+  const SERVICE = [{ from: "2026-09-24T22:45:00.000Z", to: "2026-09-25T00:25:00.000Z", readings: 5 }];
+
+  it("leaves the service out of conductivity, with no flag and no data issue", async () => {
+    const result = await tools().query({ metric: "conductivity", time_range: "2026-09-24 to 2026-09-25", aggregation: "min" });
+    expect(result.servicing).toEqual(SERVICE);
+    expect(result.value).toBeGreaterThan(40_000);
+    const verdict = verdictOf(result);
+    expect(verdict.status).toBe("in range");
+    expect(verdict).not.toHaveProperty("data_issue");
+    expect(String(result.note)).toContain("the pattern of the pod being serviced or out of the water");
+  });
+
+  it("leaves the same readings out of pH and ORP, so the rail and the bleach are not water", async () => {
+    for (const metric of ["ph", "orp"]) {
+      const result = await tools().query({ metric, time_range: "2026-09-24 to 2026-09-25", aggregation: "max" });
+      expect(result.servicing).toEqual(SERVICE);
+      expect(result.value).toBeLessThan(metric === "ph" ? 8 : 400);
+      expect(verdictOf(result)).not.toHaveProperty("data_issue");
+    }
+  });
+});
+
 describe("Algalita: the customer's 30-day report", () => {
   it("is Watch, not Action Required, with the flags told as past", async () => {
     const t = tools();
@@ -129,9 +152,11 @@ describe("Algalita: the customer's 30-day report", () => {
     expect(report.status).toBe("Watch");
     expect(report.status_reason).toMatch(/^Watch because a parameter was flagged/);
     expect(report.parameter_flags).toMatchObject({
-      ph: "Elevated", dissolved_oxygen: "Normal", orp: "Normal", conductivity: "Low",
+      // Sep 24's low conductivity was the service, left out (Michael, 2026-10-23).
+      ph: "Elevated", dissolved_oxygen: "Normal", orp: "Normal", conductivity: "Normal",
     });
-    expect(report.flag_detail).toMatchObject({ ph: { current: false }, conductivity: { current: false } });
+    expect(report.flag_detail).toMatchObject({ ph: { current: false } });
+    expect(report.flag_detail).not.toHaveProperty("conductivity");
     expect(JSON.stringify(report.status_reason)).not.toMatch(FAULT_WORDS);
 
     const prepared = await prepareReport(t.sensor, { timeRange: "last 30 days", device: ALGALITA }, CONTEXT);
@@ -147,6 +172,8 @@ describe("Algalita: the customer's 30-day report", () => {
     expect(prepared.report.dataQuality?.likelyDataIssue).toEqual(
       expect.arrayContaining(["Turbidity (Relative)", "All sensors at once"]),
     );
+    expect(prepared.report.dataQuality?.completenessNotes)
+      .toContain("Readings from 2026-09-24 22:45 to 2026-09-25 00:25 UTC were left out");
     // Events come from the flagged windows, and name no cause the other channels do not support.
     prepared.report.events
       .forEach((e) => expect(["Inconclusive", "Anomaly, cause unclear"]).toContain(e.type));

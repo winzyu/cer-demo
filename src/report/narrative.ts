@@ -340,8 +340,8 @@ const paramAnalysisLine = (
     if (flags?.persistent && episodes.length > 0) {
       // v2 §7.2 rule 7, said once, here, with its start (POST_LAUNCH_BACKLOG.md §1b, C4).
       text += ` It sat outside this range for most of the period, from ${timestamp(episodes[0].startMs)}, `
-        + "which more likely reflects a threshold that does not fit the site, sensor fouling or "
-        + "calibration than a change in the water.";
+        + "which more likely reflects a threshold that does not fit the site than a change in the "
+        + "water; a calibration check would confirm the readings.";
     }
   }
   const edge = flag === "Normal" ? flagsFor(p, noiseFloor)?.edge : undefined;
