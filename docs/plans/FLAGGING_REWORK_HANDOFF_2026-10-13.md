@@ -8,7 +8,7 @@ Rules as built: [`../SPECS.md`](../SPECS.md), "The flag rule", "Reading labels" 
 ## Start here (next chat)
 
 Michael answered on 2026-10-23 and the user decided on 2026-10-27; the servicing rule and the coordinator's landing checklist are built on the branch (see "Michael's answers and the servicing rule" below).
-What remains: the user's call on the Sep 25-29 pH swings (question 28), the replay record, and the coordinator's squash landing.
+What remains: the user's call on the Sep 25-29 pH swings (question 28) and the coordinator's squash landing; the servicing replay is recorded below ("Replay with the servicing rule").
 Read this file, then the timeline's 2026-10-13 and 2026-10-27 flagging rows; open the overview only for a case's detail.
 Rules carried over: STATUS.md is the coordinator's and is not edited on this branch; merge `origin/dev` before each commit; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; keep real readings out of git; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; push the task branch when a verified unit is done and send the coordinator the commit IDs; the coordinator lands it on `dev` by squash.
 
@@ -196,6 +196,20 @@ Weak points:
 - Q1 still takes 11.21 to 6.36 as the drop, the UTC-day defect below; one answer mixed clock and solar times (7.19 at 16:56, then 2.73 at 17:02).
 - Q2 named temperature "flat at 71.6 °F" on six sparse days: a fixture artifact (a 4-hour wobble sampled every 2 hours), fixed after the run in `month.ts`; the replay was not rerun.
 - The 12 whole-board read failures appear only as "12 left out because no parameter was usable", never as a board fault.
+
+### Replay with the servicing rule (2026-10-28)
+
+Approved by the user (about $0.08); the two questions plus "What happened to conductivity on Sept 24?", 3 runs each, on `5aa1f4a` against the fake API serving the month with the reshaped Sep 24 (all 8 device requests reached it); $0.060, no errors.
+Run: [`flagging-runs/servicing-5aa1f4a.json`](../captures/flagging-runs/servicing-5aa1f4a.json).
+- Q3, Sep 24: 3 of 3 say conductivity was in range that day and that from 22:45 UTC Sep 24 to 00:25 UTC Sep 25 the pod looks to have been serviced or out of the water, with those 5 readings left out of every metric; no fault wording, no inspection.
+- Q2, the 30-day report: 3 of 3 Watch on pH alone; conductivity Normal; Data quality notes name the servicing window as the pattern of the pod being serviced or out of the water.
+- Q1, the Sep 26 drop: 3 of 3 give the rise and the drops with times and values and offer a calibration check; none calls the readings a fault.
+- The script's `fault_wording` flags (3 of 9) are a "Data quality notes" heading and a quote of the corpus guidance's "Sensor Fault Signatures (Check First)".
+
+Weak points:
+- Q1 answers quote the corpus guidance's fault-versus-discharge discriminator; one says the step "is consistent with that signature" before saying the data cannot confirm a cause.
+- Two Q1 answers still say "the device flagged" the readings as unusual; it was the tool.
+- Q1 still takes 11.21 to 6.36 as the drop (the UTC-day defect below).
 
 ## Manual test list
 

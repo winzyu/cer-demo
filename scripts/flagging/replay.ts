@@ -8,7 +8,7 @@
  *
  * Each question is asked as a fresh chat, `--runs` times. The first is as the overview records
  * it; the second asks for the 30-day report in our own words, since the customer's wording is not
- * kept in the repository. Answers, tool calls and token counts go to `<out>/<label>.json`, with
+ * kept in the repository; the third asks about the Sep 24 service (docs/timeline.md 2026-10-27). Answers, tool calls and token counts go to `<out>/<label>.json`, with
  * first-pass flags for fault wording, "Action Required" and a data-reliability lead, meant to be
  * read alongside the answers, not instead of them. Spend is costed at `glm-5p3-flash` rates.
  */
@@ -35,6 +35,7 @@ const PRICE = { input: 0.15, cachedInput: 0.03, output: 0.5 };
 const QUESTIONS = [
   { id: "Q1-sep26-drop", question: "Why is there a big drop in pH on Sept 26?" },
   { id: "Q2-30-day-report", question: "Can you give me a report on the water over the last 30 days?" },
+  { id: "Q3-sep24-conductivity", question: "What happened to conductivity on Sept 24?" },
 ];
 
 interface Turn {
@@ -68,6 +69,8 @@ const flagsOf = (answer: string): Record<string, string[]> => {
     action_required: matching(answer, /action required|urgent|immediate/i),
     reliability_lead: /reliab|data quality|sensor|probe|trust/i.test(first) ? [first] : [],
     calibration: matching(answer, /calibrat/i),
+    low_conductivity: matching(answer, /conductivity[^.]{0,60}\b(low|flagged|below)|\b(low|flagged)[^.]{0,40}conductivity/i),
+    servicing: matching(answer, /servic|out of the water|maintenance/i),
   };
 };
 
