@@ -45,10 +45,10 @@ Other chats report commit IDs by cross-session message (`ListAgents`, `SendMessa
 5. **Server PR** (runbook `docs/runbooks/REPORT_OMIT_MIRROR_RUNBOOK.md` §10), one command at a time: `! git -C /home/winsy/code/work/clean-earth-rovers/worktrees/server-report-omit am /home/winsy/code/work/clean-earth-rovers/handoff/2026-10-15/report-retried.patch`; the push of `task/gilligan-report-omit` (exact command from the coordinator; separate consent; pushed branches are permanent); `! gh pr create --repo Clean-Earth-Rovers-Technology/clean-earth-rovers-server --base develop --head task/gilligan-report-omit --title "Relay a report request's omit list to cer-gilligan" --body-file /home/winsy/code/work/clean-earth-rovers/handoff/2026-10-15/report-omit-pr-body.md`. cer-gilligan must deploy first or alongside: the live one ignores `omit`.
 6. **Data-skepticism items** (item 3, the inverted time of day, landed in `75bbb33`): "The misread daily-cycle timing (2) and the skipped conductivity zeros (5a): these can wait until after the release."
 7. **Servicing cutoff**: "The rule counts conductivity as collapsed below 50% of its 24-hour median... Setting it to 20% still catches Sep 24 easily and halves that risk." Options: keep 50%, or 20% (`SERVICING_CONDUCTIVITY_SHARE` in `src/devices/readingQc.ts`, re-run `readingQc` and `algalitaFlagging`). Recommended: 20%.
-7b. **"Free prompt-rule inventory"**: "Tell me what the 'free prompt-rule inventory' meant." It appears only in coordinator commit `9c635f9`; if it means listing every rule bearing on data skepticism, `records/DATA_SKEPTICISM_TRIAGE_2026-10-15.md` "Contradictions" starts it.
-8. **Post-launch order**: "the unguarded user-update routes are a live production security hole in the server, and I'd put them first."
-9. **Chats to close**: cer-demo-1a and cer-demo-f8 (duplicate reflection chats; keep cer-demo-fc), `report editing` (idle), and the finished hygiene and propagation (cer-demo-53) chats.
-10. **Older**: delete the test user `winsyu475+certest@gmail.com`; `git branch -D task/swell-rule` if the swell rule stays dropped (commits stay on `origin`).
+8. **"Free prompt-rule inventory"**: "Tell me what the 'free prompt-rule inventory' meant." It appears only in coordinator commit `9c635f9`; if it means listing every rule bearing on data skepticism, `records/DATA_SKEPTICISM_TRIAGE_2026-10-15.md` "Contradictions" starts it.
+9. **Post-launch order**: "the unguarded user-update routes are a live production security hole in the server, and I'd put them first."
+10. **Chats to close**: cer-demo-1a and cer-demo-f8 (duplicate reflection chats; keep cer-demo-fc), `report editing` (idle), and the finished hygiene and propagation (cer-demo-53) chats.
+11. **Older**: delete the test user `winsyu475+certest@gmail.com`; `git branch -D task/swell-rule` if the swell rule stays dropped (commits stay on `origin`).
 
 ## Waiting on Michael
 
