@@ -1,6 +1,6 @@
 # Flagging rework: handoff (2026-10-13)
 
-Branch `task/flagging-share-window` (worktree `.claude/worktrees/flagging-share-window`), cut from `dev` `60f531c`, pushed to `origin`, not merged, nothing deployed.
+Branch `task/flagging-share-window` (worktree `.claude/worktrees/flagging-share-window`), cut from `dev` `60f531c`, landed on `dev` as `75bbb33` (squash through `c7f377a`, 2026-10-28), nothing deployed.
 Design and the real cases: [`FLAGGING_OVERVIEW_2026-10-12.html`](FLAGGING_OVERVIEW_2026-10-12.html).
 Decisions: [`../timeline.md`](../timeline.md), the 2026-10-13 row "Flagging rework decisions".
 Rules as built: [`../SPECS.md`](../SPECS.md), "The flag rule", "Reading labels" and "Verdicts".
@@ -8,13 +8,14 @@ Rules as built: [`../SPECS.md`](../SPECS.md), "The flag rule", "Reading labels" 
 ## Start here (next chat)
 
 Michael answered on 2026-10-23 and the user decided on 2026-10-27; the servicing rule and the coordinator's landing checklist are built on the branch (see "Michael's answers and the servicing rule" below).
-What remains: the coordinator's squash landing (the user kept the Sep 25-29 pH swings unusual on 2026-10-28, question 28); the servicing replay is recorded below ("Replay with the servicing rule").
+The branch landed on `dev` as `75bbb33` on 2026-10-28, with the Sep 25-29 pH swings kept unusual (the user, question 28); the servicing replay is recorded below ("Replay with the servicing rule").
+Open for the user, not built: whether `SERVICING_CONDUCTIVITY_SHARE` goes from 0.5 to 0.2.
 Read this file, then the timeline's 2026-10-13 and 2026-10-27 flagging rows; open the overview only for a case's detail.
 Rules carried over: STATUS.md is the coordinator's and is not edited on this branch; merge `origin/dev` before each commit; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; keep real readings out of git; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; push the task branch when a verified unit is done and send the coordinator the commit IDs; the coordinator lands it on `dev` by squash.
 
 Next steps, in order:
-1. If the user reclassifies the Sep 25-29 swings as device issues, build that rule and rerun the suites under "Tests run".
-2. Ask the coordinator to land the branch; deployment (F16) is a separate decision.
+1. If the user moves `SERVICING_CONDUCTIVITY_SHARE` to 0.2, change it in `src/devices/readingQc.ts`, check the Sep 24 tests in `test/unit/readingQc.test.ts` and `test/unit/algalitaFlagging.test.ts` still hold, and rerun the suites under "Tests run".
+2. Deployment (F16) is a separate decision.
 
 ## Michael's answers and the servicing rule (2026-10-23 to 2026-10-27)
 

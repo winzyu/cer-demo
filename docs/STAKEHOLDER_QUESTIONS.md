@@ -2,10 +2,10 @@
 
 A checklist of answers the project needs from people outside the codebase.
 When an item is answered, record the answer and any decision it settles in `docs/timeline.md` (or the document that owns it), then delete the item here.
-Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11, and item 23 (approved 2026-09-25) on 2026-10-21; they remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
+Only open questions stay in this file; answered items 1-4, 7-13 and 17-20 were removed on 2026-10-11, item 23 (approved 2026-09-25) on 2026-10-21, and items 28-32 and 35 on 2026-10-28; they remain in `git log -p docs/STAKEHOLDER_QUESTIONS.md`.
 Partly answered items keep only their open part.
 
-Items are ordered by what they unblock, most blocking first. Last updated 2026-10-21.
+Items are ordered by what they unblock, most blocking first. Last updated 2026-10-28.
 
 ---
 
@@ -39,25 +39,12 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   Not blocking. Both pods merged into `Old Woman Creek 2026`, a fresh-water pod on Lake Erie, but the registry lists them as `salt-water` (`docs/records/POD_RELOCATION_EVIDENCE.md` §3).
   The water type sets which normal ranges a reading is judged against, so their history is withheld from Old Woman Creek's for now (`docs/timeline.md`, 2026-09-28, Q10).
   A "no, the registry is wrong" would let their history be shown once the predecessor hand-off is enabled (`docs/plans/POST_LAUNCH_BACKLOG.md` §2).
-  Not among the questions already sent to Michael (items 28-35 and the follow-ups on flagging and learning normal patterns).
+  Not yet sent to Michael; it goes in the next message, with the item 26 follow-up.
   *Answer:*
 
 ---
 
 ## Supervisor
-
-- [ ] **28. Was Algalita's pH probe serviced around Sep 29-30 or Oct 7, and could pH there really reach 12.9 or 2.7?**
-  Between Sep 25 and 29, Algalita pH jumped by 4-5 units within half an hour four times (to 11.8, then 6.4, 2.7 and back), and again on Oct 7 (7.2 to 10.9), while ORP, conductivity, oxygen and temperature followed the same daily curve as on normal nights and the probe's own error flag stayed 0.
-  Readings returned to normal around Sep 29-30, when the registry's next calibration date fell; the data alone cannot show whether the probe or the water changed (`docs/timeline.md`, 2026-10-12).
-  *Unblocks:* whether Gilligan may describe these readings as "very unusual, a calibration check would confirm", and the manual test expectations for the customer's Sep 26 question.
-  *Answer:* Michael, 2026-10-23: "The probe wasnt recalibrated or serviced until October 13th I believe. I'm not sure what those pH swings were but likely device issues."
-  Decided (user, 2026-10-28): the swings stay labelled unusual, as built; a rule cannot tell a device problem from real water without the maintenance log.
-
-- [ ] **29. May Gilligan tell customers a reading is "very unusual; a calibration check would confirm" instead of calling it a sensor fault?**
-  The proposal keeps readings the device did not flag, including pH outside 3-12 and half-hour jumps faster than v2 §8.2's rate-of-change guide, and describes them as unusual rather than faulty; "sensor fault" and "inspect" stay for faults the device reports (error flags, read failures, flat lines, stuck turbidity).
-  Options and walkthroughs: `docs/plans/FLAGGING_OVERVIEW_2026-10-12.html` §5-7.
-  *Unblocks:* the wording rule and the pH plausibility change in the flagging rework.
-  *Answer:* Michael, 2026-10-23: "Yes on bullet #2" (approved as built).
 
 - [ ] **26. Should natural-variation notes, such as coastal upwelling, live in the guidance catalogue?**
   v2 §3 says coastal dissolved oxygen can dip to 4-5 mg/L and pH to about 7.6 during upwelling, both below its fallback ranges.
@@ -68,32 +55,14 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   *Unblocks:* moving the note and the inspection condition into the catalogue, or confirming they stay in code.
   *Answer:*
 
-- [ ] **27. Who corrects the thresholds that do not fit the water, and should the alert emails follow the new flag rule?**
+- [ ] **27. Who corrects the thresholds that do not fit the water?**
   The 2026-10-09 scan found most persistent flags come from thresholds that do not fit the water, for example PCH's 68 °F maximum against 78-85 °F water (`POST_LAUNCH_BACKLOG.md` §1a).
-  Gilligan now flags a metric only after 3 consecutive readings beyond its limit, but the server's alert emails still check only the latest reading, so an email can alert while chat says the metric is in range.
-  On 2026-10-12 Michael kept the emails out of scope for the new share rule (5% of a rolling 24 hours) without saying whether they should eventually match it; they list any exceedance in their daily, weekly or monthly digests.
-  *Unblocks:* fewer persistent flags, and chat and emails agreeing.
-  The email half was asked again ("should the alert emails use the same 5% rule?") in the message that carried items 28-35.
+  The email half is answered: Michael (2026-10-23) wants the alert emails changed so they have a grey area, recorded in `docs/timeline.md` and `POST_LAUNCH_BACKLOG.md` §1e.
+  *Unblocks:* fewer persistent flags.
   *Answer:*
 
-Items 28-35 went to Michael in one chat message on 2026-10-15, with a plain summary of the four reading labels and the 5% share rule; 28 and 29 are written up on `task/flagging-share-window` and join this file when it lands.
-Nothing more goes to him until he answers (user, 2026-10-15).
-
-- [ ] **30. Is 15% past the limit the right bar for Action Required?**
-  Action Required is used only while a problem is still happening and is more than 15% past the limit (for pH 6-10, above 10.6 or below 5.4); "Watch" needs only 3 out-of-range readings, at least 5% of a rolling 24 hours, past the noise margin (pH 0.2).
-  The 15% is our own figure, not a source's (`FLAGGING_REWORK_HANDOFF_2026-10-13.md` on `task/flagging-share-window`).
-  *Unblocks:* the Action Required rung of the flagging rework.
-  *Answer:*
-
-- [ ] **31. Are Algalita's hot-afternoon pH dips real water chemistry, and does the board have trouble in the heat?**
-  pH dips on hot afternoons, following water temperature; on some of those afternoons every sensor fails at once, only when the board reads 37-50 °C, though it usually works at those temperatures.
-  *Unblocks:* whether the dips are described as water or as a possible probe response to heat, and whether whole-board failures should reach the model as a board fault (item 25).
-  *Answer:*
-
-- [ ] **32. Was Algalita calibrated on Sep 24 around 4-6 pm?**
-  Conductivity stepped down to about 1,400 and pH sat near 10, then 7, which looks like standard solutions.
-  *Unblocks:* leaving those readings out instead of reporting low conductivity.
-  *Answer:*
+On 2026-10-15 Michael was sent six questions, items 28-32 and item 27's email half; he answered all six on 2026-10-23 (`docs/timeline.md`), and the answered items were removed on 2026-10-28.
+Items 33 and 34 were never sent; 33 waits for the release after next (user, 2026-10-26).
 
 - [ ] **33. What did "learn the normalcies" mean?**
   Either Gilligan learns each pod's normal pattern (for example pH dipping on hot afternoons), likely as a separate model trained on the pods' data that hands Gilligan a conclusion, or Gilligan learns from people marking its answers wrong, which needs someone at CER to score answers.
@@ -102,12 +71,7 @@ Nothing more goes to him until he answers (user, 2026-10-15).
 
 - [ ] **34. Are there labels or maintenance logs for the pods' data?**
   Records of when a pod or sensor was serviced, cleaned or calibrated would let a model (item 33) and the flag rules tell maintenance from water.
-  *Unblocks:* item 33's first option, and items 28 and 32 without asking case by case.
-  *Answer:*
-
-- [ ] **35. Should report omission go live before the flagging rework?**
-  The user offered to release it early; the plan is one release with the data-skepticism fix and the flagging rework (`docs/timeline.md`, 2026-10-15).
-  *Unblocks:* an earlier, separate deploy of `dev` if he wants one.
+  *Unblocks:* item 33's first option, and telling servicing or a probe problem from water without inferring it from the readings (`docs/timeline.md`, 2026-10-27).
   *Answer:*
 
 - [ ] **6. Is "configured thresholds" the right thing for users to hear?**

@@ -110,6 +110,13 @@ Questions, with what a pass looks like:
 
 Not changed by this work: report event detection still reads bucket means; the server's alert emails still check one reading (question 27); the catalogue's `inspect-sensors` condition is enforced in code (question 26).
 
+### 1e. Alert emails get a grey area (Michael, 2026-10-23)
+
+Michael: "We need to alter the alert emails because they are binary and only get sent if it exceeds the range so there's not currently any grey area."
+The server's emails (`checkWaterDataAndSendAlerts` in `clean-earth-rovers-server`) check each pod's latest reading against its thresholds, so one stray reading alerts while chat, with the flagging rework, says Normal, Watch or Action Required.
+The likely shape is emails that use the same levels and the 5% rolling-24-hour share rule; agree the levels with Michael before building.
+It is upstream server work: a branch cut from `local`, and a PR whose push needs the user's consent (`CLAUDE.md`).
+
 ## 2. Security
 
 | Item | Evidence | Note |
