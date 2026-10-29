@@ -355,6 +355,14 @@ describe("servicing: conductivity collapse with a pH rail or jump (Michael, 2026
     expect(reasons(rows, flags, "conductivity").slice(20, 24)).not.toContain("servicing");
   });
 
+  it("leaves a partial conductivity drop with a pH jump to be judged as water, the jump unusual", () => {
+    // Down to about 40% of seawater: a freshwater pulse can do that; out of the water reads near 0.
+    const rows = pod([[10.3, 22_000], [7.8, 21_000], [7.8, 22_500]]);
+    const flags = qcReadings(rows, KEYS, { water: "coastal" });
+    expect(servicingRuns(rows, flags)).toEqual([]);
+    expect(flags.get("ph")!.get(rows[20])).toEqual({ flag: "suspect", reason: "rate-of-change" });
+  });
+
   it("leaves a pH jump with conductivity steady alone", () => {
     const rows = pod([[10.3, 54_100], [7.8, 54_000]]);
     expect(servicingRuns(rows, qcReadings(rows, KEYS, { water: "coastal" }))).toEqual([]);

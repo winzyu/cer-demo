@@ -27,13 +27,13 @@
  * Readings on which every channel fails at once suggest a board fault (v2 §7.2 rule 1); three in a
  * row flag it, provisionally until CER confirms the count (STAKEHOLDER_QUESTIONS.md item 25).
  *
- * **Servicing** (`servicingWindows`): on a marine pod, conductivity collapsing below half its
- * 24-hour median within two hours, together with a pH rail or a sudden pH jump, is the pod being
- * serviced or out of the water (Michael, 2026-10-23: out of water reads near-0 conductivity,
- * bleach cleaning sends pH up, and the buoy keeps reporting while serviced). Every channel's
- * readings from the first signal until conductivity recovers fail as `servicing`: left out like a
- * device fault, never a likely data issue, and reported as servicing. Both signals are required,
- * so freshwater reaching a marine pod with pH steady is still judged as water.
+ * **Servicing** (`servicingWindows`): on a marine pod, conductivity collapsing below a fifth of
+ * its 24-hour median within two hours, together with a pH rail or a sudden pH jump, is the pod
+ * being serviced or out of the water (Michael, 2026-10-23: out of water reads near-0
+ * conductivity, bleach cleaning sends pH up, and the buoy keeps reporting while serviced). Every
+ * channel's readings from the first signal until conductivity recovers fail as `servicing`: left
+ * out like a device fault, never a likely data issue, and reported as servicing. Both signals are
+ * required, so freshwater reaching a marine pod with pH steady is still judged as water.
  *
  * QC runs over everything the caller fetched (the site's readings), not just the requested window,
  * so a flat line that started before the window is still recognised inside it. The MAD is that
@@ -235,8 +235,12 @@ export const qcMetric = (
   return flags;
 };
 
-/** Conductivity below this share of its 24-hour median has collapsed (`servicingWindows`). */
-export const SERVICING_CONDUCTIVITY_SHARE = 0.5;
+/**
+ * Conductivity below this share of its 24-hour median has collapsed (`servicingWindows`). A fifth,
+ * not half (the user, 2026-10-29): out of the water reads near 0, while a freshwater pulse can
+ * halve a marine pod's conductivity, and a real event left out is worse than a service flagged.
+ */
+export const SERVICING_CONDUCTIVITY_SHARE = 0.2;
 /** The collapse must follow a reading at the usual level within this long. */
 export const SERVICING_ONSET_MS = 2 * 60 * 60_000;
 const SERVICING_BASELINE_MS = 24 * 60 * 60_000;

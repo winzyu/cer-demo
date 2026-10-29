@@ -9,12 +9,12 @@ Rules as built: [`../SPECS.md`](../SPECS.md), "The flag rule", "Reading labels" 
 
 Michael answered on 2026-10-23 and the user decided on 2026-10-27; the servicing rule and the coordinator's landing checklist are built on the branch (see "Michael's answers and the servicing rule" below).
 The branch landed on `dev` as `75bbb33` on 2026-10-28, with the Sep 25-29 pH swings kept unusual (the user, question 28); the servicing replay is recorded below ("Replay with the servicing rule").
-Open for the user, not built: whether `SERVICING_CONDUCTIVITY_SHARE` goes from 0.5 to 0.2.
+After landing, the user set `SERVICING_CONDUCTIVITY_SHARE` to 0.2 (2026-10-29), on the branch for the next landing.
 Read this file, then the timeline's 2026-10-13 and 2026-10-27 flagging rows; open the overview only for a case's detail.
 Rules carried over: STATUS.md is the coordinator's and is not edited on this branch; merge `origin/dev` before each commit; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; keep real readings out of git; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; push the task branch when a verified unit is done and send the coordinator the commit IDs; the coordinator lands it on `dev` by squash.
 
 Next steps, in order:
-1. If the user moves `SERVICING_CONDUCTIVITY_SHARE` to 0.2, change it in `src/devices/readingQc.ts`, check the Sep 24 tests in `test/unit/readingQc.test.ts` and `test/unit/algalitaFlagging.test.ts` still hold, and rerun the suites under "Tests run".
+1. Ask the coordinator to land the 0.2 change.
 2. Deployment (F16) is a separate decision.
 
 ## Michael's answers and the servicing rule (2026-10-23 to 2026-10-27)
@@ -29,7 +29,7 @@ Next steps, in order:
 | 32, Sep 24 | Probably a service: out of water reads near-0 conductivity, bleach sends pH up, the buoy keeps reporting | The servicing rule below |
 
 The servicing rule (user, 2026-10-27; `servicingWindows` in `src/devices/readingQc.ts`; SPECS "Reading labels"):
-- On marine pods only, conductivity below half its 24-hour median within 2 hours of a reading at the usual level, together with a pH rail or a sudden pH jump, starts a servicing window.
+- On marine pods only, conductivity below a fifth of its 24-hour median (half until the user's 2026-10-29 call) within 2 hours of a reading at the usual level, together with a pH rail or a sudden pH jump, starts a servicing window.
 - Every channel's readings from the first signal until conductivity recovers fail as `servicing`: left out, never a likely data issue, listed by the sensor tool as `servicing` and named in the report's Data Quality.
 - On Algalita, Sep 24 22:45 to Sep 25 00:25 UTC is left out and the Sep 24-25 conductivity flag is gone; the 30-day report keeps only the pH flags and stays Watch.
 - Left alone, by design: a marine conductivity drop with pH steady (the skepticism fixture's Marina Dock cleaning is one), and the same pattern on brackish or freshwater pods.
