@@ -188,8 +188,11 @@ describe("overallStatus", () => {
 
   it("judges runs from the readings, not from the extrema", () => {
     expect(flagFor(param({ max: 9.0, readings: lone(9.0) }), noAccuracy)).toBe("Normal");
-    const twoHigh = series([7.0, 9.0, 9.0, 7.0, 9.0]);
+    const twoHigh = series([7.0, 9.0, 9.0, 7.0, 7.0]);
     expect(flagFor(param({ max: 9.0, readings: twoHigh }), noAccuracy)).toBe("Normal");
+    // Michael's share rule: three in 24 hours flag, consecutive or not.
+    const threeHigh = series([7.0, 9.0, 9.0, 7.0, 9.0]);
+    expect(flagFor(param({ max: 9.0, readings: threeHigh }), noAccuracy)).not.toBe("Normal");
   });
 
   it.each([0.3, 0.7])("lets a High event at confidence %s decide when a lone reading cannot", (confidence) => {

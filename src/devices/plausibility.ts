@@ -37,10 +37,10 @@ export interface PlausibleRange {
   exclusiveMin?: boolean;
   exclusiveMax?: boolean;
   /**
-   * Tighter, inclusive bounds a *reading* must also meet, where the metric's scale is wider
-   * than any natural water (pH). Kept apart from `min`/`max` because those also validate
-   * operator-configured limits (`operatorThresholds.ts`), which may legitimately sit anywhere on
-   * the scale.
+   * Tighter, inclusive bounds outside which a plausible reading is *unusual* rather than a fault,
+   * where the metric's scale is wider than any natural water (pH). Kept apart from `min`/`max`
+   * because those also validate operator-configured limits (`operatorThresholds.ts`), which may
+   * legitimately sit anywhere on the scale. Read by `isNaturalWater`, never by `isPlausible`.
    */
   naturalWater?: { min: number; max: number };
   reason: string;
@@ -71,13 +71,13 @@ export const PLAUSIBLE_RANGES: Record<MetricKey, PlausibleRange> = {
     // most acidic natural water outside mine drainage and volcanic crater lakes) to about 11
     // (soda lakes, and eutrophic water at the peak of afternoon photosynthesis). The fleet sits
     // in lakes, creeks, harbors and the open coast, where neither extreme source exists, so a
-    // reading outside 3-12 is excluded as a possible sensor fault. Live cause: the Algalita Pod, in
-    // seawater (~pH 8.1), reported a 1-day minimum of 2.07 and a 7-day maximum of 12.62, and
-    // each alone set a report to Action Required (REPORT_AUDIT_2026-09-25.md finding 5). Both
-    // edges stay outside every non-placeholder operator pH limit in the recorded registry
-    // fixtures (5 to 10), so no excursion those limits exist to catch is removed here.
+    // reading outside 3-12 is very unusual. It was excluded as a possible sensor fault from
+    // `bc097e1` (a lone 2.07 or 12.62 on the Algalita Pod set a report to Action Required,
+    // REPORT_AUDIT_2026-09-25.md finding 5); since 2026-10-13 it is kept and labelled unusual
+    // instead (`readingQc.ts`), which never counts toward a flag, because the device did not
+    // report a fault and the readings may be real (docs/timeline.md, 2026-10-13).
     naturalWater: { min: 3, max: 12 },
-    reason: "outside the pH plausibility band (3-12)",
+    reason: "at the very end of the pH scale (exactly 0 or 14), the probe's rail",
   },
   dissolvedOxygen: {
     // Max solubility is ~14.6 mg/L at 0 °C; ~30 allows for roughly 200% supersaturation during
@@ -130,9 +130,16 @@ export const isPlausible = (key: MetricKey, value: number): boolean => {
   }
   const aboveMin = range.exclusiveMin ? value > range.min : value >= range.min;
   const belowMax = range.exclusiveMax ? value < range.max : value <= range.max;
-  const natural = range.naturalWater;
-  const inNaturalWater = !natural || (value >= natural.min && value <= natural.max);
-  return aboveMin && belowMax && inNaturalWater;
+  return aboveMin && belowMax;
+};
+
+/**
+ * Whether a plausible reading sits inside the range natural water spans, where the metric has one
+ * (pH 3-12). A reading outside it is kept and labelled unusual by QC, never treated as a fault.
+ */
+export const isNaturalWater = (key: MetricKey, value: number): boolean => {
+  const natural = PLAUSIBLE_RANGES[key]?.naturalWater;
+  return !natural || (value >= natural.min && value <= natural.max);
 };
 
 /** Human-readable reason a metric's bounds exist, for a data-quality note. */

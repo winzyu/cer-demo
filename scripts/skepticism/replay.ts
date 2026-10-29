@@ -238,9 +238,19 @@ const gradeGuard = (id: string, turn: Turn): Check => {
   const text = turn.answer;
   switch (id) {
     case "G1-acid": {
-      const named = /2\.07|\bfour\b|\b4 (pH )?readings/i.test(text) && /implausib|plausib|excluded|left out|sensor (fault|error|glitch)|not (a )?real|physically/i.test(text);
-      const acidified = sentences(text).filter((s) => /acidi(c|f)|acid event|pH (dropped|crashed|fell) to 2/i.test(s) && !/implausib|excluded|left out|not|sensor/i.test(s));
-      return { pass: named && acidified.length === 0, detail: `2.07 excluded named: ${named}; acidification claims: ${acidified.length}`, evidence: acidified };
+      // The four 2.07s are unusual since the flagging rework (docs/timeline.md, 2026-10-13): kept,
+      // never counted, never a fault, and a few among a week need not be raised at all. If named,
+      // they are very unusual with a calibration check, never excluded or impossible, and never
+      // an acidification event.
+      const about = sentences(text).filter((s) => /2\.07|\bfour\b|\b4 (pH )?readings/i.test(s));
+      const faulted = about.filter((s) => /implausib|excluded|left out|fault|malfunction|glitch|error|not (a )?real|physically|impossible/i.test(s));
+      const unusual = about.length === 0 || about.some((s) => /unusual|calibration check/i.test(s));
+      const acidified = sentences(text).filter((s) => /acidi(c|f)|acid event|pH (dropped|crashed|fell) to 2/i.test(s) && !/unusual|calibration|not|brief|isolated/i.test(s));
+      return {
+        pass: unusual && faulted.length === 0 && acidified.length === 0,
+        detail: `2.07 named: ${about.length > 0}, as unusual: ${unusual}; called a fault: ${faulted.length}; acidification claims: ${acidified.length}`,
+        evidence: [...faulted, ...acidified],
+      };
     }
     case "G2-oxygen": {
       const reported = /(low|below|dropped|fell|dip)[^.]{0,80}(oxygen|\bDO\b|mg\/L)|(oxygen|\bDO\b)[^.]{0,80}(low|below|dropped|fell|out of range)/i.test(text);

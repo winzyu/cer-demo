@@ -616,8 +616,10 @@ export const buildReportPdf = (
   const clarityFootnote = hasRelativeIndex ? clarityFootnoteText(omit, flagSuffixShown) : "";
   doc.font("Helvetica").fontSize(8).fillColor(MUTED).text(
     "Flag values: Normal, Elevated, Low, or Exceedance relative to the site baseline. A flag "
-    + "needs at least three readings in a row beyond the baseline by more than the sensor's "
-    + "minimum detectable change; a single reading never sets one. Out of "
+    + "needs out-of-range readings, beyond the baseline by more than the sensor's minimum "
+    + "detectable change, to reach 5% of some 24-hour window and at least three; a single "
+    + "reading never sets one, and very unusual readings never count. Exceedance means the flag "
+    + "still held in the period's last 24 hours, well beyond the baseline. Out of "
     + "range is the share of the period's series buckets whose average sat outside that "
     + "baseline — approximate, at bucket resolution, and shown because a flag alone cannot "
     + `separate a single stray reading from a sustained offset.${clarityFootnote}`,

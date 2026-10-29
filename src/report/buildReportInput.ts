@@ -67,6 +67,7 @@
  */
 
 import type { QuerySensorData, SensorQueryParams } from "../tools/querySensorData";
+import type { Sample } from "../tools/aggregate";
 import { SensorQueryError } from "../tools/querySensorData";
 import { mapWaterType } from "./referenceRanges";
 import { USER_NOTES_FIELD } from "../types/tool.types";
@@ -110,7 +111,10 @@ interface MetricEntry {
   excluded_faulted?: number;
   excluded_implausible?: number;
   excluded_stuck?: number;
-  /** The sensor tool's verdict called this metric a likely data issue (`metricVerdict.ts`). */
+  /**
+   * The sensor tool found a run of device faults on this metric in the period (`metricVerdict.ts`
+   * "data_issue"), or every reading was one. Unusual readings never set it.
+   */
   data_issue?: boolean;
   series?: Array<{ start: string; end: string; mean: number; min: number; max: number; n: number }>;
 }
@@ -184,7 +188,8 @@ const metricsOf = (result: Record<string, unknown>): Record<string, MetricEntry>
         ? rec.excluded_implausible
         : undefined,
       excluded_stuck: typeof rec.excluded_stuck === "number" ? rec.excluded_stuck : undefined,
-      data_issue: asRecord(rec.verdict).status === "likely data issue",
+      data_issue: asRecord(rec.verdict).status === "likely data issue"
+        || Array.isArray(asRecord(rec.verdict).data_issue),
       series: Array.isArray(rec.series) ? (rec.series as MetricEntry["series"]) : undefined,
     };
     return out;
@@ -308,6 +313,12 @@ export const buildReportInput = async (
   let medianResult: Record<string, unknown>;
   let hourlyResult: Record<string, unknown>;
   const readingsByMetric = new Map<string, TimedValue[]>();
+  const lookbackByMetric = new Map<string, TimedValue[]>();
+  const kept = (samples: readonly Sample[]): TimedValue[] => samples
+    .filter((sample) => sample.valid && sample.plausible !== false)
+    .map((sample): TimedValue => (sample.unusual
+      ? [sample.atMs, sample.value, sample.unusual] : [sample.atMs, sample.value]))
+    .sort((a, b) => a[0] - b[0]);
   try {
     // Pin one authorized snapshot for series, exact median and hourly pattern classification.
     // These deterministic calculations never go through the model's tool-calling loop.
@@ -316,10 +327,10 @@ export const buildReportInput = async (
         ...baseArgs,
         aggregation: "series",
         bucket: "auto",
-        onSamples: (key, samples) => readingsByMetric.set(key, samples
-          .filter((sample) => sample.valid && sample.plausible !== false)
-          .map((sample): TimedValue => [sample.atMs, sample.value])
-          .sort((a, b) => a[0] - b[0])),
+        onSamples: (key, samples, lookback) => {
+          readingsByMetric.set(key, kept(samples));
+          lookbackByMetric.set(key, kept(lookback));
+        },
       },
       { ...baseArgs, aggregation: "median" },
       {
@@ -340,6 +351,11 @@ export const buildReportInput = async (
   const timeRangeResolved = asRecord(seriesResult.time_range_resolved);
   const startDate = typeof timeRangeResolved.start === "string" ? timeRangeResolved.start.slice(0, 10) : "unknown";
   const endDate = typeof timeRangeResolved.end === "string" ? timeRangeResolved.end.slice(0, 10) : "unknown";
+
+  // The pod reported after the period ended, so nothing in the period is current (Michael #4).
+  const pastPeriod = typeof seriesResult.device_last_reported === "string"
+    && typeof timeRangeResolved.end === "string"
+    && Date.parse(seriesResult.device_last_reported) > Date.parse(timeRangeResolved.end);
 
   const device = asRecord(seriesResult.device);
   const firstStringField = (...vals: unknown[]): string | undefined => (
@@ -543,6 +559,8 @@ export const buildReportInput = async (
         mean,
         median,
         readings: readingsByMetric.get(meta.key) ?? [],
+        lookback: lookbackByMetric.get(meta.key) ?? [],
+        ...(pastPeriod ? { pastPeriod } : {}),
         // See file docstring §1.
         pattern: classifyPattern(hourlySeries(hourlyMetrics[meta.key])),
         series,
@@ -597,6 +615,15 @@ export const buildReportInput = async (
   }
   if (typeof seriesResult.site_note === "string") {
     dataQuality.completenessNotes += ` ${seriesResult.site_note}`;
+  }
+  // Servicing is maintenance, not water and not a likely data issue (`readingQc.ts`).
+  if (Array.isArray(seriesResult.servicing)) {
+    const at = (iso: unknown): string => String(iso).slice(0, 16).replace("T", " ");
+    const spans = (seriesResult.servicing as Array<Record<string, unknown>>)
+      .map((run) => `${at(run.from)} to ${at(run.to)} UTC`);
+    dataQuality.completenessNotes += ` Readings from ${spans.join(", ")} were left out: `
+      + "conductivity collapsed while pH read at its limit or jumped, the pattern of the pod "
+      + "being serviced or out of the water.";
   }
   const report: ReportInput = {
     generatedAt,

@@ -325,22 +325,43 @@ describe("TOOL_BLOCK", () => {
     expect(TOOL_BLOCK).toContain("never a \"normal range\"");
   });
 
+  /** TOOL_BLOCK with its line wrapping folded, for phrases that span a wrap. */
+  const flat = (): string => TOOL_BLOCK.replace(/\s+/g, " ");
+
   it("explains each verdict, with a stray reading not worth raising (backlog §1)", () => {
     ["\"in range\"", "\"out of range\"", "\"likely data issue\"", "\"not assessed\"",
       "\"not enough data\""].forEach((status) => expect(TOOL_BLOCK).toContain(status));
-    expect(TOOL_BLOCK).toContain("A stray reading is normal; do not raise it.");
+    expect(flat()).toContain("Do not raise a stray reading.");
+    expect(flat()).toContain("only when its out-of-range readings reach 5% of a rolling 24 hours and at least 3");
+  });
+
+  it("names flagged days and tells a cleared flag in the past tense (Michael #4, #5)", () => {
+    expect(flat()).toContain("Name those days, not the whole period.");
+    expect(flat()).toContain("every flag has cleared: tell it in the past tense");
+    expect(flat()).toContain("never as urgent or needing action");
+  });
+
+  it("raises a metric at the edge of its range as worth watching (Michael #6)", () => {
+    expect(flat()).toContain("\"at_edge\": the metric was not flagged but sat at the edge of its healthy range");
   });
 
   it("states a persistent offset once, with its start, as a likely threshold or sensor issue", () => {
-    expect(TOOL_BLOCK).toContain("say once, with the start date");
-    expect(TOOL_BLOCK).toContain("Do not repeat that in later answers unless asked.");
+    expect(flat()).toContain("say once, with the start date");
+    expect(flat()).toContain("Do not repeat that in later answers unless asked.");
   });
 
-  it("suggests maintenance only for a likely data issue (v2 §9.2)", () => {
-    expect(TOOL_BLOCK).toContain("Suggest inspection, cleaning, maintenance or recalibration ONLY");
-    expect(TOOL_BLOCK).toContain("Never suggest it for an out-of-range verdict");
+  it("suggests maintenance only for device faults (v2 §9.2), and a calibration check for unusual readings", () => {
+    expect(flat()).toContain("Suggest inspection, cleaning, maintenance or recalibration ONLY");
+    expect(flat()).toContain("For unusual readings, the most you say is that a calibration check would confirm them.");
+    expect(flat()).toContain("Never suggest maintenance for an out-of-range verdict");
     expect(TOOL_BLOCK).not.toContain("it is a maintenance finding");
-    expect(TOOL_BLOCK).toContain("Never call a cause \"confirmed\" from sensor data.");
+    expect(flat()).toContain("Never call a cause \"confirmed\" from sensor data.");
+  });
+
+  it("describes unusual readings without calling them faults", () => {
+    expect(flat()).toContain("They are kept and shown, never counted toward a flag.");
+    expect(flat()).toContain("Never call it a fault, bad, wrong, an error or not real.");
+    expect(flat()).toContain("lead with what the water did");
   });
 
   it("gives the turbidity caveat once per conversation (backlog §1, D3)", () => {
@@ -466,8 +487,9 @@ describe("data skepticism (GILLIGAN_DATA_SKEPTICISM_2026-10-09.md §5)", () => {
   // tool measured, and swapped for new fault theories each time he pushed back.
   it("treats readings as real unless a tool flagged them", () => {
     expect(TOOL_BLOCK).toContain("Readings are real measurements of the water unless a tool says otherwise");
-    expect(TOOL_BLOCK).toContain("The tools have already run the fault checks; an \"out of range\" or unusual reading\n  passed them.");
-    expect(TOOL_BLOCK).toContain("never offer a fault theory (fouling, drift,\n  calibration, power, exposure) as their likely cause.");
+    const flat = TOOL_BLOCK.replace(/\s+/g, " ");
+    expect(flat).toContain("The tools have already run the fault checks; an \"out of range\" or unusual reading passed them.");
+    expect(flat).toContain("never offer a fault theory (fouling, drift, power, exposure) as their likely cause.");
   });
 
   it("names as a cause only what a tool measured", () => {

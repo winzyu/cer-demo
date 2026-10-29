@@ -44,6 +44,14 @@ describe("dailyCycle", () => {
     expect(Math.abs(cycle!.peak_drift_minutes_per_day)).toBeLessThan(15);
   });
 
+  it("gives each day's low with its own time, so an afternoon low is not guessed as morning", () => {
+    // The deep-dip pod's shape (data-skepticism item 3): pH highest about 05:00, lowest about 17:00.
+    const cycle = dailyCycle(samples(8, () => 5), LON);
+    expect(cycle?.daily_peaks_local_solar.every((at) => at.slice(11, 13) === "05")).toBe(true);
+    expect(cycle?.daily_lows_local_solar).toHaveLength(cycle!.daily_peaks_local_solar.length);
+    expect(cycle?.daily_lows_local_solar.every((at) => at.slice(11, 13) === "17")).toBe(true);
+  });
+
   it("calls a peak about 50 minutes later each day a tidal timing, across midnight", () => {
     // Starts at 21:00 and drifts past midnight by the fourth day.
     const cycle = dailyCycle(samples(9, (day) => 21 + 0.83 * day), LON);

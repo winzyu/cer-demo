@@ -172,7 +172,7 @@ clean-earth-rag/
 │   │   ├── buildReportInput.ts  assembles the report model from sensor + registry data
 │   │   ├── events.ts         period-relative event detection
 │   │   ├── referenceRanges.ts   v2 fallback ranges, minimum detectable change, TURBIDITY_BAND_EDGES
-│   │   ├── flagRules.ts      the 3-in-a-row flag rule and verdicts, shared by chat and reports
+│   │   ├── flagRules.ts      the share rule, edge rule and verdicts, shared by chat and reports
 │   │   ├── operatorThresholds.ts  validated per-device registry thresholds
 │   │   ├── patterns.ts       diel / tidal / trend classification from an hourly series
 │   │   ├── produceReport.ts  the whole pipeline, shared by generate_report and POST /reports
@@ -1098,12 +1098,14 @@ The tool adds `status_reason`, one sentence naming that rule and, for a flag-dri
 Before this, an ORP Exceedance on Old Woman Creek reached the model as "Action Required" with 0 events and no cause, and the model wrote "no abnormal conditions" beside it (`records/CONVERSATION_QA_2026-09-24.md` finding 3).
 The period ends on the device's newest reading, so the tool also returns `device_last_reported` with its age, and the prompt asks the model to say when a stale pod's period ended.
 
-A parameter's flag follows the 3-in-a-row rule (§19, `timeline.md` 2026-10-10): Elevated or Low needs 3 consecutive readings beyond the baseline by more than v2's minimum detectable change (Watch), and Exceedance needs 3 beyond it by the larger of 15% of the baseline's width and that change (Action Required).
-`buildReportInput` hands each parameter its usable raw readings in time order (`ParameterStats.readings`), taken from the query snapshot before bucketing, trend thinning or raw-result truncation; faulted, implausible and stuck readings are excluded, and neither count toward nor break a run.
-One or two readings beyond a limit, however far, set no flag, and the parameter analysis describes each direction by its runs' extremes, never by a lone reading.
-`status_reason` names the rule, each flagged parameter's range against its configured or generic fallback limit, and when its first run began.
-The high-confidence, high-severity event rung still takes precedence over Watch.
-The plausibility filter is unchanged: dissolved oxygen of 0.00 mg/L remains physically possible and stays in the report, though 24 identical zeros in a row fail QC as a flat line.
+A parameter's flag follows the share rule (`timeline.md` 2026-10-13): Elevated or Low means out-of-range readings, beyond the baseline by more than v2's minimum detectable change, reached 5% of the kept readings in some rolling 24 hours and numbered at least 3, at some point in the period (Watch).
+Exceedance (Action Required) needs that flag to be current, meaning the period's latest 24 hours meet it on their own, beyond the baseline by the larger of 15% of its width and that change; a period that ends before the pod's newest reading (`ParameterStats.pastPeriod`) has no current flag.
+A high-confidence, high-severity event reaches Action Required only when it ends in the period's latest 24 hours and the period is not past.
+`buildReportInput` hands each parameter its kept raw readings in time order (`ParameterStats.readings`), with unusual ones marked, taken from the query snapshot before bucketing, trend thinning or raw-result truncation; device faults are excluded.
+One or two readings beyond a limit, however far, set no flag, and unusual readings never count toward one.
+The parameter analysis names each flagged stretch with its times and extreme (summarised by side past four stretches), says whether the flag has since cleared, and adds two mentions below a flag that lift a report to Watch at most: the edge rule and unusual stretches (status rules `edge` and `unusual`).
+`status_reason` names the rule, each flagged parameter's range against its limit, and when it was first flagged; `flag_detail` gives each flagged stretch, whether the flag is current, the edge finding and unusual stretches.
+The plausibility filter keeps only rails: dissolved oxygen of 0.00 mg/L remains physically possible and stays in the report, though 24 identical zeros in a row fail QC as a flat line.
 
 **The route renders the PDF on request.** `POST /api/v1/reports` takes that `report_request` as its body and answers `200 application/pdf` with `Content-Disposition: attachment; filename="cer-report-<site>-<start>-to-<end>.pdf"` and `Cache-Control: no-store`.
 Guards, in order: `requireCallerToken` (401), the report quota (429, §4a), `REPORT_TOOL` (404 while off), body validation (400: `time_range` required, at most 100 characters; `device` optional, at most 200; `omit` optional, a list of the groups below), then the pipeline's own refusal as 422 (a phrase the grammar does not read, a pod the caller cannot see, an empty window).
@@ -1174,14 +1176,14 @@ Michael reported (2026-10-11) that a summary or overview did not say what window
 Gilligan wrote off a real daily pH cycle as sensor faults, blamed tides no tool measures, and swapped in a new fault theory each time the user pushed back (`records/GILLIGAN_DATA_SKEPTICISM_2026-10-09.md`).
 The tools already judge readings (§19); these rules keep the model from overruling them.
 
-- Readings are real measurements unless a tool says otherwise: device-flagged (`excluded_faulted`), implausible, a "likely data issue" verdict, a `board_fault` or a failed sensor.
+- Readings are real measurements unless a tool says otherwise: device-flagged (`excluded_faulted`), implausible, a "likely data issue" verdict, a `board_fault`, `servicing` or a failed sensor.
   An out-of-range or unusual reading passed those checks; the model reports it as what the water did and may call it unusual and worth checking, never bad, an error or an instrument problem, and never offers a fault theory as its cause.
 - Only measured quantities may be named as causes; tides, swell, weather, rain, air exposure, depth and nearby activity may be offered only as "consistent with", with what would confirm them.
 - A user's statement about the site (depth, position, always submerged, out of the water at a stated time) is evidence; a cause the user suggests is a hypothesis, and an event the user mentions has no time in the data, so the model never says the readings did or did not change "when it started".
 - When the user disputes the data, the model calls `query_sensor_data` again and changes position only for new data or a new site fact, saying which.
 - Series buckets carry `start_local_solar` beside the UTC `start` (UTC plus longitude / 15 hours; the API carries no time zone, and solar time is what decides whether a cycle follows the sun).
   Reading UTC bucket times as local inverted the incident pod's cycle in every pre-fix conversation ("nightly lows, midday peaks" for a pH that bottoms out mid-afternoon).
-- With three or more full local days, each metric in a series carries `daily_cycle`: each day's peak in local solar time, the fitted drift in minutes per day, and a timing of "same hour each day" (drift within 15 minutes, a solar cycle), "about 50 minutes later each day" (30-72 minutes, the lunar day's 24.84 hours, a tide) or "unclear" (day-to-day scatter over 1.5 hours, or anything else).
+- With three or more full local days, each metric in a series carries `daily_cycle`: each day's peak and low in local solar time (`daily_peaks_local_solar`, `daily_lows_local_solar`; the lows since an answer guessed an afternoon low as morning, data-skepticism item 3), the fitted drift in minutes per day, and a timing of "same hour each day" (drift within 15 minutes, a solar cycle), "about 50 minutes later each day" (30-72 minutes, the lunar day's 24.84 hours, a tide) or "unclear" (day-to-day scatter over 1.5 hours, or anything else).
   No tool measures tides, so this timing is the only evidence for telling the two apart.
 - The catalogue's `fault-first` and `inspect-sensors` are offered only for a tool-reported data issue, board fault, failed sensor, or flagged or implausible readings (`DATA_ISSUE_ONLY_ENTRIES` in `catalogue/select.ts`): the report leaves them out otherwise, and each record in the chat prompt carries an "Offer only when" line.
   `fault-first`'s own limitation says the report runs no fault checks; per-reading QC now runs them, and an exceedance passed them.
@@ -1684,7 +1686,7 @@ No test touches the network, needs an API key or costs money, and new tests keep
 | `unit/answerFormat.test.ts` | `【commentary…】` stripping anchored to the channel name, **citation markers in the same brackets left untouched** (~160 of them across the captured transcripts), the marker-only answer coming out empty so the existing 502 guard fires, and the streaming filter agreeing with the batch stripper however the text is chopped up |
 | `unit/generateReport.test.ts`, `unit/buildReportInput.test.ts`, `unit/reportModel.test.ts`, `unit/reportEvents.test.ts`, `unit/reportPatterns.test.ts`, `unit/reportReferenceRanges.test.ts`, `unit/reportNarrative.test.ts`, `unit/reportRenderPdf.test.ts` | the report pipeline: the tool's arguments and flag gating, the computed model assembled from sensor + registry data, event detection, diel/tidal/trend tagging, the transcribed baselines and turbidity bands, narration confined to pre-computed facts, and the PDF layout |
 | `unit/dataSkepticism.test.ts` | what the tools hand the model for the data-skepticism fleet (`test/fixtures/skepticism/fleet.ts`, served in the device API's wire shapes): the incident week's solar cycle and afternoon pH dip never a data issue, device-flagged faults still reported, the guard pods (implausible pH, a real low-oxygen event, a silent pod, stuck turbidity), a tidal pod's drifting peak against the solar pod's fixed one, a steady noisy channel in range, a flagged probe excluded, and a pod out of the water with no cause in the result (§10.9) |
-| `unit/dailyCycle.test.ts` | `daily_cycle` timing: same hour, about 50 minutes later across midnight, unclear for noise, nothing under three full days, flagged readings ignored; local solar time from longitude (§10.9) |
+| `unit/dailyCycle.test.ts` | `daily_cycle` timing: same hour, about 50 minutes later across midnight, unclear for noise, nothing under three full days, flagged readings ignored; each day's low with its own time; local solar time from longitude (§10.9) |
 | `integration/reports.test.ts` | `POST /api/v1/reports` (§10.7): each guard (token, flag, body, report quota), the PDF returned with nothing written to disk, a 422 refusal that counts nothing, and the removed `GET /reports/:filename` |
 
 **`unit/pgvectorRag.test.ts` is gone from the live suite** (2026-08-19). Its `fuseRrf` and
@@ -1786,8 +1788,8 @@ The detectable-change floor keeps ordinary noise on a steady channel, where the 
 Turbidity at exactly 0 keeps its own rule, because the index clamps clear water to 0: it fails only after at least 24 hours of zeros, and never becomes suspect by count.
 A missing or failed reading, a changed value or a gap over 3 hours breaks a flat line; gaps over 3 hours are reported as missing data (`missing_data`).
 QC runs on current-site context before trimming to the requested range, so a short query cannot conceal an established flat line.
-Flat-line and stuck-turbidity failures are excluded before aggregation and report pattern matching and counted per metric as `excluded_stuck` with `sensor_quality: "likely failed sensor"`; error-flag and implausible failures keep their existing counts; suspect readings are kept and counted as `suspect_readings`.
-A **likely data issue** is 3 or more consecutive suspect or failed readings of one metric; scattered failures are excluded and counted but never flagged.
+Flat-line and stuck-turbidity failures are excluded before aggregation and report pattern matching and counted per metric as `excluded_stuck` with `sensor_quality: "likely failed sensor"`; error-flag and rail failures keep their existing counts.
+A **likely data issue** is 3 or more consecutive device faults of one metric and covers only those readings; unusual readings never make one, and scattered failures are excluded and counted but never flagged.
 Three or more consecutive readings on which every channel fails at once are reported as `board_fault`, with v2 §9.2's "most likely reflects a sensor or data issue" wording; the count is provisional until CER confirms it (`STAKEHOLDER_QUESTIONS.md` item 25).
 
 **Limits** (`resolveLimit`, `src/report/operatorThresholds.ts`).
@@ -1797,22 +1799,41 @@ Temperature, conductivity, coastal ORP and turbidity have no fallback: v2 calls 
 A pod whose registry gives no water type gets no fallback; a defaulted water type never selects a column.
 Every fallback is labelled generic wherever it appears: `basis` and `limit_note` in the sensor tool, status "fallback" in `get_pod_thresholds`, `baselineSource: "v2-fallback"` and a footnote in the report.
 
-**The flag rule** (`src/report/flagRules.ts`, v2 §8.3 and §9.1).
-A metric is out of range only after 3 consecutive kept readings beyond its limit plus v2's minimum detectable change: pH 0.2, dissolved oxygen 1 mg/L, ORP 50 mV, conductivity 2% of the reading, temperature twice the PT-1000 accuracy at the reading.
-At 48 readings a day that is 6.25% of a day, inside the 5-10% Michael accepted, so there is no separate share rule.
-High and low runs are counted separately, a gap over 3 hours breaks a run, and only readings inside the requested window count.
-Runs holding at least 80% of the window's kept readings are a persistent offset, stated once with its start as more likely a threshold, fouling or calibration issue than a change in the water (v2 §7.2 rule 7).
-The datasheet accuracies (`PROBE_SPECS`) stay for their other uses but no longer set a noise floor.
+**The flag rule** (`src/report/flagRules.ts`, v2 §8.2, §8.3 and §9.1; Michael's decisions of 2026-10-12; `timeline.md` 2026-10-13).
+Every kept reading is normal, out of range, or unusual; device faults never reach the rule.
+Out of range means beyond the limit plus v2's minimum detectable change: pH 0.2, dissolved oxygen 1 mg/L, ORP 50 mV, conductivity 2% of the reading, temperature twice the PT-1000 accuracy at the reading.
+A metric is flagged where out-of-range readings reach 5% of the kept readings in some rolling 24 hours and number at least 3, consecutive or not; at 48 readings a day the minimum of 3 binds.
+High and low are counted separately, and flagged readings more than 12 hours apart start a new stretch, so a daily dip is flagged day by day.
+A flag is current only when the latest 24 hours meet the rule on their own.
+Unusual readings stay in every share's denominator but never count toward a flag.
+The edge rule raises a metric within one cushion of a limit, either side of it, for 12 hours in a row, or for 2 hours or more on at least half the period's days with at least 3 such days; a flag supersedes it.
+An unusual stretch is readings unusual for their value (pH outside 3-12, a short flat line) that meet the share rule themselves; jumps and spikes are a moment and never make one, so a brief blip stays quiet.
+Flagged readings holding at least 80% of the window's kept readings are a persistent offset, stated once with its start as more likely a threshold that does not fit the site than a change in the water, with a calibration check to confirm the readings (v2 §7.2 rule 7; Michael's approved wording, 2026-10-23, which names no sensor fouling).
+The datasheet accuracies (`PROBE_SPECS`) stay for their other uses but do not set a noise floor.
+
+**Reading labels** (`src/devices/readingQc.ts`, v2 §8.2).
+A device fault (QC fail) is the probe's error flag, the read-failure value, a rail no probe in water can emit (pH exactly 0 or 14, the -1023 °C temperature rail), a flat line of 24 or more, turbidity at 0 for a day, or every channel failing at once; it is left out, and only here may Gilligan say "sensor fault" or "inspect".
+An unusual reading (QC suspect) is kept and shown: pH outside 3-12, a jump faster than v2's rate of change (pH 0.3 per 10 minutes on marine and brackish pods, none for freshwater; temperature 2 °C per 10 minutes; scaled to the gap, untested across gaps over 3 hours), a spike, or a flat line of 6-23.
+Only the reading after a jump is labelled, so a real change that holds still counts from the next reading on; a jump back into range is labelled too.
+Servicing (`servicingWindows`, Michael 2026-10-23: out of the water reads near-0 conductivity, bleach cleaning sends pH up, and the buoy keeps reporting while serviced; the user's rule of 2026-10-27) is a device fault of its own, on marine pods only.
+It needs both signals: conductivity below half its median over the previous 24 hours within 2 hours of a reading at the usual level, and a pH rail or a sudden pH jump from 2 hours before that collapse until conductivity recovers.
+Every channel's readings from the first signal to the last reading before recovery fail as `servicing`; the other tests are rerun without them, so the recovery is not a jump.
+Servicing never makes a likely data issue and never suggests inspection; the sensor tool lists it as `servicing` (from, to, readings) with a note, and the report's Data Quality names its times.
+A marine conductivity drop with pH steady, and the same pattern on a brackish or freshwater pod, stay readings of the water, so a real freshwater intrusion is not hidden.
+On Algalita it removes Sep 24 22:45 UTC to Sep 25 00:25 UTC (pH 0 beside off-scale conductivity, conductivity down to about 1,400, pH 12.6), and with it the low-conductivity flag on Sep 24-25.
 
 **Verdicts** (`src/tools/metricVerdict.ts`).
-`query_sensor_data` returns each metric's `verdict`: `status` (in range, out of range, likely data issue, not assessed, not enough data, by that precedence with the data issue first), `basis`, `limit`, `limit_note`, `out_of_range` (direction, first run start, latest run end, run count, whether ongoing, whether persistent), `data_issue` runs and `suspect_readings`.
-A window with fewer than 3 kept readings, such as "now", is judged on the run ending at its newest reading, using the two kept readings before it.
-The prompt has the model relay verdicts, suggest inspection or maintenance only for a likely data issue, a board fault or a likely failed sensor, state a persistent offset once, and give `turbidity_caveat`, now its own field rather than part of `note`, once per conversation.
+`query_sensor_data` returns each metric's `verdict`: `status` (in range, out of range, likely data issue, not assessed, not enough data), `basis`, `limit`, `limit_note`, `out_of_range` (direction, each flagged stretch with its times and extreme, the newest 12 listed, whether current, whether persistent), `at_edge`, `unusual_stretches`, `unusual_readings` with `unusual_listed` (the 12 that moved most from the reading before, in time order, each with why and the previous reading), and `data_issue` stretches.
+"Likely data issue" is the status only when device faults left no readings in the window; otherwise faults are listed beside a verdict on the rest.
+The window is judged with the 24 hours before it, so a "now" question or a flagged day straddling the window's start is judged on a full day; the edge rule counts the window's own days.
+The report judges its period the same way (`flagRules.ts` `assessWindow`, through `flagsFor`), so a chat answer and a report on the same period name the same flags.
+`current` is true only when the window holds the pod's newest reading.
+The prompt has the model relay verdicts, name flagged days, tell a cleared flag in the past tense, describe unusual readings (when, how far, how fast, what other metrics did) as very unusual with a calibration check, never as a fault, suggest inspection or maintenance only for device faults, a board fault or a likely failed sensor, state a persistent offset once, lead a summary with what the water did, and give `turbidity_caveat` once per conversation.
 The server's alert emails still check only each pod's latest reading (`STAKEHOLDER_QUESTIONS.md` item 27), so an email can alert while chat calls the metric in range.
 Operator limits that are unusable because they exceed the sensor's measurement range remain “Not assessed”, with no assertion that readings are within those limits.
 
-A pH reading outside 3-12 is implausible and excluded like a probe rail, because natural surface water spans roughly 3.5 (peat bogs) to 11 (soda lakes) and the fleet sits in neither; configured pH limits are still validated against the 0-14 scale.
-The pH 3-12 band stays inclusive, and the tool and report notes say readings outside plausibility bounds "may be sensor faults and were left out" without claiming a confirmed fault.
+A pH reading outside 3-12 is kept and labelled unusual, never a fault: natural surface water spans roughly 3.5 (peat bogs) to 11 (soda lakes) and the fleet sits in neither, but the device did not flag the reading and it may be real (`timeline.md` 2026-10-13; from `bc097e1` until then it was excluded like a rail).
+Only pH exactly 0 or 14 is excluded as a rail; configured pH limits are still validated against the 0-14 scale, and the tool and report notes say rail readings "may be sensor faults and were left out".
 `list_pods` gives each pod a status of reporting, silent (no current-site reading for more than 6 hours), unconfirmed (no timestamp) or not checked, and repeats silent pods with their reading age in `silent_pods`, so an answer about which pods are online lists them as silent instead of leaving them out.
 The system prompt's single pod-status rule calls only reporting pods online, lists every silent pod with its age, and requires a `query_sensor_data` check only for an unconfirmed pod; the `list_pods` note defines the statuses without restating the rule.
 `query_sensor_data` lists each metric's implausible readings beside `excluded_implausible` as `excluded_implausible_values` (newest 10, oldest first, with `excluded_implausible_not_listed` for the rest) plus `excluded_implausible_min` and `excluded_implausible_max`, and its note says `value` and `n_samples` count only the remaining readings.

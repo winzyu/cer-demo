@@ -143,7 +143,7 @@ describe("deterministicNarrative — summary is a bulleted list", () => {
     expect(summaryBullets[0]).toContain("Overall status: Watch");
     // sentenceCase only touches the first character, so the label "pH" renders "PH" here --
     // that quirk is expected (see the ORP-acronym test below for why a full capitalize() isn't used).
-    expect(summaryBullets[1]).toMatch(/^PH moved outside the site baseline/);
+    expect(summaryBullets[1]).toMatch(/^PH: flagged outside the site baseline/);
     expect(summaryBullets[2]).toContain("1 candidate event(s)");
   });
 
@@ -201,7 +201,7 @@ describe("deterministicNarrative — parameter analysis", () => {
     const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { max: 9.0, pattern: "flat" });
     const { parameterAnalysis } = deterministicNarrative(report([ph]), noAccuracy, "Watch");
     expect(parameterAnalysis.has("pH")).toBe(true);
-    expect(parameterAnalysis.get("pH")).toContain("for at least three readings in a row");
+    expect(parameterAnalysis.get("pH")).toContain("reached 5% of a 24-hour window and at least three readings");
   });
 
   it("never describes a lone stray reading as the parameter's excursion", () => {
@@ -220,7 +220,9 @@ describe("deterministicNarrative — parameter analysis", () => {
     });
     const text = deterministicNarrative(report([ph]), noAccuracy, "Watch").parameterAnalysis.get("pH")!;
     expect(text).toContain("for most of the period, from 2026-08-01 00:00");
-    expect(text).toContain("threshold that does not fit the site, sensor fouling or calibration");
+    expect(text).toContain("threshold that does not fit the site than a change in the water; "
+      + "a calibration check would confirm the readings");
+    expect(text).not.toMatch(/fouling/);
     expect(text.match(/most of the period/g)).toHaveLength(1);
   });
 
@@ -240,8 +242,8 @@ describe("deterministicNarrative — parameter analysis", () => {
     });
     const text = deterministicNarrative(report([do_]), noAccuracy, "Action Required")
       .parameterAnalysis.get("Dissolved Oxygen (mg/L)")!;
-    expect(text).toContain("above it to 23.32 mg/L");
-    expect(text).toContain("below it to 1.72 mg/L");
+    expect(text).toContain("above it, to 23.32 mg/L");
+    expect(text).toContain("below it, to 1.72 mg/L");
   });
 
   it("reports how much of the period a parameter spent outside baseline", () => {
@@ -255,7 +257,7 @@ describe("deterministicNarrative — parameter analysis", () => {
   it("prints no stray space around a value whose parameter has no unit", () => {
     const ph = param(fixedBaseline("ph", "pH", "", 6.5, 8.5), { max: 9.0, pattern: "unknown" });
     const text = deterministicNarrative(report([ph]), noAccuracy, "Watch").parameterAnalysis.get("pH")!;
-    expect(text).toContain("above it to 9.00 for");
+    expect(text).toContain("above it, to 9.00, from");
     expect(text).not.toMatch(/ {2}/);
   });
 
@@ -402,7 +404,7 @@ describe("deterministicNarrative — parameter analysis", () => {
     const { summaryBullets } = deterministicNarrative(report([ph, turbidity]), noAccuracy, "Watch");
 
     // Only pH is named as having moved outside the site baseline.
-    expect(summaryBullets[1]).toMatch(/^PH moved outside the site baseline/);
+    expect(summaryBullets[1]).toMatch(/^PH: flagged outside the site baseline/);
     expect(summaryBullets[1]).not.toContain("Turbidity");
 
     const clarity = summaryBullets.find((b) => b.startsWith("Turbidity (Relative):"))!;

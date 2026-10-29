@@ -5,22 +5,35 @@
  *
  * Every reading of every metric gets one flag:
  *
- * - **fail** (QARTOD 4): the probe's error flag is set; the value is `1000000000`, which the
- *   server documents as a sensor read failure; the value is physically implausible
- *   (`plausibility.ts`); or it belongs to a flat line of 24 or more identical readings. Turbidity
- *   at exactly 0 instead fails only after a day of zeros, because the index clamps clear water to
- *   0 and a long run of zeros can be real (`referenceRanges.ts`).
- * - **suspect** (QARTOD 3): a flat line of 6 or more identical readings, or a spike: a reading
- *   more than 3 x the metric's MAD from the mean of its two neighbours, when those neighbours
- *   agree with each other within the same tolerance. With a MAD of 0 the spike test is skipped.
+ * - **fail** (QARTOD 4), a *device fault*: the probe's error flag is set; the value is
+ *   `1000000000`, which the server documents as a sensor read failure; the value is a rail no
+ *   probe in water can emit (`isPlausible`, e.g. pH exactly 0 or 14, -1023 °C); or it belongs to a
+ *   flat line of 24 or more identical readings. Turbidity at exactly 0 instead fails only after a
+ *   day of zeros, because the index clamps clear water to 0 and a long run of zeros can be real
+ *   (`referenceRanges.ts`). Failed readings are left out.
+ * - **suspect** (QARTOD 3), an *unusual* reading: kept and shown, never counted toward a flag and
+ *   never called a fault (`report/flagRules.ts`). A flat line of 6 or more identical readings; pH
+ *   outside the range natural water spans (`isNaturalWater`, 3-12); a jump faster than v2 §8.2's
+ *   rate of change (`RATE_OF_CHANGE`); or a spike: a reading more than 3 x the metric's MAD from
+ *   the mean of its two neighbours, when those neighbours agree with each other within the same
+ *   tolerance. With a MAD of 0 the spike test is skipped.
  * - **pass** (QARTOD 1) otherwise. Gaps longer than `MAX_GAP_MS` are counted as missing data
  *   (QARTOD 9) and break every run.
  *
- * A **likely data issue** (v2 §9.2) is `DATA_ISSUE_RUN` or more consecutive suspect or failed
- * readings of one metric; scattered failures are excluded and counted, never flagged on their
- * own (`POST_LAUNCH_BACKLOG.md` §1: one bad reading among 48 a day is not a maintenance item).
+ * A **likely data issue** (v2 §9.2) is `DATA_ISSUE_RUN` or more consecutive device faults of one
+ * metric; it covers only those readings, and unusual readings never make one (docs/timeline.md,
+ * 2026-10-13). Scattered failures are excluded and counted, never flagged on their own
+ * (`POST_LAUNCH_BACKLOG.md` §1: one bad reading among 48 a day is not a maintenance item).
  * Readings on which every channel fails at once suggest a board fault (v2 §7.2 rule 1); three in a
  * row flag it, provisionally until CER confirms the count (STAKEHOLDER_QUESTIONS.md item 25).
+ *
+ * **Servicing** (`servicingWindows`): on a marine pod, conductivity collapsing below half its
+ * 24-hour median within two hours, together with a pH rail or a sudden pH jump, is the pod being
+ * serviced or out of the water (Michael, 2026-10-23: out of water reads near-0 conductivity,
+ * bleach cleaning sends pH up, and the buoy keeps reporting while serviced). Every channel's
+ * readings from the first signal until conductivity recovers fail as `servicing`: left out like a
+ * device fault, never a likely data issue, and reported as servicing. Both signals are required,
+ * so freshwater reaching a marine pod with pH steady is still judged as water.
  *
  * QC runs over everything the caller fetched (the site's readings), not just the requested window,
  * so a flat line that started before the window is still recognised inside it. The MAD is that
@@ -28,8 +41,10 @@
  */
 
 import type { DeviceReading, MetricKey } from "../types/device.types";
-import { isPlausible } from "./plausibility";
+import { isNaturalWater, isPlausible } from "./plausibility";
 import { minimumDetectableChange } from "../report/referenceRanges";
+import type { FallbackWaterClass } from "../report/referenceRanges";
+import type { UnusualKind } from "../report/flagRules";
 
 export type QcFlag = "pass" | "suspect" | "fail";
 
@@ -39,7 +54,10 @@ export type QcReason =
   | "implausible"
   | "flat-line"
   | "stuck-turbidity"
-  | "spike";
+  | "outside-natural-water"
+  | "rate-of-change"
+  | "spike"
+  | "servicing";
 
 export interface QcResult {
   flag: QcFlag;
@@ -71,7 +89,30 @@ const DETECTABLE_CHANGE_KEY: Record<MetricKey, string> = {
   temperature: "temperature",
   turbidity: "turbidity",
 };
-/** Consecutive suspect or failed readings that make a likely data issue. */
+/**
+ * v2 §8.2 rate of change, per 10 minutes, scaled to the gap between consecutive kept readings: pH
+ * 0.3 for marine and brackish pods (v2 gives no freshwater pH rate), temperature 2 °C, in °F here
+ * because readings are decoded to °F. Only the reading after the jump is labelled, so a real
+ * change that holds still counts from the next reading on.
+ */
+export const RATE_OF_CHANGE: Partial<Record<MetricKey, {
+  perTenMinutes: number; waters?: readonly FallbackWaterClass[];
+}>> = {
+  ph: { perTenMinutes: 0.3, waters: ["coastal", "brackish"] },
+  temperature: { perTenMinutes: 2 * (9 / 5) },
+};
+const TEN_MINUTES_MS = 10 * 60_000;
+
+/**
+ * How a kept reading is unusual, for `report/flagRules.ts`: "moment" for a spike or a jump,
+ * "value" for pH outside natural water or a short flat line; undefined when it passed.
+ */
+export const unusualKind = (result: QcResult | undefined): UnusualKind | undefined => {
+  if (result?.flag !== "suspect") return undefined;
+  return result.reason === "spike" || result.reason === "rate-of-change" ? "moment" : "value";
+};
+
+/** Consecutive device faults (failed readings) that make a likely data issue. */
 export const DATA_ISSUE_RUN = 3;
 
 const timeOf = (row: DeviceReading): number => Date.parse(row.observedAt ?? "");
@@ -88,6 +129,7 @@ const pointCheck = (row: DeviceReading, key: MetricKey): QcResult | undefined =>
   if (metric.value === SENSOR_READ_FAILURE_VALUE) return { flag: "fail", reason: "read-failure" };
   if (!metric.valid) return { flag: "fail", reason: "error-flag" };
   if (!isPlausible(key, metric.value)) return { flag: "fail", reason: "implausible" };
+  if (!isNaturalWater(key, metric.value)) return { flag: "suspect", reason: "outside-natural-water" };
   return { flag: "pass" };
 };
 
@@ -104,6 +146,11 @@ export const medianAbsoluteDeviation = (values: number[]): number => {
   return median(values.map((v) => Math.abs(v - centre)));
 };
 
+/** What QC needs to know about the site: its water class, for the pH rate of change. */
+export interface QcOptions {
+  water?: FallbackWaterClass;
+}
+
 /**
  * Flags every reading of one metric. `rows` must be in time order (`inTimeOrder`); readings with
  * no value for this metric are left out of the map.
@@ -111,6 +158,7 @@ export const medianAbsoluteDeviation = (values: number[]): number => {
 export const qcMetric = (
   rows: readonly DeviceReading[],
   key: MetricKey,
+  options: QcOptions = {},
 ): Map<DeviceReading, QcResult> => {
   const flags = new Map<DeviceReading, QcResult>();
   rows.forEach((row) => {
@@ -145,11 +193,27 @@ export const qcMetric = (
   });
   flush();
 
-  // Spikes, among the readings still kept, against the whole series' MAD and the detectable change.
   const kept = rows.filter((row) => {
     const flag = flags.get(row)?.flag;
     return flag === "pass" || flag === "suspect";
   });
+
+  // Rate of change, against the previous kept reading within `MAX_GAP_MS`.
+  const rate = RATE_OF_CHANGE[key];
+  if (rate && (!rate.waters || (options.water && rate.waters.includes(options.water)))) {
+    kept.forEach((row, i) => {
+      const before = kept[i - 1];
+      if (!before || flags.get(row)?.flag !== "pass") return;
+      const gap = timeOf(row) - timeOf(before);
+      if (gap <= 0 || gap > MAX_GAP_MS) return;
+      const change = Math.abs(row.metrics[key].value! - before.metrics[key].value!);
+      if (change > rate.perTenMinutes * (gap / TEN_MINUTES_MS)) {
+        flags.set(row, { flag: "suspect", reason: "rate-of-change" });
+      }
+    });
+  }
+
+  // Spikes, among the readings still kept, against the whole series' MAD and the detectable change.
   const values = kept.map((row) => row.metrics[key].value as number);
   const tolerance = SPIKE_MAD_MULTIPLE * medianAbsoluteDeviation(values);
   if (tolerance > 0) {
@@ -171,13 +235,130 @@ export const qcMetric = (
   return flags;
 };
 
-/** Every metric's flags over the same rows. */
+/** Conductivity below this share of its 24-hour median has collapsed (`servicingWindows`). */
+export const SERVICING_CONDUCTIVITY_SHARE = 0.5;
+/** The collapse must follow a reading at the usual level within this long. */
+export const SERVICING_ONSET_MS = 2 * 60 * 60_000;
+const SERVICING_BASELINE_MS = 24 * 60 * 60_000;
+
+const isPhRail = (row: DeviceReading): boolean => {
+  const value = row.metrics.ph?.value;
+  return value === 0 || value === 14;
+};
+
+/**
+ * Stretches where a marine pod was most likely serviced or out of the water: conductivity
+ * collapsing below `SERVICING_CONDUCTIVITY_SHARE` of its median over the previous 24 hours, within
+ * `SERVICING_ONSET_MS` of a reading at the usual level, with a pH rail or a sudden pH jump from
+ * `SERVICING_ONSET_MS` before the collapse until conductivity recovers. A stretch runs from the
+ * earlier signal to the last reading before recovery, or to the last reading when there is none.
+ * `rows` in time order; `flags` from `qcMetric` for conductivity and pH.
+ */
+export const servicingWindows = (
+  rows: readonly DeviceReading[],
+  flags: ReadonlyMap<MetricKey, Map<DeviceReading, QcResult>>,
+  options: QcOptions = {},
+): ReadingRun[] => {
+  const conductivityFlags = flags.get("conductivity");
+  const phFlags = flags.get("ph");
+  if (options.water !== "coastal" || !conductivityFlags || !phFlags) return [];
+  const kept = rows.filter((row) => {
+    const flag = conductivityFlags.get(row)?.flag;
+    return flag === "pass" || flag === "suspect";
+  });
+  const valueOf = (row: DeviceReading): number => row.metrics.conductivity.value as number;
+  const phSignal = (row: DeviceReading): boolean => isPhRail(row)
+    || phFlags.get(row)?.reason === "rate-of-change";
+
+  /** The window a collapse at `kept[i]` starts, if it is one. */
+  const windowFrom = (i: number): ReadingRun | undefined => {
+    const at = timeOf(kept[i]);
+    const earlier = kept.slice(0, i).filter((row) => at - timeOf(row) <= SERVICING_BASELINE_MS);
+    const floor = SERVICING_CONDUCTIVITY_SHARE * median(earlier.map(valueOf));
+    const previous = kept[i - 1];
+    const collapse = valueOf(kept[i]) < floor && valueOf(previous) >= floor
+      && at - timeOf(previous) <= SERVICING_ONSET_MS;
+    if (!collapse) return undefined;
+    let last = i;
+    while (last + 1 < kept.length && valueOf(kept[last + 1]) < floor) last += 1;
+    const endMs = timeOf(kept[last]);
+    const signal = rows.find((row) => timeOf(row) >= at - SERVICING_ONSET_MS
+      && timeOf(row) <= endMs && phSignal(row));
+    if (!signal) return undefined;
+    const startMs = Math.min(at, timeOf(signal));
+    return {
+      startMs,
+      endMs,
+      readings: rows.filter((row) => timeOf(row) >= startMs && timeOf(row) <= endMs).length,
+    };
+  };
+
+  const windows: ReadingRun[] = [];
+  for (let i = 1; i < kept.length; i += 1) {
+    const covered = windows.length > 0 && timeOf(kept[i]) <= windows[windows.length - 1].endMs;
+    const found = covered ? undefined : windowFrom(i);
+    if (found) windows.push(found);
+  }
+  return windows;
+};
+
+/**
+ * Every metric's flags over the same rows. Readings in a servicing window (`servicingWindows`)
+ * fail as `servicing` on every metric, and the other tests are rerun without them, so a jump or
+ * spike is measured against the readings either side of the service, not against it.
+ */
 export const qcReadings = (
   rows: readonly DeviceReading[],
   keys: readonly MetricKey[],
+  options: QcOptions = {},
 ): Map<MetricKey, Map<DeviceReading, QcResult>> => {
   const ordered = inTimeOrder(rows);
-  return new Map(keys.map((key) => [key, qcMetric(ordered, key)]));
+  const flags = new Map(keys.map((key) => [key, qcMetric(ordered, key, options)]));
+  // Servicing is read from conductivity and pH even when neither was asked for.
+  const signals = new Map(flags);
+  if (options.water === "coastal") {
+    (["conductivity", "ph"] as const).forEach((key) => {
+      if (!signals.has(key)) signals.set(key, qcMetric(ordered, key, options));
+    });
+  }
+  const windows = servicingWindows(ordered, signals, options);
+  if (windows.length === 0) return flags;
+  const serviced = (row: DeviceReading): boolean => windows
+    .some((w) => timeOf(row) >= w.startMs && timeOf(row) <= w.endMs);
+  const rest = ordered.filter((row) => !serviced(row));
+  return new Map(keys.map((key) => {
+    const result = qcMetric(rest, key, options);
+    ordered.filter(serviced).forEach((row) => {
+      if (row.metrics[key]?.value !== undefined) {
+        result.set(row, { flag: "fail", reason: "servicing" });
+      }
+    });
+    return [key, result];
+  }));
+};
+
+/** The servicing windows `qcReadings` applied, from its flags. `rows` in time order. */
+export const servicingRuns = (
+  rows: readonly DeviceReading[],
+  flags: ReadonlyMap<MetricKey, Map<DeviceReading, QcResult>>,
+): ReadingRun[] => {
+  const runs: ReadingRun[] = [];
+  let run: DeviceReading[] = [];
+  const flush = (): void => {
+    if (run.length > 0) {
+      runs.push({
+        startMs: timeOf(run[0]), endMs: timeOf(run[run.length - 1]), readings: run.length,
+      });
+    }
+    run = [];
+  };
+  rows.forEach((row) => {
+    const isServiced = [...flags.values()].some((m) => m.get(row)?.reason === "servicing");
+    if (isServiced) run.push(row);
+    else flush();
+  });
+  flush();
+  return runs;
 };
 
 /** A stretch of consecutive readings, by time. */
@@ -188,8 +369,9 @@ export interface ReadingRun {
 }
 
 /**
- * Runs of `DATA_ISSUE_RUN` or more consecutive suspect or failed readings of one metric. A passing
- * reading, a reading with no value, or a gap over `MAX_GAP_MS` ends a run. `rows` in time order.
+ * Runs of `DATA_ISSUE_RUN` or more consecutive failed readings (device faults) of one metric. A
+ * kept reading, passing or unusual, a reading with no value, or a gap over `MAX_GAP_MS` ends a
+ * run. `rows` in time order.
  */
 export const dataIssueRuns = (
   rows: readonly DeviceReading[],
@@ -206,13 +388,14 @@ export const dataIssueRuns = (
     run = [];
   };
   rows.forEach((row) => {
-    const flag = flags.get(row)?.flag;
+    const result = flags.get(row);
+    // Servicing is reported as servicing (`servicingRuns`), never as a likely data issue.
+    const fault = result?.flag === "fail" && result.reason !== "servicing";
     const previous = run[run.length - 1];
-    if (flag === undefined || flag === "pass"
-      || (previous && timeOf(row) - timeOf(previous) > MAX_GAP_MS)) {
+    if (!fault || (previous && timeOf(row) - timeOf(previous) > MAX_GAP_MS)) {
       flush();
     }
-    if (flag === "suspect" || flag === "fail") run.push(row);
+    if (fault) run.push(row);
   });
   flush();
   return runs;

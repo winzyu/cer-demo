@@ -20,7 +20,10 @@
  * and the difference has to reach the model rather than being averaged away.
  */
 
+import type { UnusualKind } from "../report/flagRules";
+
 /** One metric's value at one instant, already decoded and unit-normalized. */
+
 export interface Sample {
   /** Epoch ms. Derived from the reading's `observedAt`, never from the raw epoch-seconds field. */
   atMs: number;
@@ -38,6 +41,12 @@ export interface Sample {
    * `QuerySensorData.samplesInRange` sets it for everything that reaches the tool paths.
    */
   plausible?: boolean;
+  /**
+   * Set when QC labelled the reading unusual (`devices/readingQc.ts`), for how it moved or for its
+   * value (`UnusualKind`). Kept in every statistic, never counted toward a flag
+   * (`report/flagRules.ts`).
+   */
+  unusual?: UnusualKind;
 }
 
 /**

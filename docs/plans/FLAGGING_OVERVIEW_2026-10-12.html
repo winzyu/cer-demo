@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flagging Overview</title>
+<style>
+:root {
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+  --s-normal: #2a78d6; --s-odd: #eb6834;
+  --good: #006300; --warn: #8a5a00; --bad: #b42318; --info: #2a78d6;
+  --good-bg: #e8f3e8; --warn-bg: #fbf1dc; --bad-bg: #fbe9e7; --info-bg: #e8f0fb;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --s-normal: #3987e5; --s-odd: #d95926;
+    --good: #0ca30c; --warn: #e0a526; --bad: #f2786d; --info: #6aa6f0;
+    --good-bg: #13241380; --warn-bg: #2e240f; --bad-bg: #331a17; --info-bg: #15233a;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+  --s-normal: #3987e5; --s-odd: #d95926;
+  --good: #0ca30c; --warn: #e0a526; --bad: #f2786d; --info: #6aa6f0;
+  --good-bg: #13241380; --warn-bg: #2e240f; --bad-bg: #331a17; --info-bg: #15233a;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1040px; margin: 0 auto; padding: 32px 16px 80px; }
+h1 { font-size: 28px; line-height: 1.2; margin: 0 0 6px; }
+h2 { font-size: 21px; margin: 44px 0 10px; padding-top: 8px; border-top: 1px solid var(--border); }
+h3 { font-size: 16px; margin: 22px 0 6px; }
+p, li { color: var(--ink); }
+.sub { color: var(--ink-2); margin: 0 0 18px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin: 14px 0; }
+.lede { font-size: 16.5px; }
+.analogy { border-left: 3px solid var(--info); background: var(--info-bg); }
+nav ol { columns: 2; column-gap: 32px; margin: 6px 0 0; padding-left: 20px; }
+@media (max-width: 640px) { nav ol { columns: 1; } }
+a { color: var(--info); }
+code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--grid); padding: 1px 4px; border-radius: 4px; }
+.table-wrap { overflow-x: auto; margin: 10px 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 11px; border-bottom: 1px solid var(--border); }
+th { color: var(--ink-2); font-weight: 600; background: var(--surface); position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.pill.good { color: var(--good); background: var(--good-bg); }
+.pill.warn { color: var(--warn); background: var(--warn-bg); }
+.pill.bad { color: var(--bad); background: var(--bad-bg); }
+.pill.info { color: var(--info); background: var(--info-bg); }
+.pill::before { margin-right: 4px; }
+.pill.good::before { content: "\2713"; }
+.pill.warn::before { content: "~"; }
+.pill.bad::before { content: "\2717"; }
+.pill.info::before { content: "\2192"; }
+.flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin: 12px 0; }
+.step { flex: 1 1 170px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.step b { display: block; margin-bottom: 2px; }
+.step small { color: var(--ink-2); display: block; }
+.step .issues { margin-top: 6px; font-size: 12.5px; color: var(--bad); }
+.arrow { align-self: center; color: var(--muted); font-size: 20px; }
+@media (max-width: 640px) { .arrow { display: none; } }
+.labels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 10px; }
+.labels .card { margin: 0; }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+.chart { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px 6px; position: relative; }
+.chart h4 { margin: 0 0 2px; font-size: 14px; }
+.chart .note { color: var(--ink-2); font-size: 12.5px; margin: 0 0 4px; }
+.chart svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13.5px; color: var(--ink-2); margin: 8px 0; }
+.legend span::before { content: ""; display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; background: var(--c); }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 8px; font-size: 12.5px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); display: none; white-space: nowrap; z-index: 2; }
+.tip i { font-style: normal; display: inline-block; width: 10px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 5px; }
+details { margin: 8px 0; }
+summary { cursor: pointer; color: var(--ink-2); }
+.decision { counter-increment: d; }
+.small { font-size: 13px; color: var(--ink-2); }
+.theme-toggle { float: right; font: inherit; font-size: 13px; color: var(--ink-2); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+</style>
+</head>
+<body>
+<main>
+<button class="theme-toggle" id="theme" type="button">Theme</button>
+<h1>Flagging: the whole story</h1>
+<p class="sub">Algalita Pod, Michael's decisions of 2026-10-12, a customer's first chat, and one plan for every flagging problem so far. Written 2026-10-12 on branch <code>task/flagging-share-window</code> (from <code>dev</code> <code>60f531c</code>). Nothing here is deployed.</p>
+
+<div class="card lede">
+<p><b>In one minute.</b> Gilligan has two opposite habits that both hurt trust.
+It <b>raises alarms too easily</b> (one or three odd readings became "needs immediate attention"), and when it sees something unusual it <b>blames the sensor</b> ("most likely a pH probe malfunction", "data quality is the biggest concern").
+Michael wants the opposite of both: stay quiet about brief blips, flag only sustained problems, and treat the data as real unless the device itself says otherwise.</p>
+<p>The data supports Michael on <i>how Gilligan should talk</i>: the probe reported no fault, and the other four sensors behaved normally all month.
+It does not settle <i>what happened to pH</i> on Sep 25-29: pH jumped by 4-5 units within half an hour while nothing else moved, which is very unusual for seawater.
+Only a hand-meter comparison or CER's service record can settle that, and the customer's team is about to do exactly that kind of testing.</p>
+<p>The proposed fix gives every reading one of four labels (<b>normal</b>, <b>out of range</b>, <b>unusual</b>, <b>device fault</b>), flags a metric only when out-of-range readings reach 5% of a rolling 24 hours, and keeps the word "fault" for faults the device itself reports.</p>
+</div>
+
+<div class="card analogy">
+<p><b>Analogy: a smoke alarm in a kitchen.</b>
+A good alarm ignores a single puff from the toaster (a brief blip), goes off when smoke keeps building (a sustained problem), and stops once the air clears (clearing).
+When it sees something strange, like a reading that makes no sense, it should say "this looks odd, worth checking the alarm", not "your alarm is broken, ignore it".
+Gilligan today goes off at the toaster <i>and</i> tells you the alarm is broken.</p>
+</div>
+
+<nav class="card"><b>Contents</b>
+<ol>
+<li><a href="#cast">Who said what, and what the data says</a></li>
+<li><a href="#data">See the data yourself</a></li>
+<li><a href="#pipeline">How a reading becomes a sentence</a></li>
+<li><a href="#issues">Every flagging issue so far</a></li>
+<li><a href="#solution">The proposed solution</a></li>
+<li><a href="#cases">Does it work on the real cases?</a></li>
+<li><a href="#decisions">Decisions for you</a></li>
+<li><a href="#michael">Questions for Michael</a></li>
+<li><a href="#learn">"Learn normal": later, not now</a></li>
+<li><a href="#sources">Sources and how this was checked</a></li>
+</ol></nav>
+
+<h2 id="cast">1. Who said what, and what the data says</h2>
+<p>Three conversations matter. Michael's own chat on 2026-10-09 (Balboa, then Algalita), a flagging example Michael gave on 2026-10-12, and a customer's first chat on 2026-10-12 (Algalita organization, chat <code>CxB30b9W3FMpRzHDuaDt</code>). All three ran on the live release (rc2, <code>ddd6292</code>), which predates every fix on <code>dev</code>.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Who</th><th>What they said</th><th>What the data shows</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td>Gilligan to Michael, 10-09</td><td>pH, temperature and conductivity swing "on the tide clock"; the pod is exposed at low tide; "pretty much" all error data.</td><td>The swings happen at the same clock hours every day (coldest 05:00-08:00, warmest 14:00-17:00 local): a sun-driven daily cycle, not tides. No tool measures tides. Michael confirmed the pod is always submerged.</td><td><span class="pill bad">Not supported</span></td></tr>
+<tr><td>Gilligan, Michael's flagging example</td><td>Algalita pH "needs immediate attention" because of 3 out-of-range points.</td><td>The only 3-point episode that fits: Oct 7, 02:27-03:27 local, pH 10.94, 10.92, 10.32 against a limit of 10. pH jumped from 7.16 in 30 minutes, ORP moved 1.4 mV, nothing else changed, back to 8.4 by 03:57. (This chat was not read; the match is inferred.)</td><td><span class="pill bad">Not supported</span></td></tr>
+<tr><td>Customer, 10-12</td><td>"Why is there a big drop in pH on Sept 26?"</td><td>Yes. Sep 26 at 17:56 local, pH fell from 7.19 to 2.73 in 30 minutes. Earlier that day, at 10:56, it fell from 11.21 to 6.36.</td><td><span class="pill good">Supported</span></td></tr>
+<tr><td>Gilligan to the customer, Q1</td><td>"Looks more like a sensor problem"; "28 readings physically impossible"; "most likely a pH probe malfunction"; inspect the sensors.</td><td>Its numbers are right, and it is right that only pH moved. But "physically impossible" is this project's own 3-12 cutoff, not physics, the probe reported no fault, and nothing proves a malfunction.</td><td><span class="pill warn">Facts right, conclusion overstated</span></td></tr>
+<tr><td>Gilligan to the customer, Q2</td><td>30-day report: Action Required (pH, ORP, conductivity, DO); "the data quality itself is the biggest concern"; a conductivity dip "looks like instrument problems".</td><td>pH and conductivity have been back in range since Sep 29. Oxygen, ORP, conductivity and temperature followed their normal daily pattern. One conductivity reading of 1,387 µS/cm was not examined here.</td><td><span class="pill bad">Not supported overall</span></td></tr>
+<tr><td>Customer</td><td>Appreciated the skeptical answer.</td><td>Understandable, but it primes her team to distrust the pod before their hand-testing comparisons, which are exactly what can settle the question.</td><td><span class="pill info">Context</span></td></tr>
+<tr><td>Michael</td><td>"I don't think they have bad data... Gilligan didn't have the full picture."</td><td>The record is faithful: no device fault flag, and four sensors behaving normally. The site (an inch or two under the surface, harbor mouth, 100°F+ days) explains the large daily swings. It does not by itself explain 4-5 unit pH jumps with nothing else moving.</td><td><span class="pill warn">Right on how to talk; open on pH 12.9 and 2.7</span></td></tr>
+<tr><td>Me, earlier in this chat</td><td>"A failing pH probe, not water"; "pH rose smoothly to 12.9".</td><td>The first is the same overreach as Gilligan's. The second is wrong: pH jumped (8.12 to 11.83 in 30 minutes). Both are withdrawn.</td><td><span class="pill bad">Corrected</span></td></tr>
+</tbody></table></div>
+<p><b>So who does the data support?</b> Michael, on the rule that matters for the product: Gilligan must not call readings faulty when the device did not.
+The skeptical reading, on the narrow fact that pH moved alone.
+The honest position between them is: <i>report the readings, say plainly what makes them unusual, and suggest a calibration check</i>. A calibration check is routine and leaves the data standing; a "sensor fault" tells the customer to throw it away.</p>
+
+<h2 id="data">2. See the data yourself</h2>
+<p>Raw values from production Firestore (<code>water-data</code>, device <code>dev:351077454569099</code>), read once, read-only. Two nights on the same local clock: <span style="color:var(--s-odd)">the night pH reached 12.9</span> (Sep 25-26) and <span style="color:var(--s-normal)">a normal night</span> (Sep 29-30, readings available from 17:28). Hover a chart for values.</p>
+<div class="legend"><span style="--c:var(--s-odd)">Sep 25-26 (pH reached 12.9)</span><span style="--c:var(--s-normal)">Sep 29-30 (normal)</span></div>
+<div class="charts" id="charts"></div>
+<p><b>What to see:</b> ORP, conductivity, oxygen and temperature trace almost the same shape on both nights. Only pH differs, and it changes in steps, not curves.</p>
+
+<h3>The jumps</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Local time (PDT)</th><th class="num">pH before</th><th class="num">pH after</th><th class="num">Change in 30 min</th><th class="num">ORP change</th><th class="num">Water temp</th></tr></thead>
+<tbody>
+<tr><td>Sep 25, 18:26 to 18:56</td><td class="num">8.12</td><td class="num">11.83</td><td class="num">+3.71</td><td class="num">+0.9 mV</td><td class="num">24 °C, cooling</td></tr>
+<tr><td>Sep 26, 10:26 to 10:56</td><td class="num">11.21</td><td class="num">6.36</td><td class="num">-4.85</td><td class="num">-1.6 mV</td><td class="num">24.5 °C, warming</td></tr>
+<tr><td>Sep 26, 17:26 to 17:56</td><td class="num">7.19</td><td class="num">2.73</td><td class="num">-4.46</td><td class="num">-4.2 mV</td><td class="num">26.5 °C, cooling</td></tr>
+<tr><td>Oct 7, 01:57 to 02:27</td><td class="num">7.16</td><td class="num">10.94</td><td class="num">+3.78</td><td class="num">+1.4 mV</td><td class="num">20.7 °C</td></tr>
+</tbody></table></div>
+<p class="small">v2's rate-of-change guide for marine pH is 0.3 per 10 minutes (0.9 per 30 minutes). <code>phError</code> was 0 on every reading shown. The three Sep 25-26 jumps all happen as the water passes 24-26 °C; worth telling CER, not proof of anything.</p>
+
+<h3>What the numbers can and cannot prove</h3>
+<div class="labels">
+<div class="card"><b>Points to the measurement</b><br>Other channels identical on odd and normal nights; ORP within a few mV while pH moves 4-5 units; pH high one night, low the next; back to normal around Sep 29-30, when the registry's next calibration date (Sep 30) fell.</div>
+<div class="card"><b>Would point to real water</b><br>ORP moving against pH by tens or hundreds of mV; a step in conductivity or oxygen at the same moment; v2's alkaline signature (concrete washout) raises conductivity as well as pH.</div>
+<div class="card"><b>Cannot be shown from data</b><br>Whether the probe was wrong. Only a hand-meter comparison or CER's service record (was the probe recalibrated or swapped around Sep 30?) settles it.</div>
+</div>
+
+<h2 id="pipeline">3. How a reading becomes a sentence</h2>
+<p>Every flagging problem enters at one of five steps. Chat and report share steps 2-4 (<code>src/tools/metricVerdict.ts</code> and <code>src/report/types.ts</code> both call <code>src/report/flagRules.ts</code>), so they cannot disagree.</p>
+<div class="flow">
+<div class="step"><b>1. Device</b><small>Six readings every 30 minutes, with error flags; 1,000,000,000 means a read failure.</small></div><div class="arrow">&rarr;</div>
+<div class="step"><b>2. Quality check</b><small><code>readingQc.ts</code>, <code>plausibility.ts</code>: plausible range, flat lines, spikes.</small><div class="issues">F4, F5, F9</div></div><div class="arrow">&rarr;</div>
+<div class="step"><b>3. Judge against the limit</b><small><code>flagRules.ts</code>: limit + noise cushion, 3 in a row.</small><div class="issues">F1, F2, F10, F11</div></div><div class="arrow">&rarr;</div>
+<div class="step"><b>4. Status and report</b><small><code>types.ts</code>, <code>events.ts</code>: Normal, Watch, Action Required; events.</small><div class="issues">F7, F8, F12</div></div><div class="arrow">&rarr;</div>
+<div class="step"><b>5. Wording</b><small>System prompt, catalogue, tool notes.</small><div class="issues">F3, F6</div></div>
+</div>
+
+<h2 id="issues">4. Every flagging issue so far</h2>
+<p>"Live" is what customers get today (rc2). "dev" is merged but not deployed. "Plan" is the proposal in section 5.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>Issue</th><th>Real example</th><th>Live</th><th>dev</th><th>Plan</th></tr></thead>
+<tbody>
+<tr><td>F1</td><td>One reading flags a metric.</td><td>A single pH of 2.07 or 12.62 set Algalita's report to Action Required (report audit, 2026-09-25).</td><td><span class="pill bad">Yes</span></td><td><span class="pill good">Fixed: 3 in a row</span></td><td>5% of a rolling 24 h, at least 3 readings (Michael #1, #2)</td></tr>
+<tr><td>F2</td><td>A short jump raises an alarm.</td><td>Oct 7: three readings over an hour became "needs immediate attention".</td><td><span class="pill bad">Yes</span></td><td><span class="pill bad">Still flags</span></td><td>v2 rate-of-change marks the jump unusual; 2 of 47 readings is under 5%</td></tr>
+<tr><td>F3</td><td>Real daily cycles called tides or sensor faults.</td><td>Michael, 10-09: a solar pH cycle written off as tide-driven error.</td><td><span class="pill bad">Yes</span></td><td><span class="pill good">Fixed in prompt</span></td><td>Keep (instrument theories 4 of 9 to 0 of 9 in testing)</td></tr>
+<tr><td>F4</td><td>The 3-12 pH cutoff turns unusual readings into "faults" and splits one episode in two.</td><td>Sep 26: 12.08 counted as a fault, 11.87 beside it as real water.</td><td><span class="pill bad">Yes</span></td><td><span class="pill bad">Yes</span></td><td>Outside 3-12 becomes "unusual": shown, labelled, not a fault</td></tr>
+<tr><td>F5</td><td>A data-issue verdict overrides the whole metric for the whole window.</td><td>Sep 24-28: verdict "likely data issue", though the 3-5.9 readings passed every check.</td><td>n/a</td><td><span class="pill bad">Yes</span></td><td>Only device-reported faults make a data issue, scoped to their own readings</td></tr>
+<tr><td>F6</td><td>"Fault" wording for what is only unusual.</td><td>"Most likely a pH probe malfunction"; tool notes say "may be sensor faults".</td><td><span class="pill bad">Yes</span></td><td><span class="pill warn">Partly</span></td><td>Two vocabularies: "device fault" vs "unusual, a calibration check would confirm"</td></tr>
+<tr><td>F7</td><td>Cleared problems still read as urgent.</td><td>The customer's 30-day report said Action Required; pH and conductivity were back in range since Sep 29.</td><td><span class="pill bad">Yes</span></td><td><span class="pill bad">Yes</span></td><td>Flag is current only if the last 24 h meet the rule; past days in past tense (Michael #4)</td></tr>
+<tr><td>F8</td><td>Long reports judge the whole period at once.</td><td>A week with one bad day reads as a bad week.</td><td><span class="pill bad">Yes</span></td><td><span class="pill bad">Yes</span></td><td>Flag individual days (Michael #5)</td></tr>
+<tr><td>F9</td><td>Spikes can count as bad readings.</td><td>Spike-suspect readings are kept and can extend a run.</td><td>n/a</td><td><span class="pill warn">Yes</span></td><td>Unusual readings never count toward a flag</td></tr>
+<tr><td>F10</td><td>Noise cushion and the Action Required step are unsettled.</td><td><code>dev</code> uses v2's minimum detectable change (pH 0.2); your proposal implied 0.4; the 15% Action Required margin has no source.</td><td>n/a</td><td><span class="pill warn">Open</span></td><td>Decision 5 and 6</td></tr>
+<tr><td>F11</td><td>A metric hugging its limit is never mentioned.</td><td>Michael's 10-09 pod: pH about 5.9-6.2 each afternoon against a minimum of 6.</td><td><span class="pill bad">Yes</span></td><td><span class="pill bad">Yes</span></td><td>Edge rule: mention, Watch at most (Michael #6)</td></tr>
+<tr><td>F12</td><td>Report events come from 2-3 hour averages, not the flags.</td><td>An event and a flag can disagree on the same day.</td><td><span class="pill bad">Yes</span></td><td><span class="pill bad">Yes</span></td><td>Events from flagged windows</td></tr>
+<tr><td>F13</td><td>Turbidity stuck at 0 says "inspect".</td><td>Algalita turbidity is 0 all month; the backend also reports a missing sensor as 0.</td><td>Yes</td><td>Yes</td><td>Keep: an approved guard, and device-reported</td></tr>
+<tr><td>F14</td><td>Conductivity may not be corrected to 25 °C.</td><td>v2's seawater range would flag ordinary seawater.</td><td>n/a</td><td>No fallback</td><td>Keep; stakeholder question 24</td></tr>
+<tr><td>F15</td><td>Customer alert emails fire on the latest reading alone.</td><td>An email can alert while chat calls the metric in range.</td><td><span class="pill bad">Yes</span></td><td>Out of scope</td><td>Question for Michael (Michael #7)</td></tr>
+<tr><td>F16</td><td>Fixes on <code>dev</code> are not deployed.</td><td>The customer used the pre-fix release on 10-12.</td><td colspan="3">Every customer sees live behaviour until a new cer-gilligan image is built and routed.</td></tr>
+</tbody></table></div>
+
+<h2 id="solution">5. The proposed solution</h2>
+<p>One idea runs through all of it: <b>report what the water did, say plainly what is unusual, and call something a fault only when the device says so.</b></p>
+<h3>Every reading gets one label</h3>
+<div class="labels">
+<div class="card"><span class="pill good">Normal</span><p>Inside the limit, or beyond it by no more than the noise cushion.</p></div>
+<div class="card"><span class="pill warn">Out of range</span><p>Beyond the limit by more than the cushion. The only label that counts toward a flag.</p></div>
+<div class="card"><span class="pill info">Unusual</span><p>A spike (3 x MAD), a jump faster than v2's rate-of-change guide, or pH outside 3-12. Shown and described; never counts toward a flag; never called a fault. Wording: "very unusual for seawater; a calibration check would confirm."</p></div>
+<div class="card"><span class="pill bad">Device fault</span><p>The device said so: an error flag, a read failure, a reading at exactly 0 or 14, a flat line, stuck turbidity, every channel failing at once. Left out; "sensor fault" and "inspect" are allowed here and only here.</p></div>
+</div>
+<h3>When a metric is flagged</h3>
+<ol>
+<li><b>Share rule</b> (Michael #1, #2): out-of-range readings reach 5% of the kept readings in some rolling 24 hours, and number at least 3. At 48 readings a day that is 3; the minimum of 3 stops a sparse window (1 of 10) from flagging. The run-of-3 stops being the trigger.</li>
+<li><b>Per day</b> (Michael #5): a report or a multi-day answer names the days with a flag, not the whole period.</li>
+<li><b>Current or past</b> (Michael #4): a flag is current only if the latest 24 hours meet the rule. A past flag is told in past tense, with no "urgent" or "action required".</li>
+<li><b>Action Required</b>: only for a current flag beyond the limit by more than 15% of the range (or the cushion, if larger).</li>
+<li><b>Edge rule</b> (Michael #6): a metric within one cushion of its limit for at least 2 hours on at least half the days of the period is mentioned ("sat at the low edge of its range most afternoons") and lifts the report to Watch at most. A share of a single 24 hours would miss a daily dip that lasts a few hours, which is exactly Michael's pod.</li>
+</ol>
+<h3>Everything else</h3>
+<ul>
+<li>A data issue comes only from device faults (3 or more in a row) and covers only those readings, so it can no longer hide out-of-range readings beside it.</li>
+<li>Report events come from the flagged 24-hour windows, so an event and a flag never disagree.</li>
+<li>Chat and report keep one shared rule file, as today.</li>
+<li>Not touched: alert emails (Michael's open question), conductivity fallbacks (question 24), site baselines (section 9).</li>
+</ul>
+
+<h2 id="cases">6. Does it work on the real cases?</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Case</th><th>Live today</th><th>dev</th><th>Proposed</th><th>Michael's rules</th></tr></thead>
+<tbody>
+<tr><td>Oct 7: 3 readings near 10.9 for an hour</td><td>"Needs immediate attention"</td><td>Out of range (high)</td><td>10.94 is a jump, so unusual; 2 of 47 readings out of range is under 5%. Silent in summaries; if asked, described as a brief, unusual jump.</td><td><span class="pill good">Pass</span></td></tr>
+<tr><td>Sep 25-26: pH 11.2-12.9 for about 16 hours</td><td>"Sensor problem", "probe malfunction"</td><td>"Likely data issue", inspect</td><td>About a dozen readings of 11.2-11.9 are out of range, so Sep 26 is flagged. The jumps and the readings above 12 are described as unusual, with a calibration check suggested. No "fault".</td><td><span class="pill good">Pass</span></td></tr>
+<tr><td>Sep 26 evening drop to 2.7, then 3-5.9 for days</td><td>"Erratic", part of the fault</td><td>Hidden under "likely data issue"</td><td>The drop to 2.73 and the next reading are jumps, so unusual; the 3-5.8 readings that follow are out of range, so Sep 27-29 are flagged.</td><td><span class="pill good">Pass</span></td></tr>
+<tr><td>The customer's 30-day report (Sep 13 to Oct 12)</td><td>Action Required: pH, ORP, conductivity, DO</td><td>Action Required: pH, conductivity</td><td>Flags on Sep 24-29, told in past tense; no Action Required, because nothing is flagged in the last 24 hours.</td><td><span class="pill good">Pass</span></td></tr>
+<tr><td>Michael's 10-09 pod: afternoon pH 5.9-6.2 against a minimum of 6</td><td>Tide-driven sensor error</td><td>No fault theory (prompt fix)</td><td>Never past the cushion for long (one reading of 5.74 on Oct 4), so never flagged. The edge rule mentions the afternoon lows and sets Watch at most, if "extended" means a few hours on most days (decision 7).</td><td><span class="pill warn">Depends on decision 7</span></td></tr>
+<tr><td>A lone read failure (1,000,000,000)</td><td>Left out</td><td>Left out, counted</td><td>Unchanged: a device fault, left out and counted.</td><td><span class="pill good">Pass</span></td></tr>
+</tbody></table></div>
+<p class="small">Proposed-column outcomes are worked by hand from the readings above; they become unit tests and the manual test list once built. Which of the customer's exact sentences disappear needs the paid replay (decision 10).</p>
+
+<h2 id="decisions">7. Decisions for you</h2>
+<ol>
+<li><b>Readings outside pH 3-12</b>: label them unusual and keep showing them (recommended), remove the cutoff so they count as out of range, or keep calling them faults (today). Reverses the approved "pH 2.07 stays implausible" guard either way.</li>
+<li><b>Add v2's rate-of-change test</b> (recommended): pH 0.3 per 10 minutes, scaled to the gap between readings, for marine and brackish pods; temperature 2 °C per 10 minutes. Freshwater pH gets no rate test, because v2 gives none.</li>
+<li><b>Unusual readings never count toward a flag</b> (recommended), the same as the spikes Michael agreed to ignore.</li>
+<li><b>Share rule</b>: 5% of a rolling 24 hours and at least 3 readings (recommended); run-of-3 retired as the trigger.</li>
+<li><b>Noise cushion</b>: v2's minimum detectable change, pH 0.2 (recommended), or 2 x the upper accuracy, pH 0.4.</li>
+<li><b>Action Required</b>: current flags only, beyond 15% of the range (recommended); the 15% is this project's number, not a source's.</li>
+<li><b>Edge rule</b>: what "extended" means. Recommended: within one cushion of the limit for at least 2 hours on at least half the days, mentioned plus Watch at most. Half of a single 24 hours would miss Michael's afternoon dips.</li>
+<li><b>Data issues</b>: device faults only, scoped to their own readings (recommended).</li>
+<li><b>Report events</b> from flagged windows (recommended, your earlier lean).</li>
+<li><b>Paid replay</b>: the customer's two questions, 3 runs on <code>dev</code> now and 3 on this branch after the fix, about $0.30.</li>
+</ol>
+
+<h2 id="michael">8. Questions for Michael</h2>
+<p>Updated 2026-10-14 with the real month (Sep 12 to Oct 13). Each question shows how the rules as built label the readings behind it, so Michael can mark each row "agree" or "I would label it X".
+Labels as in <a href="#solution">section 5</a>: <span class="pill good">Normal</span> <span class="pill warn">Out of range</span> (the only label that counts) <span class="pill info">Unusual</span> (kept, shown, never counted) <span class="pill bad">Device fault</span> (left out).
+A flag needs at least 3 out-of-range readings making up 5% of a rolling 24 hours; the Algalita pH limits are 6-10.</p>
+
+<h3>1. Was the probe serviced around Sep 29-30 or Oct 7, and could pH really reach 12.9 or 2.7?</h3>
+<p><b>Why we ask:</b> the odd days end around Sep 29-30, when the registry's next calibration date fell, and ORP, oxygen and conductivity barely moved while pH swung 4-5 units. If the probe was handled, these readings are artifacts, not water.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Readings</th><th>Our label</th><th>What Gilligan does</th></tr></thead>
+<tbody>
+<tr><td>Sep 25-26: 20 readings from 2.73 to 12.91</td><td><span class="pill info">Unusual</span> outside 3-12, or a jump</td><td>Kept and mentioned: "very unusual for this water; a calibration check would confirm". Never a fault, never counted.</td></tr>
+<tr><td>Sep 26: 12 readings at 11.2-11.9</td><td><span class="pill warn">Out of range</span> high</td><td>pH flagged high on Sep 26, told as past and cleared.</td></tr>
+<tr><td>Sep 27-29: readings of 3-5.8</td><td><span class="pill warn">Out of range</span> low</td><td>pH flagged low Sep 27-29, cleared.</td></tr>
+<tr><td>Sep 27 late morning: three readings at 2.22-2.47</td><td><span class="pill info">Unusual</span> below 3</td><td>A separate unusual stretch, mentioned.</td></tr>
+<tr><td>Oct 7 about 02:30: 10.94, 10.92, 10.32</td><td>10.94 <span class="pill info">Unusual</span> (faster than 0.3 per 10 minutes); the other two <span class="pill warn">Out of range</span></td><td>Two readings are under the minimum of 3: not flagged, mentioned only if asked.</td></tr>
+</tbody></table></div>
+<p><b>If he says yes:</b> those readings should become <span class="pill bad">Device fault</span> (a service window left out), and the Sep 26 and Sep 27-29 flags disappear. If pH cannot reach 12.9 or 2.7 in that bay, the 3-12 "unusual" band may belong in "device fault" instead.</p>
+
+<h3>2. Is "very unusual; a calibration check would confirm" acceptable wording for customers?</h3>
+<p><b>Why we ask:</b> it is the only sentence Gilligan uses for every unusual reading or stretch above; "sensor fault" and "inspect" are kept for device faults. It replaced "probe malfunction" and "likely data issue", which customers read as "your data is wrong".</p>
+<p><b>If he says no:</b> one sentence changes in the prompt and the report; no label moves.</p>
+
+<h3>3. Is 15% of the range the right margin for Action Required?</h3>
+<p><b>Why we ask:</b> the number is ours, not from a source. A flag reaches Action Required only if it is still active and beyond the limit by more than 15% of the range; on the 6-10 range that is above 10.6 or below 5.4. Anything less is Watch.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Case</th><th>Result today</th></tr></thead>
+<tbody>
+<tr><td>The customer's 30-day report</td><td>Watch: every flag had cleared (before the rework: Action Required).</td></tr>
+<tr><td>A current flag at 10.4 on a 6-10 pod</td><td>Watch: past the 0.2 cushion, not past 0.6.</td></tr>
+<tr><td>A current flag at 10.7</td><td>Action Required.</td></tr>
+</tbody></table></div>
+
+<h3>4. Should the customer alert emails follow the same 5% rule?</h3>
+<p><b>Why we ask:</b> chat and reports now use the share rule, but the alert emails still run on the server's old logic, so an email can fire on readings the report does not flag (Oct 7 is one). This would be a change to the upstream server, not to Gilligan.</p>
+
+<h3>5. Oct 3-8 afternoons: are the dips to about 6.0 real water, given the board failures at the same time?</h3>
+<p><b>Why we ask:</b> on the same afternoons, every probe reported an error at once (17 readings). If the dips are electrical too, telling the customer the pH "sat at the low edge" is misleading.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Readings</th><th>Our label</th><th>What Gilligan does</th></tr></thead>
+<tbody>
+<tr><td>Afternoon pH about 5.8-6.2 on 6 of 7 days</td><td><span class="pill good">Normal</span> (within the 0.2 cushion), but the edge rule applies</td><td>"At the low edge of its healthy range", Watch at most, no flag.</td></tr>
+<tr><td>17 readings with every channel failing (Sep 15, Oct 3-8)</td><td><span class="pill bad">Device fault</span></td><td>Left out. Three in a row on Oct 8 (15:22-16:37 PDT) give "likely data issue, inspect" for every sensor.</td></tr>
+</tbody></table></div>
+<p><b>If the dips are electrical:</b> the edge mention should be dropped for those afternoons, or the readings near a board failure treated as suspect.</p>
+
+<h3>6. Sep 24 afternoon: was the pod out of the water?</h3>
+<p><b>Why we ask:</b> pH read exactly 0 and conductivity fell from about 54,000 to 1,387 µS/cm (the limit is 40,000) within about two hours. That is what a pod lifted into the air looks like, but Gilligan reports it as low conductivity.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Time (PDT)</th><th>Readings</th><th>Our label</th></tr></thead>
+<tbody>
+<tr><td>15:46</td><td>pH 0</td><td><span class="pill bad">Device fault</span> (probe rail), left out</td></tr>
+<tr><td>15:46</td><td>Conductivity about 177,000</td><td>Most likely <span class="pill info">Unusual</span> (a spike between its neighbours); not run separately to confirm</td></tr>
+<tr><td>16:33 to about 17:30</td><td>Conductivity about 7,600, 5,000, then down to 1,387</td><td><span class="pill warn">Out of range</span> low</td></tr>
+<tr><td>Result</td><td colspan="2">Conductivity flagged low Sep 24-25, so the 30-day report flags pH and conductivity.</td></tr>
+</tbody></table></div>
+<p class="small">The dashboard CSV export gives times in UTC, so these readings appear there as 22:46-23:50 on 09/24 and just after midnight on 09/25. The export matched the device API's readings where checked (23:33 and 23:50 UTC) and is not cleaned: the pH 0 and the 177,000 are in it.</p>
+<p><b>If he says yes:</b> readings while the pod is out of the water should be <span class="pill bad">Device fault</span>, which needs a new detection rule (for example a pH rail next to a conductivity collapse) and removes the Sep 24-25 conductivity flag.</p>
+
+<div class="card"><b>Most likely to change.</b> Questions 1, 5 and 6 each ask whether something treated as water is really the device; a yes moves those readings to "device fault". Questions 2-4 are tuning: a sentence, a margin, and the emails.
+Each rule's code is listed in the handoff, <code>FLAGGING_REWORK_HANDOFF_2026-10-13.md</code>, "Where each rule lives".
+Not asked here: whether pods report conductivity corrected to 25 °C (stakeholder question 24, still open).</div>
+
+<h2 id="learn">9. "Learn normal": later, not now</h2>
+<p>Michael asked whether Gilligan could learn what is normal as data accumulates. It can, with plain statistics rather than model training: for each pod, the typical value and spread at each hour of the day over its own last 2-4 weeks (v2 §4 and §9.1).</p>
+<ul>
+<li><b>Gains:</b> "unusual for this site at this hour" instead of generic ranges; a better spike test than today's whole-series MAD; v2's climatology test becomes possible.</li>
+<li><b>Risks:</b> a baseline learned from a bad stretch makes that stretch look normal; new pods have no history; moved pods (Algalita moved in August) need history cut at the move; it changes what "unusual" means everywhere, so it needs its own evaluation.</li>
+<li><b>Where:</b> <code>POST_LAUNCH_BACKLOG.md</code>, after this flagging work.</li>
+</ul>
+
+<h2 id="sources">10. Sources and how this was checked</h2>
+<ul>
+<li>Readings: production Firestore <code>water-data</code>, one read-only run by you (about 6,000 document reads); the device API, read-only, by the agent (no model). Spend: $0 on models.</li>
+<li>Chats: <code>chats/jg0HyEPyFZbw4FVB3s29</code> (Michael, 10-09, record in <code>GILLIGAN_DATA_SKEPTICISM_2026-10-09.md</code>) and <code>chats/CxB30b9W3FMpRzHDuaDt</code> (customer, 10-12, read once by you, read-only). Michael's flagging-example chat was not read.</li>
+<li>Code: <code>src/report/flagRules.ts</code>, <code>src/devices/readingQc.ts</code>, <code>src/devices/plausibility.ts</code> (3-12 cutoff, commit <code>bc097e1</code>, 2026-09-27), <code>src/tools/metricVerdict.ts</code>, <code>src/report/types.ts</code>, <code>src/report/events.ts</code>.</li>
+<li>Rules: source-of-truth v2 §8.2 (QC tests, rate of change), §8.3 (minimum detectable change), §9.1-9.2 (persistence, confidence language); Michael's decisions of 2026-10-12.</li>
+<li>Earlier records: <code>DATA_SKEPTICISM_FIX_2026-10-12.md</code>, <code>V2_FLAGGING_SMOKE_2026-10-11.md</code>, <code>REPORT_AUDIT_2026-09-25.md</code> finding 5.</li>
+</ul>
+<details><summary>Data table for the charts</summary><div class="table-wrap" id="datatable"></div></details>
+</main>
+<div class="tip" id="tip"></div>
+<script>
+const DATA = {"high": [{"x": 11.433, "t": "Sep 25 11:26 PDT", "v": [7.82, 234.85, 62645.0, 10.07, 24.89]}, {"x": 11.933, "t": "Sep 25 11:56 PDT", "v": [7.76, 231.35, 61685.0, 9.7, 26.03]}, {"x": 12.433, "t": "Sep 25 12:26 PDT", "v": [7.71, 234.0, 60445.0, 9.97, 27.03]}, {"x": 12.933, "t": "Sep 25 12:56 PDT", "v": [7.65, 228.3, 59755.0, 9.45, 27.89]}, {"x": 13.433, "t": "Sep 25 13:26 PDT", "v": [7.61, 226.25, 59430.0, 9.73, 28.43]}, {"x": 13.933, "t": "Sep 25 13:56 PDT", "v": [7.57, 227.2, 58825.0, 9.64, 28.87]}, {"x": 14.433, "t": "Sep 25 14:26 PDT", "v": [7.55, 224.75, 58700.0, 9.44, 29.01]}, {"x": 14.933, "t": "Sep 25 14:56 PDT", "v": [7.55, 221.95, 59120.0, 8.68, 29.02]}, {"x": 15.433, "t": "Sep 25 15:26 PDT", "v": [7.54, 222.65, 59110.0, 8.61, 29.01]}, {"x": 15.933, "t": "Sep 25 15:56 PDT", "v": [7.53, 220.85, 59185.0, 8.41, 28.84]}, {"x": 16.433, "t": "Sep 25 16:26 PDT", "v": [7.52, 225.85, 59575.0, 9.11, 28.7]}, {"x": 16.933, "t": "Sep 25 16:56 PDT", "v": [7.51, 226.25, 59895.0, 8.98, 28.19]}, {"x": 17.433, "t": "Sep 25 17:26 PDT", "v": [7.54, 228.8, 60995.0, 8.98, 27.11]}, {"x": 17.933, "t": "Sep 25 17:56 PDT", "v": [7.59, 227.8, 62380.0, 9.03, 25.93]}, {"x": 18.433, "t": "Sep 25 18:26 PDT", "v": [8.12, 232.6, 63690.0, 8.9, 24.91]}, {"x": 18.933, "t": "Sep 25 18:56 PDT", "v": [11.83, 233.5, 64805.0, 9.16, 24.04]}, {"x": 19.433, "t": "Sep 25 19:26 PDT", "v": [12.19, 234.55, 65695.0, 9.35, 23.23]}, {"x": 19.933, "t": "Sep 25 19:56 PDT", "v": [12.45, 233.75, 66640.0, 9.41, 22.57]}, {"x": 20.433, "t": "Sep 25 20:26 PDT", "v": [12.55, 235.65, 67275.0, 9.26, 21.97]}, {"x": 20.933, "t": "Sep 25 20:56 PDT", "v": [12.71, 237.7, 67975.0, 9.86, 21.45]}, {"x": 21.433, "t": "Sep 25 21:26 PDT", "v": [12.71, 237.65, 68930.0, 8.94, 21.02]}, {"x": 21.933, "t": "Sep 25 21:56 PDT", "v": [12.86, 238.1, 69100.0, 9.32, 20.69]}, {"x": 22.433, "t": "Sep 25 22:26 PDT", "v": [12.82, 239.55, 69715.0, 9.09, 20.33]}, {"x": 22.933, "t": "Sep 25 22:56 PDT", "v": [12.89, 239.85, 69995.0, 9.68, 20.12]}, {"x": 23.433, "t": "Sep 25 23:26 PDT", "v": [12.91, 241.05, 70315.0, 9.05, 19.94]}, {"x": 23.933, "t": "Sep 25 23:56 PDT", "v": [12.72, 238.35, 70515.0, 9.11, 19.9]}, {"x": 24.433, "t": "Sep 26 00:26 PDT", "v": [12.59, 237.3, 70890.0, 9.41, 19.87]}, {"x": 24.933, "t": "Sep 26 00:56 PDT", "v": [12.68, 237.55, 70935.0, 10.24, 19.9]}, {"x": 25.433, "t": "Sep 26 01:26 PDT", "v": [12.45, 238.4, 71150.0, 10.68, 19.86]}, {"x": 25.933, "t": "Sep 26 01:56 PDT", "v": [12.35, 238.7, 71105.0, 8.86, 19.89]}, {"x": 26.433, "t": "Sep 26 02:26 PDT", "v": [12.36, 237.75, 70690.0, 9.82, 19.88]}, {"x": 26.933, "t": "Sep 26 02:56 PDT", "v": [12.25, 237.8, 70495.0, 8.46, 19.83]}, {"x": 27.433, "t": "Sep 26 03:26 PDT", "v": [12.25, 235.9, 70955.0, 8.53, 19.76]}, {"x": 27.933, "t": "Sep 26 03:56 PDT", "v": [12.08, 237.55, 71005.0, 7.97, 19.68]}, {"x": 28.433, "t": "Sep 26 04:26 PDT", "v": [11.87, 237.8, 70900.0, 8.49, 19.73]}, {"x": 28.933, "t": "Sep 26 04:56 PDT", "v": [11.85, 236.45, 70780.0, 7.89, 19.8]}, {"x": 29.433, "t": "Sep 26 05:26 PDT", "v": [11.8, 237.6, 70725.0, 9.28, 19.9]}, {"x": 29.933, "t": "Sep 26 05:56 PDT", "v": [11.87, 237.0, 70550.0, 8.59, 19.85]}, {"x": 30.433, "t": "Sep 26 06:26 PDT", "v": [11.85, 238.25, 70765.0, 7.86, 19.72]}, {"x": 30.933, "t": "Sep 26 06:56 PDT", "v": [11.76, 237.85, 70745.0, 9.02, 19.58]}, {"x": 31.433, "t": "Sep 26 07:26 PDT", "v": [11.61, 237.05, 70520.0, 8.05, 19.46]}, {"x": 31.933, "t": "Sep 26 07:56 PDT", "v": [11.63, 237.15, 70350.0, 8.1, 19.43]}, {"x": 32.433, "t": "Sep 26 08:26 PDT", "v": [11.49, 238.7, 69495.0, 8.28, 19.59]}, {"x": 32.933, "t": "Sep 26 08:56 PDT", "v": [12.48, 236.35, 69095.0, 8.3, 20.03]}, {"x": 33.433, "t": "Sep 26 09:26 PDT", "v": [11.92, 232.8, 67570.0, 8.19, 21.07]}, {"x": 33.933, "t": "Sep 26 09:56 PDT", "v": [11.48, 232.25, 66095.0, 8.35, 22.22]}, {"x": 34.433, "t": "Sep 26 10:26 PDT", "v": [11.21, 226.7, 64600.0, 8.41, 23.1]}, {"x": 34.933, "t": "Sep 26 10:56 PDT", "v": [6.36, 225.1, 62830.0, 8.5, 24.51]}, {"x": 35.433, "t": "Sep 26 11:26 PDT", "v": [6.53, 226.3, 61000.0, 7.88, 25.93]}, {"x": 35.933, "t": "Sep 26 11:56 PDT", "v": [7.46, 226.0, 59985.0, 8.64, 26.88]}, {"x": 36.433, "t": "Sep 26 12:26 PDT", "v": [7.01, 225.0, 59550.0, 8.22, 27.71]}, {"x": 36.933, "t": "Sep 26 12:56 PDT", "v": [7.35, 221.75, 59000.0, 8.27, 28.42]}, {"x": 37.433, "t": "Sep 26 13:26 PDT", "v": [7.24, 219.7, 58310.0, 8.44, 29.17]}, {"x": 37.933, "t": "Sep 26 13:56 PDT", "v": [7.25, 224.6, 58540.0, 8.32, 29.57]}, {"x": 38.433, "t": "Sep 26 14:26 PDT", "v": [7.15, 221.6, 58460.0, 8.6, 29.78]}, {"x": 38.933, "t": "Sep 26 14:56 PDT", "v": [7.09, 224.25, 58305.0, 7.94, 29.91]}, {"x": 39.433, "t": "Sep 26 15:26 PDT", "v": [7.18, 218.4, 58590.0, 8.6, 29.79]}, {"x": 39.933, "t": "Sep 26 15:56 PDT", "v": [6.78, 218.8, 58770.0, 8.4, 29.53]}, {"x": 40.433, "t": "Sep 26 16:26 PDT", "v": [7.16, 218.25, 58840.0, 8.82, 29.39]}, {"x": 40.933, "t": "Sep 26 16:56 PDT", "v": [7.12, 220.3, 59190.0, 8.59, 28.67]}, {"x": 41.433, "t": "Sep 26 17:26 PDT", "v": [7.19, 226.3, 60490.0, 8.9, 27.6]}, {"x": 41.933, "t": "Sep 26 17:56 PDT", "v": [2.73, 222.15, 61690.0, 8.6, 26.52]}, {"x": 42.433, "t": "Sep 26 18:26 PDT", "v": [4.26, 221.9, 62845.0, 9.4, 25.58]}, {"x": 42.933, "t": "Sep 26 18:56 PDT", "v": [5.07, 218.55, 63815.0, 9.07, 24.74]}], "normal": [{"x": 17.467, "t": "Sep 29 17:28 PDT", "v": [6.91, 223.0, 61265.0, 8.82, 26.59]}, {"x": 17.967, "t": "Sep 29 17:58 PDT", "v": [6.93, 222.6, 62935.0, 8.82, 25.43]}, {"x": 18.467, "t": "Sep 29 18:28 PDT", "v": [7.08, 224.35, 64035.0, 9.36, 24.45]}, {"x": 18.967, "t": "Sep 29 18:58 PDT", "v": [6.93, 226.5, 65175.0, 9.56, 23.57]}, {"x": 19.467, "t": "Sep 29 19:28 PDT", "v": [6.96, 227.1, 66155.0, 8.69, 22.8]}, {"x": 19.967, "t": "Sep 29 19:58 PDT", "v": [7.09, 227.6, 66745.0, 8.93, 22.19]}, {"x": 20.467, "t": "Sep 29 20:28 PDT", "v": [7.19, 227.0, 67460.0, 8.63, 21.73]}, {"x": 20.967, "t": "Sep 29 20:58 PDT", "v": [7.31, 227.15, 67900.0, 8.68, 21.3]}, {"x": 21.467, "t": "Sep 29 21:28 PDT", "v": [7.33, 227.8, 68475.0, 8.3, 20.98]}, {"x": 21.967, "t": "Sep 29 21:58 PDT", "v": [7.26, 228.85, 68840.0, 8.77, 20.7]}, {"x": 22.467, "t": "Sep 29 22:28 PDT", "v": [7.37, 231.1, 68675.0, 8.97, 20.48]}, {"x": 22.967, "t": "Sep 29 22:58 PDT", "v": [7.37, 231.2, 69145.0, 9.24, 20.3]}, {"x": 23.467, "t": "Sep 29 23:28 PDT", "v": [7.35, 231.05, 68845.0, 9.72, 20.2]}, {"x": 23.967, "t": "Sep 29 23:58 PDT", "v": [7.39, 231.65, 69340.0, 10.02, 20.06]}, {"x": 24.467, "t": "Sep 30 00:28 PDT", "v": [7.36, 232.7, 69415.0, 8.77, 19.81]}, {"x": 24.967, "t": "Sep 30 00:58 PDT", "v": [7.4, 231.45, 69940.0, 8.61, 19.63]}, {"x": 25.467, "t": "Sep 30 01:28 PDT", "v": [7.43, 232.6, 70540.0, 9.16, 19.42]}, {"x": 25.967, "t": "Sep 30 01:58 PDT", "v": [7.4, 232.3, 70590.0, 8.97, 19.3]}, {"x": 26.467, "t": "Sep 30 02:28 PDT", "v": [7.46, 230.9, 70830.0, 8.66, 19.22]}, {"x": 26.967, "t": "Sep 30 02:58 PDT", "v": [7.46, 234.0, 70835.0, 8.78, 19.12]}, {"x": 27.467, "t": "Sep 30 03:28 PDT", "v": [7.48, 233.4, 71055.0, 8.44, 19.06]}, {"x": 27.967, "t": "Sep 30 03:58 PDT", "v": [7.44, 233.05, 70950.0, 8.21, 18.98]}, {"x": 28.467, "t": "Sep 30 04:28 PDT", "v": [7.46, 230.85, 71525.0, 8.88, 18.94]}, {"x": 28.967, "t": "Sep 30 04:58 PDT", "v": [7.45, 230.3, 70740.0, 8.24, 18.95]}, {"x": 29.467, "t": "Sep 30 05:28 PDT", "v": [7.46, 229.85, 70860.0, 8.15, 18.97]}, {"x": 29.967, "t": "Sep 30 05:58 PDT", "v": [7.47, 228.75, 70625.0, 7.94, 18.98]}, {"x": 30.467, "t": "Sep 30 06:28 PDT", "v": [7.49, 230.35, 71095.0, 8.04, 18.93]}, {"x": 30.967, "t": "Sep 30 06:58 PDT", "v": [7.5, 228.9, 71190.0, 7.97, 18.88]}, {"x": 31.467, "t": "Sep 30 07:28 PDT", "v": [7.5, 228.9, 71035.0, 8.04, 18.88]}, {"x": 31.967, "t": "Sep 30 07:58 PDT", "v": [7.51, 229.8, 70720.0, 8.6, 18.88]}, {"x": 32.467, "t": "Sep 30 08:28 PDT", "v": [7.49, 229.65, 70285.0, 8.72, 19.07]}, {"x": 32.967, "t": "Sep 30 08:58 PDT", "v": [7.49, 227.5, 69780.0, 9.57, 19.39]}, {"x": 33.467, "t": "Sep 30 09:28 PDT", "v": [7.46, 227.4, 68370.0, 9.1, 20.1]}, {"x": 33.967, "t": "Sep 30 09:58 PDT", "v": [7.4, 225.7, 66925.0, 9.5, 21.2]}, {"x": 34.467, "t": "Sep 30 10:28 PDT", "v": [7.3, 224.25, 65180.0, 9.85, 22.52]}, {"x": 34.967, "t": "Sep 30 10:58 PDT", "v": [7.21, 224.05, 63740.0, 9.48, 23.62]}], "jump": [{"t": "Oct 7 01:27 PDT", "v": [7.16, 243.15, 66590.0, 7.06, 21.03, 0.0]}, {"t": "Oct 7 01:57 PDT", "v": [7.16, 245.15, 67050.0, 6.74, 20.86, 0.0]}, {"t": "Oct 7 02:27 PDT", "v": [10.94, 246.55, 67005.0, 6.74, 20.73, 0.0]}, {"t": "Oct 7 02:57 PDT", "v": [10.92, 247.9, 66625.0, 6.64, 20.65, 0.0]}, {"t": "Oct 7 03:27 PDT", "v": [10.32, 248.95, 66930.0, 7.21, 20.57, 0.0]}, {"t": "Oct 7 03:57 PDT", "v": [8.41, 250.9, 67205.0, 7.28, 20.49, 0.0]}]};
+const METRICS = [
+  { i: 0, name: "pH", unit: "", note: "Dashed: Algalita's limits 6 and 10. Dotted: the 3-12 cutoff.", refs: [[6, "dash"], [10, "dash"], [12, "dot"], [3, "dot"]], fix: 2 },
+  { i: 1, name: "ORP", unit: " mV", note: "A real pH swing of 4-5 units would usually move this by tens to hundreds of mV.", refs: [], fix: 1 },
+  { i: 2, name: "Conductivity", unit: " µS/cm", note: "Rises at night, falls by day, on both nights.", refs: [], fix: 0 },
+  { i: 3, name: "Dissolved oxygen", unit: " mg/L", note: "Same range on both nights.", refs: [], fix: 2 },
+  { i: 4, name: "Temperature", unit: " °C", note: "Raw Firestore value, in °C.", refs: [], fix: 2 },
+];
+const X0 = 11, X1 = 43;
+const clock = (h) => `${String(((Math.floor(h) % 24) + 24) % 24).padStart(2, "0")}:00`;
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); if (parent) parent.appendChild(e); return e; };
+const tip = document.getElementById("tip");
+
+function draw() {
+  const root = document.getElementById("charts");
+  root.innerHTML = "";
+  METRICS.forEach((m) => {
+    const box = document.createElement("div"); box.className = "chart";
+    box.innerHTML = `<h4>${m.name}${m.unit ? ` (${m.unit.trim()})` : ""}</h4><p class="note">${m.note}</p>`;
+    root.appendChild(box);
+    const W = 340, H = 170, L = 46, R = 8, T = 8, B = 24;
+    const vals = [...DATA.high, ...DATA.normal].map((p) => p.v[m.i]).concat(m.refs.map((r) => r[0]));
+    let lo = Math.min(...vals), hi = Math.max(...vals); const pad = (hi - lo) * 0.06 || 1; lo -= pad; hi += pad;
+    const sx = (x) => L + (x - X0) / (X1 - X0) * (W - L - R);
+    const sy = (y) => T + (hi - y) / (hi - lo) * (H - T - B);
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${m.name}, two nights compared` }, box);
+    for (let k = 0; k <= 4; k += 1) {
+      const y = lo + (hi - lo) * k / 4;
+      el("line", { x1: L, x2: W - R, y1: sy(y), y2: sy(y), stroke: css("--grid"), "stroke-width": 1 }, svg);
+      const t = el("text", { x: L - 6, y: sy(y) + 4, "text-anchor": "end", "font-size": 10, fill: css("--muted") }, svg);
+      t.textContent = Math.abs(hi - lo) > 1000 ? `${Math.round(y / 1000)}k` : (Math.abs(hi - lo) > 20 ? Math.round(y) : y.toFixed(1));
+    }
+    [12, 18, 24, 30, 36, 42].forEach((h) => {
+      const t = el("text", { x: sx(h), y: H - 6, "text-anchor": "middle", "font-size": 10, fill: css("--muted") }, svg);
+      t.textContent = clock(h);
+    });
+    m.refs.forEach(([y, kind]) => el("line", { x1: L, x2: W - R, y1: sy(y), y2: sy(y), stroke: css("--muted"), "stroke-width": 1, "stroke-dasharray": kind === "dash" ? "5 4" : "1.5 3" }, svg));
+    const line = (pts, color) => el("polyline", { points: pts.map((p) => `${sx(p.x).toFixed(1)},${sy(p.v[m.i]).toFixed(1)}`).join(" "), fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    line(DATA.normal, css("--s-normal"));
+    line(DATA.high, css("--s-odd"));
+    const cross = el("line", { y1: T, y2: H - B, stroke: css("--axis"), "stroke-width": 1, visibility: "hidden" }, svg);
+    const hit = el("rect", { x: L, y: T, width: W - L - R, height: H - T - B, fill: "transparent" }, svg);
+    const nearest = (pts, x) => pts.reduce((b, p) => (Math.abs(p.x - x) < Math.abs(b.x - x) ? p : b), pts[0]);
+    hit.addEventListener("mousemove", (ev) => {
+      const r = svg.getBoundingClientRect();
+      const x = X0 + ((ev.clientX - r.left) / r.width * W - L) / (W - L - R) * (X1 - X0);
+      const a = nearest(DATA.high, x); const b = nearest(DATA.normal, x);
+      cross.setAttribute("x1", sx(x)); cross.setAttribute("x2", sx(x)); cross.setAttribute("visibility", "visible");
+      const row = (p, c) => (Math.abs(p.x - x) < 0.6 ? `<div><i style="background:${c}"></i>${p.t}: <b>${p.v[m.i].toFixed(m.fix)}${m.unit}</b></div>` : "");
+      tip.innerHTML = row(a, css("--s-odd")) + row(b, css("--s-normal")) || "No reading";
+      tip.style.display = "block";
+      tip.style.left = `${Math.min(ev.pageX + 12, window.scrollX + document.documentElement.clientWidth - tip.offsetWidth - 8)}px`;
+      tip.style.top = `${ev.pageY + 12}px`;
+    });
+    hit.addEventListener("mouseleave", () => { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); });
+  });
+}
+
+function table() {
+  const rows = [["Sep 25-26", DATA.high], ["Sep 29-30", DATA.normal]].flatMap(([n, pts]) => pts.map((p) => `<tr><td>${n}</td><td>${p.t}</td>${p.v.map((v) => `<td class="num">${v}</td>`).join("")}</tr>`));
+  document.getElementById("datatable").innerHTML = `<table><thead><tr><th>Night</th><th>Time</th><th class="num">pH</th><th class="num">ORP</th><th class="num">Cond.</th><th class="num">DO</th><th class="num">Temp °C</th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
+}
+
+document.getElementById("theme").addEventListener("click", () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark"
+    || (!document.documentElement.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  draw();
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+draw(); table();
+</script>
+</body>
+</html>

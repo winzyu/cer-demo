@@ -195,8 +195,10 @@ describe("GenerateReport.run", () => {
   });
 
   describe("the reason behind the status", () => {
-    const oxygenPeriod = (values: number[]): Array<Record<string, unknown>> => (
+    /** 60 days of hourly readings; `values` set the first oxygen readings, or the last ones. */
+    const oxygenPeriod = (values: number[], atEnd = false): Array<Record<string, unknown>> => (
       Array.from({ length: 60 * 24 }, (_, i) => {
+        const at = atEnd ? i - (60 * 24 - values.length) : i;
         const time = NOW - (60 * 24 + 12 - i) * 3_600_000;
         return {
           ...ALGALITA_PERIOD[0],
@@ -206,7 +208,7 @@ describe("GenerateReport.run", () => {
           water_data: {
             ...(ALGALITA_PERIOD[0].water_data as Record<string, number>),
             // Every metric varies: identical consecutive readings are a flat line (readingQc.ts).
-            97: values[i] ?? 8 + (i % 7) * 0.01,
+            97: values[at] ?? 8 + (i % 7) * 0.01,
             98: 200 + (i % 7),
             99: 7.2 + (i % 7) * 0.01,
             100: 55000 + (i % 7) * 10,
@@ -217,23 +219,27 @@ describe("GenerateReport.run", () => {
       })
     );
 
-    // Algalita's dissolved oxygen limit is 4-15 mg/L. Watch needs 3 readings in a row beyond it
-    // by more than v2's 1 mg/L; Action Required beyond it by 15% of the width (1.65 mg/L).
+    // Algalita's dissolved oxygen limit is 4-15 mg/L. A flag needs 3 readings in 24 hours beyond
+    // it by more than v2's 1 mg/L; Action Required needs that flag in the period's last 24 hours,
+    // beyond it by 15% of the width (1.65 mg/L). A flag 60 days ago is Watch, told as past.
     it.each([
-      [[0], "Normal", "Normal"],
-      [[0, 0], "Normal", "Normal"],
-      [[0, 0, 0], "Action Required", "Exceedance"],
-      [[2.8, 2.8, 2.8], "Watch", "Low"],
-      [[17, 17, 17], "Action Required", "Exceedance"],
-    ] as const)("flags dissolved oxygen %j only after three readings in a row", async (values, status, flag) => {
-      const sensor = makeSensor(oxygenPeriod([...values]));
+      [[0], false, "Normal", "Normal"],
+      [[0, 0], true, "Normal", "Normal"],
+      [[0, 0, 0], false, "Watch", "Low"],
+      [[0, 0, 0], true, "Action Required", "Exceedance"],
+      [[2.8, 2.8, 2.8], true, "Watch", "Low"],
+      [[17, 17, 17], false, "Watch", "Elevated"],
+      [[17, 17, 17], true, "Action Required", "Exceedance"],
+    ] as const)("flags dissolved oxygen %j (at the end: %s) only from three readings", async (values, atEnd, status, flag) => {
+      const sensor = makeSensor(oxygenPeriod([...values], atEnd));
       const result = await new GenerateReport({ sensor })
         .run({ time_range: "last 60 days", device: "Algalita" }, CALLER);
       expect(result.error).toBeUndefined();
       expect(result.status).toBe(status);
       expect(result.parameter_flags).toMatchObject({ dissolved_oxygen: flag });
       if (status === "Watch") {
-        expect(result.status_reason).toMatch(/^Watch because a parameter stayed outside its threshold for at least three readings in a row: dissolved_oxygen ranged from 2\.80 to .* against its configured 4 to 15 mg\/L, first from /);
+        expect(result.status_reason).toMatch(/^Watch because a parameter was flagged outside its threshold during the period, with out-of-range readings reaching 5% of a 24-hour window and at least three: dissolved_oxygen ranged from [0-9.]+ to .* against its configured 4 to 15 mg\/L, first flagged from /);
+        expect(result.flag_detail).toMatchObject({ dissolved_oxygen: { current: atEnd } });
       }
       const prepared = await prepareReport(sensor, { timeRange: "last 60 days", device: "Algalita" }, CALLER);
       if (prepared.error !== undefined) throw new Error(prepared.error);
@@ -265,9 +271,9 @@ describe("GenerateReport.run", () => {
       };
       // Kept: 0 and 0. The faulted reading and the implausible -1 are dropped.
       expect((await run([0, 0, -1, 0])).status).toBe("Normal");
-      // Kept: 0, 0, 0 in a row once the dropped readings are set aside.
+      // Kept: 0, 0, 0 once the dropped readings are set aside; 60 days ago, so a past flag.
       const three = await run([0, 0, -1, 0, 0]);
-      expect(three.status).toBe("Action Required");
+      expect(three.status).toBe("Watch");
       expect(three.report.parameters.find((p) => p.baseline.key === "dissolved_oxygen"))
         .toMatchObject({ min: 0 });
     });
@@ -290,7 +296,7 @@ describe("GenerateReport.run", () => {
           atMs: Date.parse(bucket.start),
           value: i === 0 ? bucket.min : i === 1 ? bucket.max : bucket.mean,
           valid: true,
-        }))));
+        }))), []);
         return {
           device: { name: "Old Woman Creek 2026", label: "dev:owc", operating_environment: "fresh-water" },
           time_range_resolved: { start: "2026-07-26T00:00:00.000Z", end: LAST_READING },

@@ -405,7 +405,7 @@ describe("detectEvents — a window covering the whole period", () => {
     const short = report([
       statsFor(
         fixedBaseline("ph", "pH", "", 7.8, 8.3),
-        [0, 4, 8, 12, 16, 20, 24].map((h): [number, number] => [at(h), h >= 4 && h <= 8 ? 7.0 : 8.0]),
+        [0, 4, 8, 12, 16, 20, 24].map((h): [number, number] => [at(h), h >= 4 && h <= 12 ? 7.0 : 8.0]),
       ),
     ]);
     const [event] = detectEvents(short);
