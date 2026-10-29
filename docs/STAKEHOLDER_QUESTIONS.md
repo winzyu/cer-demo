@@ -51,7 +51,7 @@ Items are ordered by what they unblock, most blocking first. Last updated 2026-1
   Readings returned to normal around Sep 29-30, when the registry's next calibration date fell; the data alone cannot show whether the probe or the water changed (`docs/timeline.md`, 2026-10-12).
   *Unblocks:* whether Gilligan may describe these readings as "very unusual, a calibration check would confirm", and the manual test expectations for the customer's Sep 26 question.
   *Answer:* Michael, 2026-10-23: "The probe wasnt recalibrated or serviced until October 13th I believe. I'm not sure what those pH swings were but likely device issues."
-  Open: whether the swings stay labelled unusual, as built, is the user's call.
+  Decided (user, 2026-10-28): the swings stay labelled unusual, as built; a rule cannot tell a device problem from real water without the maintenance log.
 
 - [ ] **29. May Gilligan tell customers a reading is "very unusual; a calibration check would confirm" instead of calling it a sensor fault?**
   The proposal keeps readings the device did not flag, including pH outside 3-12 and half-hour jumps faster than v2 §8.2's rate-of-change guide, and describes them as unusual rather than faulty; "sensor fault" and "inspect" stay for faults the device reports (error flags, read failures, flat lines, stuck turbidity).

@@ -8,7 +8,7 @@ Rules as built: [`../SPECS.md`](../SPECS.md), "The flag rule", "Reading labels" 
 ## Start here (next chat)
 
 Michael answered on 2026-10-23 and the user decided on 2026-10-27; the servicing rule and the coordinator's landing checklist are built on the branch (see "Michael's answers and the servicing rule" below).
-What remains: the user's call on the Sep 25-29 pH swings (question 28) and the coordinator's squash landing; the servicing replay is recorded below ("Replay with the servicing rule").
+What remains: the coordinator's squash landing (the user kept the Sep 25-29 pH swings unusual on 2026-10-28, question 28); the servicing replay is recorded below ("Replay with the servicing rule").
 Read this file, then the timeline's 2026-10-13 and 2026-10-27 flagging rows; open the overview only for a case's detail.
 Rules carried over: STATUS.md is the coordinator's and is not edited on this branch; merge `origin/dev` before each commit; announce any device API read before running it; production reads are blocked for the agent, so hand the user a `! ...` command; no paid runs without approval; do not quote the customer's chat or name her in committed docs beyond the chat id; keep real readings out of git; run only relevant Jest suites singly plus `npm run typecheck` and `npm run lint`; push the task branch when a verified unit is done and send the coordinator the commit IDs; the coordinator lands it on `dev` by squash.
 
@@ -20,7 +20,7 @@ Next steps, in order:
 
 | Question | Michael | On the branch |
 |---|---|---|
-| 28, Algalita pH swings | No service until about Oct 13; the swings were "likely device issues" | Kept unusual, as built, pending the user's call |
+| 28, Algalita pH swings | No service until about Oct 13; the swings were "likely device issues" | Kept unusual, as built: the user's call, 2026-10-28 |
 | 29, wording | Yes | Approved as built |
 | 30, 15% Action Required bar | Yes | Approved as built |
 | 27, alert emails | They are binary and need a grey area | Out of scope; the coordinator's post-release backlog |
