@@ -24,7 +24,7 @@ Not covered here:
 
 - What `sensor_fault_notes` removes is visible only when a turbidity Flag cell reads "(all zero)" or "(off-scale)", and no Mirror pod produces either; on the Mirror it changes only the Omitted row (C7).
   The removed text is covered by `test/unit/reportRenderPdf.test.ts` and the offline sample `report-omit-samples/offline-S3-no-turbidity-or-fault-notes.pdf` that Michael approved.
-- The rest of what `dev` carries (v2 flagging, the data-skepticism fix, the coverage line) runs on this stack but has its own checks; the flagging rework is not on `dev` yet.
+- The rest of what `dev` carries (v2 flagging, the flagging rework, the data-skepticism fix, the coverage line) runs on this stack but has its own checks.
 
 ## 2-5. Stack, setup, settings and start
 

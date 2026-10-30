@@ -3,8 +3,7 @@
 How to stand up the Mirror, a local copy of production with fabricated data, check it, and stop it.
 Nothing here reads or writes production: Firestore is a local emulator, the CER server (cer-api) and dashboard are local, and the only outside call is the model provider during paid steps.
 
-Rebuilt on 2026-10-21 from the setup in [`REPORT_OMIT_MIRROR_RUNBOOK.md`](REPORT_OMIT_MIRROR_RUNBOOK.md), which ran as written on 2026-10-15 (§3-§5 and the free checks); this combined version has not been run end to end yet.
-By the user's decision of 2026-10-21 it is verified at its next real use (a report-omission or flagging test), not by a separate run; fix any step that differs then.
+Rebuilt on 2026-10-21 from the setup in [`REPORT_OMIT_MIRROR_RUNBOOK.md`](REPORT_OMIT_MIRROR_RUNBOOK.md); §4-§6 ran as written on 2026-10-30 for the release verification ([`RELEASE_VERIFICATION_2026-10-30.md`](../records/RELEASE_VERIFICATION_2026-10-30.md)).
 The September version, for the launch items on the 2026-09-28 stack, is `git show 2dd024a:docs/runbooks/MIRROR_RUNBOOK.md`; its test order is now in [`LAUNCH_ISSUES_CHECKLIST.md`](../records/LAUNCH_ISSUES_CHECKLIST.md).
 
 What to test once the stack is up lives in the feature's own document:
@@ -47,7 +46,7 @@ browser -> dashboard :3100 -> cer-api :5101 -> Firestore emulator :8080 (project
 |---|---|---|
 | Firestore emulator and seed | `~/code/work/clean-earth-rovers/worktrees/mirror-report-omit` | server `mirror/release-rc1` `8594338` (live cer-api's release `122136d` plus the Mirror fixtures; local, not pushed) with three patches (§3.1) |
 | cer-api | same directory | same |
-| Gilligan | `~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/omit-mirror` | cer-demo `dev`, detached (`acb9d7d` on 2026-10-21), so commits to `dev` do not change it mid-test |
+| Gilligan | `~/code/work/clean-earth-rovers/repo/cer-demo/.claude/worktrees/omit-mirror` | cer-demo `dev`, detached (`2cb5523` on 2026-10-30), so commits to `dev` do not change it mid-test |
 | Dashboard | `~/code/work/clean-earth-rovers/worktrees/dashboard-land` | dashboard `fc13d16`, detached: the live cer-ui build |
 
 All three directories exist on this machine as of 2026-10-21.

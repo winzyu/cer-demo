@@ -109,7 +109,7 @@ Worth raising with Michael, outside the release: the customer `(default)` databa
 
 The table and the note under it predate the release candidate.
 They record what each release commit had to contain when the plan was written, not the commits that ship.
-The release commits, their contents and their checksums are in `RELEASE_CANDIDATE.md` on branch `release/rc2` (`ddd6292`), not on `dev`: `git show release/rc2:docs/migration/RELEASE_CANDIDATE.md`.
+The release commits, their contents and their checksums are in [`RELEASE_CANDIDATE.md`](../records/RELEASE_CANDIDATE.md) (rc2, `ddd6292`).
 Where the two differ, `RELEASE_CANDIDATE.md` wins, and its commits fill the `[FILL]` cells below and in §8.
 
 | service | repository | release commit must contain | release commit |
