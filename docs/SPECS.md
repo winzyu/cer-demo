@@ -1133,6 +1133,7 @@ A tool-free answer that points at the download button, or says in a sentence tha
 A sentence that names readings ("two flat-line readings were excluded from the report period") explains reading QC, since `omit` leaves out notes and never readings.
 The forced call costs one more model round and a device read.
 In a chat where an earlier reply carried a delivery line, a sentence that points back at that copy ("already", "still", "current", "existing", "earlier", "previous") is not a claim: that copy exists, and forcing the tool on a refusal such as "take the pH numbers out" made an unrequested copy, once with every note restored (Mirror A4, 2 of 2 runs, 2026-10-16). In a chat with no earlier report the same sentence is still a false delivery and is retried.
+A sentence that offers a copy ("if you'd like", "would you like", "I can", "I could", or a question) is not a claim either: on the 2026-10-30 Mirror run A4's refusal ended "if you'd like a copy without the explanatory notes ..., I can regenerate it with any of those left out", and forcing the tool on it made an unrequested full copy.
 The sentence that triggered a retry is logged, since the dropped answer is otherwise lost.
 The response carries `report_retried: true` when the retry ran.
 Taking edits away from the model entirely (omit checkboxes beside the dashboard's download button) remains the fully deterministic alternative.

@@ -127,6 +127,16 @@ describe("claimsReport", () => {
     expect(claimsReport(text, { earlierReport: true })).toBe(false);
   });
 
+  // Mirror A4, 2026-10-30: an offer of a copy is not a delivery of one.
+  it.each([
+    "What I can do instead: if you'd like a copy without the explanatory notes (turbidity notes, sensor fault notes, threshold notes, or the Data Quality section), I can regenerate it with any of those left out.",
+    "Would you like a copy with the turbidity notes left out?",
+    "If you want, I could make a version that leaves out the threshold notes.",
+  ])("does not read an offer as a claim: %s", (text) => {
+    expect(claimsReport(text)).toBe(false);
+    expect(claimsReport(text, { earlierReport: true })).toBe(false);
+  });
+
   it("still reads a new delivery as a claim after an earlier report", () => {
     const text = "This version of the PDF leaves out the turbidity notes.";
     expect(claimsReport(text, { earlierReport: true })).toBe(true);

@@ -135,6 +135,12 @@ const READINGS = /\b(?:readings?|data points?|samples?|measurements?)\b/i;
  */
 const BACK_REFERENCE = /\b(?:already|still|current(?:ly)?|existing|earlier|previous(?:ly)?)\b/i;
 
+/**
+ * "If you'd like, I can regenerate it with those left out" offers a copy; it does not claim one.
+ * Forcing a report on it made an unrequested copy after a refusal (Mirror A4, 2026-10-30).
+ */
+const OFFER = /\b(?:if you(?:'d| would)? (?:like|prefer|want)|would you like|do you want|want me to|shall I|should I|I can|I could|happy to)\b|\?\s*$/i;
+
 export interface ClaimContext {
   /** An earlier reply in this chat carried a delivery line, so a copy it made exists. */
   earlierReport?: boolean;
@@ -151,7 +157,7 @@ export const reportClaim = (answer: string, context: ClaimContext = {}): string 
   answer.split(/(?<=[.!?])\s+|\n+/).find((sentence) => (
     (BUTTON.test(sentence) || (
       LEFT_OUT.test(sentence) && REPORT_NOUN.test(sentence) && !NEGATION.test(sentence)
-      && !READINGS.test(sentence)
+      && !READINGS.test(sentence) && !OFFER.test(sentence)
     ))
     && !(context.earlierReport && BACK_REFERENCE.test(sentence))
   ))
